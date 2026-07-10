@@ -5,7 +5,7 @@
   "description": "Collaborative itinerary planner with shareable room links.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node prepare-seed.js"
   },
   "engines": {
     "node": ">=20"
