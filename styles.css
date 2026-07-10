@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   color-scheme: light;
   --bg: #f6f8f6;
   --surface: #ffffff;
@@ -303,6 +303,26 @@ textarea:focus {
   font-weight: 760;
 }
 
+.member[type="button"] {
+  appearance: none;
+  font-family: inherit;
+  cursor: default;
+}
+
+.member.editable {
+  cursor: pointer;
+  border-color: rgba(15, 143, 131, 0.22);
+  color: var(--ink);
+}
+
+.member.editable:hover,
+.member.editable:focus-visible {
+  border-color: rgba(15, 143, 131, 0.45);
+  background: var(--teal-soft);
+  box-shadow: 0 0 0 3px rgba(15, 143, 131, 0.1);
+  outline: none;
+}
+
 .avatar {
   display: grid;
   width: 18px;
@@ -471,15 +491,16 @@ textarea:focus {
 
 .day-index {
   display: grid;
-  width: 48px;
+  min-width: 58px;
   height: 48px;
-  flex: 0 0 auto;
+  flex: 0 0 58px;
   place-items: center;
   border-radius: var(--radius);
   background: var(--ink);
   color: #fff;
   font-size: 13px;
   font-weight: 820;
+  white-space: nowrap;
 }
 
 .day-date {
@@ -531,6 +552,21 @@ textarea:focus {
   border: 1px solid rgba(15, 143, 131, 0.2);
   background: var(--teal-soft);
   color: var(--teal-dark);
+}
+
+.editable-pill {
+  appearance: none;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.editable-pill:hover,
+.editable-pill:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(15, 143, 131, 0.45);
+  box-shadow: 0 0 0 3px rgba(15, 143, 131, 0.1);
+  outline: none;
 }
 
 .activity-list {
@@ -748,7 +784,7 @@ textarea:focus {
 
   .day-main {
     display: grid;
-    grid-template-columns: 48px 1fr auto;
+    grid-template-columns: minmax(58px, auto) minmax(0, 1fr) auto;
   }
 
   .day-date {
@@ -862,7 +898,6 @@ textarea:focus {
   }
 }
 
-
 .trip-list-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 38px;
@@ -907,3 +942,8 @@ textarea:focus {
   width: 17px;
   height: 17px;
 }
+
+
+
+
+
