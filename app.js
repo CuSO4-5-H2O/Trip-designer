@@ -1,4 +1,4 @@
-﻿const transportTypes = [
+const transportTypes = [
   { id: "plane", label: "飞机", icon: "M3 11l18-7-7 17-3-7-8-3Z" },
   { id: "train", label: "火车", icon: "M6 4h12v10a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V4Zm3 16 2-2m4 2-2-2M8 8h8M8 12h8" },
   { id: "bus", label: "大巴", icon: "M5 6h14v9a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6Zm2 0V4h10v2M8 18v2m8-2v2M7 11h10" },
@@ -12,7 +12,8 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   day: "numeric",
 });
 
-const clientId = crypto.randomUUID();
+const localClientIdKey = "trip-planner:client-id";
+const clientId = getClientId();
 const params = new URLSearchParams(location.search);
 const appConfig = window.TRIP_PLANNER_CONFIG || {};
 const roomId = params.get("room") || createRoomId();
@@ -348,14 +349,19 @@ function renderMembers() {
   const freshMembers = Array.from(members.values()).filter((member) => Date.now() - member.at < 20000);
   els.memberStrip.replaceChildren(
     ...freshMembers.map((member) => {
-      const node = document.createElement("span");
+      const node = document.createElement("button");
+      node.type = "button";
       node.className = "member";
+      node.classList.toggle("editable", member.clientId === clientId);
+      node.title = member.clientId === clientId ? "点击修改你的同行名称" : `${member.name} 正在查看`;
       node.innerHTML = `<span class="avatar">${escapeHtml(member.name.slice(0, 1).toUpperCase())}</span>${escapeHtml(member.name)}`;
+      if (member.clientId === clientId) {
+        node.addEventListener("click", focusMemberName);
+      }
       return node;
     }),
   );
 }
-
 function renderDays() {
   const fragment = document.createDocumentFragment();
   state.days.forEach((day, index) => {
@@ -375,9 +381,9 @@ function renderDays() {
 
     const meta = card.querySelector(".day-meta");
     meta.append(
-      createPill(day.location || "未填写地点", "meta-pill", "M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z M12 10.5h.01"),
-      createPill(day.stay || "未填写住宿", "meta-pill", "M4 20V8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v12M4 12h16M8 12V9h8v3"),
-      createPill(getTransportLabel(day.transport), "transport-chip", getTransportIcon(day.transport.type)),
+      createEditablePill(day.location || "未填写地点", "meta-pill", "M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z M12 10.5h.01", "修改当天地点", () => focusDayField(day.id, "location")),
+      createEditablePill(day.stay || "未填写住宿", "meta-pill", "M4 20V8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v12M4 12h16M8 12V9h8v3", "修改当天住宿", () => focusDayField(day.id, "stay")),
+      createEditablePill(getTransportLabel(day.transport), "transport-chip", getTransportIcon(day.transport.type), "修改当天交通", () => focusDayField(day.id, "transport")),
     );
 
     const list = card.querySelector(".activity-list");
@@ -461,6 +467,49 @@ function createPill(text, className, iconPath) {
   return pill;
 }
 
+function createEditablePill(text, className, iconPath, label, onClick) {
+  const pill = document.createElement("button");
+  pill.className = `${className} editable-pill`;
+  pill.type = "button";
+  pill.ariaLabel = label;
+  pill.title = label;
+  pill.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${iconPath}" /></svg>${escapeHtml(text)}`;
+  pill.addEventListener("click", (event) => {
+    event.stopPropagation();
+    onClick();
+  });
+  return pill;
+}
+
+function focusMemberName() {
+  els.memberName.focus();
+  els.memberName.select();
+}
+
+function focusDayField(dayId, field) {
+  selectedDayId = dayId;
+  state.selectedDayId = dayId;
+  persistAndBroadcast("selection");
+  render();
+  requestAnimationFrame(() => {
+    if (field === "location") {
+      focusAndSelect(els.detailLocation);
+      return;
+    }
+    if (field === "stay") {
+      focusAndSelect(els.detailStay);
+      return;
+    }
+    document.querySelector(".transport-editor")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    els.transportTabs.querySelector(".transport-tab.active")?.focus();
+  });
+}
+
+function focusAndSelect(input) {
+  input.scrollIntoView({ behavior: "smooth", block: "center" });
+  input.focus();
+  input.select();
+}
 function addList() {
   const name = `新行程单 ${library.lists.length + 1}`;
   const list = createList(name, createBlankTrip(name));
@@ -756,6 +805,14 @@ function ensureLocalMember() {
   }
 }
 
+function getClientId() {
+  const storedClientId = localStorage.getItem(localClientIdKey);
+  if (storedClientId) return storedClientId;
+  const nextClientId = crypto.randomUUID();
+  localStorage.setItem(localClientIdKey, nextClientId);
+  return nextClientId;
+}
+
 function createRoomId() {
   return Array.from(crypto.getRandomValues(new Uint8Array(4)))
     .map((value) => value.toString(16).padStart(2, "0"))
@@ -783,6 +840,7 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
 
 
 
