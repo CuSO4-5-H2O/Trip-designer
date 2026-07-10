@@ -234,14 +234,13 @@ svg {
 }
 
 .field,
-.transport-editor,
+.activity-transport,
 .activity-form {
   display: grid;
   gap: 7px;
 }
 
 .field + .field,
-.transport-editor,
 .activity-form {
   margin-top: 13px;
 }
@@ -303,6 +302,7 @@ textarea:focus {
   font-weight: 760;
 }
 
+
 .member[type="button"] {
   appearance: none;
   font-family: inherit;
@@ -322,7 +322,6 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(15, 143, 131, 0.1);
   outline: none;
 }
-
 .avatar {
   display: grid;
   width: 18px;
@@ -554,6 +553,7 @@ textarea:focus {
   color: var(--teal-dark);
 }
 
+
 .editable-pill {
   appearance: none;
   font-family: inherit;
@@ -568,7 +568,6 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(15, 143, 131, 0.1);
   outline: none;
 }
-
 .activity-list {
   display: grid;
   gap: 8px;
@@ -595,10 +594,20 @@ textarea:focus {
   background: #fbfffd;
 }
 
+.activity-row.editing {
+  border-color: rgba(15, 143, 131, 0.55);
+  background: #f6fffc;
+  box-shadow: 0 0 0 3px rgba(15, 143, 131, 0.1);
+}
+
 .activity-time {
   color: var(--teal-dark);
   font-size: 13px;
   font-weight: 840;
+}
+
+.activity-body {
+  min-width: 0;
 }
 
 .activity-body strong {
@@ -615,13 +624,68 @@ textarea:focus {
   line-height: 1.45;
 }
 
+.activity-transport-chip,
+.activity-transport-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 28px;
+  margin-top: 8px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 760;
+  transition:
+    transform 160ms var(--ease),
+    border-color 160ms var(--ease),
+    background 160ms var(--ease),
+    box-shadow 160ms var(--ease);
+}
+
+.activity-transport-chip {
+  border: 1px solid rgba(15, 143, 131, 0.22);
+  background: var(--teal-soft);
+  color: var(--teal-dark);
+}
+
+.activity-transport-add {
+  border: 1px dashed var(--line);
+  background: #fff;
+  color: var(--muted);
+}
+
+.activity-transport-chip:hover,
+.activity-transport-add:hover,
+.activity-transport-chip:focus-visible,
+.activity-transport-add:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(15, 143, 131, 0.45);
+  box-shadow: 0 0 0 3px rgba(15, 143, 131, 0.1);
+  outline: none;
+}
+
+.activity-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.edit-activity,
 .remove-activity {
+  display: grid;
   width: 30px;
   height: 30px;
+  place-items: center;
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--muted);
+}
+
+.edit-activity:hover {
+  background: var(--teal-soft);
+  color: var(--teal-dark);
 }
 
 .remove-activity:hover {
@@ -636,6 +700,29 @@ textarea:focus {
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
+}
+
+.activity-transport {
+  padding: 10px;
+  border: 1px solid rgba(213, 223, 220, 0.82);
+  border-radius: var(--radius-sm);
+  background: #fbfffd;
+}
+
+.form-subheading,
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.form-actions .full {
+  flex: 1 1 0;
+}
+
+.hidden {
+  display: none !important;
 }
 
 .transport-tabs {
@@ -797,7 +884,11 @@ textarea:focus {
   }
 
   .activity-row {
-    grid-template-columns: 58px 1fr 30px;
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+  }
+
+  .activity-actions {
+    flex-direction: column;
   }
 
   .two-col,
@@ -834,6 +925,13 @@ textarea:focus {
   border-color: rgba(15, 143, 131, 0.38);
   background: #d3eee9;
   transform: translateY(-1px);
+}
+
+.mini-action.muted {
+  min-height: 28px;
+  border-color: var(--line);
+  background: #fff;
+  color: var(--muted);
 }
 
 .trip-list {
@@ -898,6 +996,7 @@ textarea:focus {
   }
 }
 
+
 .trip-list-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 38px;
@@ -942,8 +1041,3 @@ textarea:focus {
   width: 17px;
   height: 17px;
 }
-
-
-
-
-
