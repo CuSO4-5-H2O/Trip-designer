@@ -6,9 +6,6 @@
     <title>同行日程</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317211f'/%3E%3Cpath d='M13 34 28 11l8 19 17-7-14 30-8-19-18 7Z' fill='white'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./layout-fix.css" />
-    <link rel="stylesheet" href="./transport-multiselect.css" />
-    <link rel="stylesheet" href="./inline-edit.css" />
   </head>
   <body>
     <div class="app-shell">
@@ -36,7 +33,9 @@
             </svg>
           </button>
           <button class="primary-action" id="addDayTopBtn" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
             添加日期
           </button>
         </div>
@@ -48,7 +47,9 @@
             <div class="section-heading">
               <p>行程单</p>
               <button class="mini-action" id="addListBtn" type="button">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
                 新建
               </button>
             </div>
@@ -60,18 +61,39 @@
           </section>
 
           <section class="panel trip-panel">
-            <div class="section-heading"><p>行程设置</p><span id="roomCode">LOCAL</span></div>
-            <label class="field"><span>开始日期</span><input id="startDate" type="date" /></label>
-            <label class="field"><span>出发城市</span><input id="originCity" type="text" placeholder="例如：上海" /></label>
-            <label class="field"><span>同行成员</span><input id="memberName" type="text" placeholder="输入你的名字" /></label>
+            <div class="section-heading">
+              <p>行程设置</p>
+              <span id="roomCode">LOCAL</span>
+            </div>
+            <label class="field">
+              <span>开始日期</span>
+              <input id="startDate" type="date" />
+            </label>
+            <label class="field">
+              <span>出发城市</span>
+              <input id="originCity" type="text" placeholder="例如：上海" />
+            </label>
+            <label class="field">
+              <span>同行成员</span>
+              <input id="memberName" type="text" placeholder="输入你的名字" />
+            </label>
             <div class="member-strip" id="memberStrip"></div>
           </section>
 
           <section class="panel compact-panel">
-            <div class="section-heading"><p>概览</p><span id="dayCount">0 天</span></div>
+            <div class="section-heading">
+              <p>概览</p>
+              <span id="dayCount">0 天</span>
+            </div>
             <div class="stat-grid">
-              <div><strong id="activityCount">0</strong><span>事项</span></div>
-              <div><strong id="stayCount">0</strong><span>住宿</span></div>
+              <div>
+                <strong id="activityCount">0</strong>
+                <span>事项</span>
+              </div>
+              <div>
+                <strong id="stayCount">0</strong>
+                <span>住宿</span>
+              </div>
             </div>
             <div class="transport-summary" id="transportSummary"></div>
           </section>
@@ -79,9 +101,15 @@
 
         <section class="timeline-section" aria-label="每日行程列表">
           <div class="timeline-head">
-            <div><p class="eyeline">每日列表</p><h1>把每天要做的事排清楚</h1></div>
+            <div>
+              <p class="eyeline">每日列表</p>
+              <h1>把每天要做的事排清楚</h1>
+            </div>
             <button class="ghost-action" id="addDayBtn" type="button">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 10h18" /><path d="M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z" /></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 2v4M16 2v4M3 10h18" />
+                <path d="M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z" />
+              </svg>
               添加日期
             </button>
           </div>
@@ -93,35 +121,53 @@
             <div class="section-heading">
               <p id="detailLabel">第 1 天</p>
               <button class="icon-button danger" id="deleteDayBtn" type="button" aria-label="删除当天" title="删除当天">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15" />
+                </svg>
               </button>
             </div>
-            <label class="field"><span>当天地点</span><input id="detailLocation" type="text" placeholder="例如：东京 / 河口湖" /></label>
-            <label class="field"><span>住宿</span><input id="detailStay" type="text" placeholder="酒店、民宿或露营地" /></label>
-            <div class="transport-editor">
-              <span class="field-label">交通（可多选）</span>
-              <div class="transport-tabs" id="transportTabs"></div>
-              <div class="two-col">
-                <input id="transportFrom" type="text" placeholder="出发地" aria-label="交通出发地" />
-                <input id="transportTo" type="text" placeholder="到达地" aria-label="交通到达地" />
-              </div>
-              <div class="two-col">
-                <input id="transportDepart" type="time" aria-label="出发时间" />
-                <input id="transportArrive" type="time" aria-label="到达时间" />
-              </div>
-            </div>
+
+            <label class="field">
+              <span>当天地点</span>
+              <input id="detailLocation" type="text" placeholder="例如：东京 / 河口湖" />
+            </label>
+            <label class="field">
+              <span>住宿</span>
+              <input id="detailStay" type="text" placeholder="酒店、民宿或露营地" />
+            </label>
+
             <form class="activity-form" id="activityForm">
-              <span class="field-label">添加事项</span>
+              <span class="field-label" id="activityFormLabel">添加事项</span>
               <div class="two-col compact">
                 <input id="activityTime" type="time" required aria-label="事项时间" />
                 <input id="activityPlace" type="text" placeholder="地点" aria-label="事项地点" />
               </div>
               <input id="activityTitle" type="text" placeholder="要做的事情" required aria-label="事项标题" />
+              <div class="activity-transport">
+                <div class="form-subheading">
+                  <span class="field-label">事项交通</span>
+                  <button class="mini-action muted" id="clearTransportBtn" type="button">无交通</button>
+                </div>
+                <div class="transport-tabs" id="transportTabs"></div>
+                <div class="two-col">
+                  <input id="transportFrom" type="text" placeholder="出发地" aria-label="交通出发地" />
+                  <input id="transportTo" type="text" placeholder="到达地" aria-label="交通到达地" />
+                </div>
+                <div class="two-col">
+                  <input id="transportDepart" type="time" aria-label="出发时间" />
+                  <input id="transportArrive" type="time" aria-label="到达时间" />
+                </div>
+              </div>
               <textarea id="activityNote" rows="3" placeholder="备注、票号、集合点"></textarea>
-              <button class="primary-action full" type="submit">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
-                添加事项
-              </button>
+              <div class="form-actions">
+                <button class="ghost-action full hidden" id="cancelEditActivityBtn" type="button">取消编辑</button>
+                <button class="primary-action full" id="activitySubmitBtn" type="submit">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                  <span id="activitySubmitText">添加事项</span>
+                </button>
+              </div>
             </form>
           </div>
         </aside>
@@ -133,15 +179,18 @@
     <template id="dayCardTemplate">
       <article class="day-card">
         <button class="day-main" type="button">
-          <span class="day-index"></span><span class="day-date"></span><span class="day-weekday"></span>
+          <span class="day-index"></span>
+          <span class="day-date"></span>
+          <span class="day-weekday"></span>
         </button>
-        <div class="day-content"><div class="day-meta"></div><div class="activity-list"></div></div>
+        <div class="day-content">
+          <div class="day-meta"></div>
+          <div class="activity-list"></div>
+        </div>
       </article>
     </template>
 
     <script src="./config.js"></script>
-    <script src="./app.js"></script>
-    <script src="./transport-multiselect.js"></script>
-    <script src="./inline-edit.js"></script>
+    <script src="./app.js" type="module"></script>
   </body>
 </html>
