@@ -1,4 +1,4 @@
-﻿const crypto = require("crypto");
+const crypto = require("crypto");
 const fs = require("fs");
 const http = require("http");
 const path = require("path");
@@ -117,6 +117,7 @@ function handleMessage(socket, raw) {
 
   const room = ensureRoom(peer.roomId);
   if (message.type === "join") {
+    removeDuplicateClientPeers(peer.roomId, peer.clientId, socket);
     if (!room.state) {
       room.state = message.state;
       scheduleSave();
@@ -190,6 +191,19 @@ function saveRooms() {
     fs.renameSync(tempFile, dataFile);
   } catch (error) {
     console.warn(`Could not save room data: ${error.message}`);
+  }
+}
+
+function removeDuplicateClientPeers(roomId, clientId, currentSocket) {
+  const room = rooms.get(roomId);
+  if (!room || !clientId) return;
+  for (const otherSocket of Array.from(room.peers)) {
+    if (otherSocket === currentSocket) continue;
+    const otherPeer = sockets.get(otherSocket);
+    if (otherPeer?.clientId !== clientId) continue;
+    room.peers.delete(otherSocket);
+    sockets.delete(otherSocket);
+    otherSocket.destroy();
   }
 }
 
@@ -276,5 +290,3 @@ function encodeFrame(message) {
   }
   return Buffer.concat([header, payload]);
 }
-
-
