@@ -32,6 +32,8 @@ let saveTimer = 0;
 let reconnectTimer = 0;
 let toastTimer = 0;
 let members = new Map();
+let editingActivityId = "";
+let draftTransportType = "";
 
 const els = {
   tripTitle: document.querySelector("#tripTitle"),
@@ -63,6 +65,11 @@ const els = {
   transportDepart: document.querySelector("#transportDepart"),
   transportArrive: document.querySelector("#transportArrive"),
   activityForm: document.querySelector("#activityForm"),
+  activityFormLabel: document.querySelector("#activityFormLabel"),
+  activitySubmitBtn: document.querySelector("#activitySubmitBtn"),
+  activitySubmitText: document.querySelector("#activitySubmitText"),
+  cancelEditActivityBtn: document.querySelector("#cancelEditActivityBtn"),
+  clearTransportBtn: document.querySelector("#clearTransportBtn"),
   activityTime: document.querySelector("#activityTime"),
   activityPlace: document.querySelector("#activityPlace"),
   activityTitle: document.querySelector("#activityTitle"),
@@ -96,30 +103,27 @@ function createSeedTrip() {
         id: crypto.randomUUID(),
         location: "东京 · 浅草",
         stay: "浅草雷门酒店",
-        transport: { type: "plane", from: "上海浦东", to: "东京成田", depart: "08:20", arrive: "12:10" },
         activities: [
-          { id: crypto.randomUUID(), time: "09:30", title: "浅草寺", place: "台东区", note: "先逛雷门，再去仲见世通。", done: false },
-          { id: crypto.randomUUID(), time: "14:10", title: "隅田川游船", place: "吾妻桥码头", note: "提前 20 分钟到码头。", done: false },
-          { id: crypto.randomUUID(), time: "19:00", title: "入住酒店", place: "浅草", note: "确认次日早餐时间。", done: false },
+          { id: crypto.randomUUID(), time: "09:30", title: "浅草寺", place: "台东区", note: "先逛雷门，再去仲见世通。", done: false, transport: { type: "plane", from: "上海浦东", to: "东京成田", depart: "08:20", arrive: "12:10" } },
+          { id: crypto.randomUUID(), time: "14:10", title: "隅田川游船", place: "吾妻桥码头", note: "提前 20 分钟到码头。", done: false, transport: { type: "boat", from: "吾妻桥", to: "日之出码头", depart: "14:10", arrive: "14:55" } },
+          { id: crypto.randomUUID(), time: "19:00", title: "入住酒店", place: "浅草", note: "确认次日早餐时间。", done: false, transport: null },
         ],
       },
       {
         id: crypto.randomUUID(),
         location: "东京 · 涩谷",
         stay: "新宿站前酒店",
-        transport: { type: "train", from: "浅草", to: "涩谷", depart: "10:00", arrive: "10:35" },
         activities: [
-          { id: crypto.randomUUID(), time: "11:00", title: "明治神宫散步", place: "原宿", note: "", done: false },
-          { id: crypto.randomUUID(), time: "16:30", title: "涩谷 Sky", place: "涩谷", note: "看日落，带证件。", done: false },
+          { id: crypto.randomUUID(), time: "11:00", title: "明治神宫散步", place: "原宿", note: "", done: false, transport: { type: "train", from: "浅草", to: "原宿", depart: "10:00", arrive: "10:35" } },
+          { id: crypto.randomUUID(), time: "16:30", title: "涩谷 Sky", place: "涩谷", note: "看日落，带证件。", done: false, transport: null },
         ],
       },
       {
         id: crypto.randomUUID(),
         location: "河口湖",
         stay: "湖畔温泉旅馆",
-        transport: { type: "bus", from: "新宿", to: "河口湖", depart: "08:45", arrive: "10:40" },
         activities: [
-          { id: crypto.randomUUID(), time: "13:00", title: "湖边骑行", place: "河口湖大桥", note: "按天气调整。", done: false },
+          { id: crypto.randomUUID(), time: "13:00", title: "湖边骑行", place: "河口湖大桥", note: "按天气调整。", done: false, transport: { type: "bus", from: "新宿", to: "河口湖", depart: "08:45", arrive: "10:40" } },
         ],
       },
     ],
@@ -131,7 +135,6 @@ function createBlankTrip(title) {
     id: crypto.randomUUID(),
     location: "",
     stay: "",
-    transport: { type: "train", from: "", to: "", depart: "", arrive: "" },
     activities: [],
   };
   return {
@@ -196,9 +199,11 @@ function normalizeLibrary(input) {
   const lists = (input.lists || [])
     .filter((list) => list?.trip?.days?.length)
     .map((list, index) => {
-      const name = (list.name || list.trip.tripTitle || `行程单 ${index + 1}`).trim();
+      const trip = normalizeTrip(list.trip);
+      const name = (list.name || trip.tripTitle || `行程单 ${index + 1}`).trim();
       list.id = list.id || crypto.randomUUID();
       list.name = name;
+      list.trip = trip;
       list.trip.tripTitle = list.trip.tripTitle || name;
       list.trip.selectedDayId = list.trip.selectedDayId || list.trip.days[0].id;
       list.trip.updatedAt = list.trip.updatedAt || Date.now();
@@ -217,6 +222,54 @@ function normalizeLibrary(input) {
     lists,
     updatedAt: input.updatedAt || Date.now(),
   };
+}
+
+function normalizeTrip(trip) {
+  const days = (trip.days || []).filter(Boolean).map(normalizeDay);
+  return {
+    ...trip,
+    days: days.length ? days : createBlankTrip(trip.tripTitle || "新行程单").days,
+  };
+}
+
+function normalizeDay(day) {
+  const legacyTransport = normalizeTransport(day.transport);
+  const activities = (day.activities || []).map((activity, index) => normalizeActivity(activity, index === 0 ? legacyTransport : null));
+  return {
+    id: day.id || crypto.randomUUID(),
+    location: day.location || "",
+    stay: day.stay || "",
+    activities,
+  };
+}
+
+function normalizeActivity(activity, fallbackTransport = null) {
+  return {
+    id: activity.id || crypto.randomUUID(),
+    time: activity.time || "",
+    title: activity.title || "未命名事项",
+    place: activity.place || "",
+    note: activity.note || "",
+    done: Boolean(activity.done),
+    transport: normalizeTransport(activity.transport) || fallbackTransport,
+  };
+}
+
+function normalizeTransport(transport) {
+  if (!transport || typeof transport !== "object") return null;
+  const next = {
+    type: transport.type || "",
+    from: transport.from || "",
+    to: transport.to || "",
+    depart: transport.depart || "",
+    arrive: transport.arrive || "",
+  };
+  const hasAnyValue = Object.values(next).some(Boolean);
+  if (!hasAnyValue) return null;
+  if (!transportTypes.some((type) => type.id === next.type)) {
+    next.type = "train";
+  }
+  return next;
 }
 
 function wrapLegacyRemote(remoteTrip) {
@@ -244,11 +297,9 @@ function bindEvents() {
   els.deleteDayBtn.addEventListener("click", deleteSelectedDay);
   els.detailLocation.addEventListener("input", () => updateSelectedDay({ location: els.detailLocation.value }));
   els.detailStay.addEventListener("input", () => updateSelectedDay({ stay: els.detailStay.value }));
-  els.transportFrom.addEventListener("input", () => updateTransport({ from: els.transportFrom.value }));
-  els.transportTo.addEventListener("input", () => updateTransport({ to: els.transportTo.value }));
-  els.transportDepart.addEventListener("input", () => updateTransport({ depart: els.transportDepart.value }));
-  els.transportArrive.addEventListener("input", () => updateTransport({ arrive: els.transportArrive.value }));
-  els.activityForm.addEventListener("submit", addActivity);
+  els.clearTransportBtn.addEventListener("click", clearTransportDraft);
+  els.cancelEditActivityBtn.addEventListener("click", resetActivityForm);
+  els.activityForm.addEventListener("submit", saveActivity);
 
   channel?.addEventListener("message", (event) => {
     if (event.data?.clientId === clientId || event.data?.type !== "library") return;
@@ -322,7 +373,8 @@ function renderTripLists() {
 }
 
 function renderStats() {
-  const activityTotal = state.days.reduce((total, day) => total + day.activities.length, 0);
+  const activities = state.days.flatMap((day) => day.activities);
+  const activityTotal = activities.length;
   const stayTotal = state.days.filter((day) => day.stay.trim()).length;
   els.dayCount.textContent = `${state.days.length} 天`;
   els.activityCount.textContent = activityTotal;
@@ -330,7 +382,7 @@ function renderStats() {
 
   const counts = transportTypes.map((type) => ({
     ...type,
-    count: state.days.filter((day) => day.transport.type === type.id).length,
+    count: activities.filter((activity) => activity.transport?.type === type.id).length,
   }));
   els.transportSummary.replaceChildren(
     ...counts
@@ -383,7 +435,6 @@ function renderDays() {
     meta.append(
       createEditablePill(day.location || "未填写地点", "meta-pill", "M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z M12 10.5h.01", "修改当天地点", () => focusDayField(day.id, "location")),
       createEditablePill(day.stay || "未填写住宿", "meta-pill", "M4 20V8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v12M4 12h16M8 12V9h8v3", "修改当天住宿", () => focusDayField(day.id, "stay")),
-      createEditablePill(getTransportLabel(day.transport), "transport-chip", getTransportIcon(day.transport.type), "修改当天交通", () => focusDayField(day.id, "transport")),
     );
 
     const list = card.querySelector(".activity-list");
@@ -409,17 +460,13 @@ function renderDetail() {
   els.deleteDayBtn.disabled = state.days.length <= 1;
   if (!day) return;
 
+  if (editingActivityId && !day.activities.some((activity) => activity.id === editingActivityId)) {
+    resetActivityForm();
+  }
+
   els.detailLabel.textContent = `第 ${index + 1} 天 · ${weekdayFormatter.format(getDayDate(index))}`;
   els.detailLocation.value = day.location;
   els.detailStay.value = day.stay;
-  els.transportFrom.value = day.transport.from || "";
-  els.transportTo.value = day.transport.to || "";
-  els.transportDepart.value = day.transport.depart || "";
-  els.transportArrive.value = day.transport.arrive || "";
-
-  els.transportTabs.querySelectorAll(".transport-tab").forEach((button) => {
-    button.classList.toggle("active", button.dataset.type === day.transport.type);
-  });
 }
 
 function renderTransportTabs() {
@@ -430,7 +477,8 @@ function renderTransportTabs() {
       button.type = "button";
       button.dataset.type = type.id;
       button.textContent = type.label;
-      button.addEventListener("click", () => updateTransport({ type: type.id }));
+      button.classList.toggle("active", draftTransportType === type.id);
+      button.addEventListener("click", () => setDraftTransportType(type.id));
       return button;
     }),
   );
@@ -438,22 +486,42 @@ function renderTransportTabs() {
 
 function createActivityRow(dayId, activity) {
   const row = document.createElement("div");
+  const transportLabel = getTransportLabel(activity.transport);
   row.className = "activity-row";
+  row.classList.toggle("editing", editingActivityId === activity.id);
   row.innerHTML = `
     <span class="activity-time">${escapeHtml(activity.time)}</span>
     <span class="activity-body">
       <strong>${escapeHtml(activity.title)}</strong>
       ${activity.place ? `<span>${escapeHtml(activity.place)}</span>` : ""}
       ${activity.note ? `<p>${escapeHtml(activity.note)}</p>` : ""}
+      <button class="${transportLabel ? "activity-transport-chip" : "activity-transport-add"}" type="button" data-action="transport" title="编辑事项交通">
+        ${transportLabel ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${getTransportIcon(activity.transport?.type)}" /></svg>${escapeHtml(transportLabel)}` : "添加交通"}
+      </button>
     </span>
-    <button class="remove-activity" type="button" aria-label="删除事项" title="删除事项">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15" /></svg>
-    </button>
+    <span class="activity-actions">
+      <button class="edit-activity" type="button" data-action="edit" aria-label="编辑事项" title="编辑事项">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" /></svg>
+      </button>
+      <button class="remove-activity" type="button" data-action="delete" aria-label="删除事项" title="删除事项">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15" /></svg>
+      </button>
+    </span>
   `;
-  row.querySelector("button").addEventListener("click", (event) => {
+
+  row.querySelector('[data-action="transport"]').addEventListener("click", (event) => {
+    event.stopPropagation();
+    loadActivityForEdit(dayId, activity.id, { focusTransport: true });
+  });
+  row.querySelector('[data-action="edit"]').addEventListener("click", (event) => {
+    event.stopPropagation();
+    loadActivityForEdit(dayId, activity.id);
+  });
+  row.querySelector('[data-action="delete"]').addEventListener("click", (event) => {
     event.stopPropagation();
     const day = state.days.find((item) => item.id === dayId);
     day.activities = day.activities.filter((item) => item.id !== activity.id);
+    if (editingActivityId === activity.id) resetActivityForm();
     persistAndBroadcast("delete-activity");
     render();
   });
@@ -496,13 +564,93 @@ function focusDayField(dayId, field) {
       focusAndSelect(els.detailLocation);
       return;
     }
-    if (field === "stay") {
-      focusAndSelect(els.detailStay);
+    focusAndSelect(els.detailStay);
+  });
+}
+
+function loadActivityForEdit(dayId, activityId, options = {}) {
+  selectedDayId = dayId;
+  state.selectedDayId = dayId;
+  editingActivityId = activityId;
+  persistAndBroadcast("selection");
+  render();
+  requestAnimationFrame(() => {
+    const result = findActivity(dayId, activityId);
+    if (!result) return;
+    fillActivityForm(result.activity);
+    if (options.focusTransport) {
+      focusActivityTransport();
       return;
     }
-    document.querySelector(".transport-editor")?.scrollIntoView({ behavior: "smooth", block: "center" });
-    els.transportTabs.querySelector(".transport-tab.active")?.focus();
+    focusAndSelect(els.activityTitle);
   });
+}
+
+function fillActivityForm(activity) {
+  const transport = normalizeTransport(activity.transport);
+  els.activityTime.value = activity.time || "";
+  els.activityPlace.value = activity.place || "";
+  els.activityTitle.value = activity.title || "";
+  els.activityNote.value = activity.note || "";
+  draftTransportType = transport?.type || "";
+  els.transportFrom.value = transport?.from || "";
+  els.transportTo.value = transport?.to || "";
+  els.transportDepart.value = transport?.depart || "";
+  els.transportArrive.value = transport?.arrive || "";
+  renderTransportTabs();
+  setActivityFormMode(true);
+}
+
+function resetActivityForm() {
+  editingActivityId = "";
+  els.activityForm.reset();
+  draftTransportType = "";
+  renderTransportTabs();
+  setActivityFormMode(false);
+}
+
+function setActivityFormMode(isEditing) {
+  els.activityFormLabel.textContent = isEditing ? "编辑事项" : "添加事项";
+  els.activitySubmitText.textContent = isEditing ? "保存事项" : "添加事项";
+  els.cancelEditActivityBtn.classList.toggle("hidden", !isEditing);
+}
+
+function setDraftTransportType(typeId) {
+  draftTransportType = typeId;
+  renderTransportTabs();
+}
+
+function clearTransportDraft() {
+  draftTransportType = "";
+  els.transportFrom.value = "";
+  els.transportTo.value = "";
+  els.transportDepart.value = "";
+  els.transportArrive.value = "";
+  renderTransportTabs();
+}
+
+function getDraftTransport() {
+  const transport = {
+    type: draftTransportType,
+    from: els.transportFrom.value.trim(),
+    to: els.transportTo.value.trim(),
+    depart: els.transportDepart.value,
+    arrive: els.transportArrive.value,
+  };
+  const hasAnyValue = Object.values(transport).some(Boolean);
+  if (!hasAnyValue) return null;
+  if (!transport.type) transport.type = "train";
+  return transport;
+}
+
+function focusActivityTransport() {
+  document.querySelector(".activity-transport")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  const activeTab = els.transportTabs.querySelector(".transport-tab.active");
+  if (activeTab) {
+    activeTab.focus();
+    return;
+  }
+  els.transportFrom.focus();
 }
 
 function focusAndSelect(input) {
@@ -510,6 +658,14 @@ function focusAndSelect(input) {
   input.focus();
   input.select();
 }
+
+function findActivity(dayId, activityId) {
+  const day = state.days.find((item) => item.id === dayId);
+  const activity = day?.activities.find((item) => item.id === activityId);
+  if (!day || !activity) return null;
+  return { day, activity };
+}
+
 function addList() {
   const name = `新行程单 ${library.lists.length + 1}`;
   const list = createList(name, createBlankTrip(name));
@@ -568,7 +724,6 @@ function addDay() {
     id: crypto.randomUUID(),
     location: "",
     stay: "",
-    transport: { type: "train", from: "", to: "", depart: "", arrive: "" },
     activities: [],
   };
   state.days.push(newDay);
@@ -591,20 +746,36 @@ function deleteSelectedDay() {
   showToast("已删除当天行程");
 }
 
-function addActivity(event) {
+function saveActivity(event) {
   event.preventDefault();
   const day = getSelectedDay();
   if (!day) return;
-  day.activities.push({
-    id: crypto.randomUUID(),
+
+  const payload = {
+    id: editingActivityId || crypto.randomUUID(),
     time: els.activityTime.value,
     title: els.activityTitle.value.trim(),
     place: els.activityPlace.value.trim(),
     note: els.activityNote.value.trim(),
     done: false,
-  });
-  els.activityForm.reset();
+    transport: getDraftTransport(),
+  };
+
+  if (editingActivityId) {
+    const existing = day.activities.find((activity) => activity.id === editingActivityId);
+    if (existing) {
+      Object.assign(existing, payload);
+      persistAndBroadcast("update-activity");
+      resetActivityForm();
+      render();
+      showToast("事项已更新");
+      return;
+    }
+  }
+
+  day.activities.push(payload);
   persistAndBroadcast("add-activity");
+  resetActivityForm();
   render();
   showToast("事项已加入当天列表");
 }
@@ -623,14 +794,6 @@ function updateSelectedDay(patch) {
   if (!day) return;
   Object.assign(day, patch);
   persistAndBroadcast("update-day");
-  render();
-}
-
-function updateTransport(patch) {
-  const day = getSelectedDay();
-  if (!day) return;
-  day.transport = { ...day.transport, ...patch };
-  persistAndBroadcast("update-transport");
   render();
 }
 
@@ -782,9 +945,11 @@ function getDayDate(index) {
 }
 
 function getTransportLabel(transport) {
-  const type = transportTypes.find((item) => item.id === transport.type)?.label || "交通";
-  const route = [transport.from, transport.to].filter(Boolean).join(" → ");
-  const time = [transport.depart, transport.arrive].filter(Boolean).join("-");
+  const normalized = normalizeTransport(transport);
+  if (!normalized) return "";
+  const type = transportTypes.find((item) => item.id === normalized.type)?.label || "交通";
+  const route = [normalized.from, normalized.to].filter(Boolean).join(" → ");
+  const time = [normalized.depart, normalized.arrive].filter(Boolean).join("-");
   return [type, route, time].filter(Boolean).join(" · ");
 }
 
@@ -840,10 +1005,3 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
-
-
-
-
-
-
-
