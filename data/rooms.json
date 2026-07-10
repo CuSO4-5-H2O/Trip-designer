@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "savedAt": "2026-07-10T11:15:17.409Z",
+  "rooms": {
+    "STATICCFG_WS": {
+      "activeListId": "list-static",
+      "lists": [
+        {
+          "id": "list-static",
+          "name": "Static Config Test",
+          "trip": {
+            "title": "Static Config Test",
+            "startDate": "2026-07-10",
+            "days": []
+          },
+          "updatedAt": 1783682079577
+        }
+      ],
+      "updatedAt": 1783682079577
+    },
+    "STATICCFG_WS2": {
+      "activeListId": "list-static",
+      "lists": [
+        {
+          "id": "list-static",
+          "name": "Static Config Test",
+          "trip": {
+            "title": "Static Config Test",
+            "startDate": "2026-07-10",
+            "days": []
+          },
+          "updatedAt": 1783682097260
+        }
+      ],
+      "updatedAt": 1783682097260
+    },
+    "STATICCFG_WS3": {
+      "activeListId": "list-static",
+      "lists": [
+        {
+          "id": "list-static",
+          "name": "Static Config Test",
+          "trip": {
+            "title": "Static Config Test",
+            "startDate": "2026-07-10",
+            "days": []
+          },
+          "updatedAt": 1783682117131
+        }
+      ],
+      "updatedAt": 1783682117131
+    }
+  }
+}
