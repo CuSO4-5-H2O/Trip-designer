@@ -23,6 +23,7 @@ const currencyOptions = [
   { code: "EUR", label: "欧元", short: "EUR", symbol: "€", locale: "de-DE", digits: 2 },
 ];
 
+
 const activityPresets = [
   { title: "早餐", time: "08:30", category: "food", cost: 35, icon: "M4 3v7a4 4 0 0 0 4 4v7M8 3v18M14 3v18M14 3h3a3 3 0 0 1 0 6h-3" },
   { title: "咖啡休息", time: "10:30", category: "food", cost: 28, icon: "M4 8h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Zm12 2h2a2 2 0 0 1 0 4h-2" },
@@ -545,6 +546,11 @@ function getActiveTrip(library) {
 }
 
 function publishLibrary(library, reason) {
+  if (window.TripPlanner?.saveExternalLibrary) {
+    window.TripPlanner.saveExternalLibrary(library, reason);
+    window.setTimeout(renderTripInsights, 80);
+    return;
+  }
   if (!library) return;
   const list = library.lists.find((item) => item.id === library.activeListId) || library.lists[0];
   const trip = list?.trip;
@@ -559,16 +565,7 @@ function publishLibrary(library, reason) {
 }
 
 function sendRemoteState(library, reason) {
-  const endpoint = buildSyncUrl();
-  if (!endpoint) return;
-  try {
-    const socket = new WebSocket(endpoint);
-    socket.addEventListener("open", () => {
-      socket.send(JSON.stringify({ type: "state", clientId: insightClientId, roomId: insightRoomId, state: library, reason }));
-      window.setTimeout(() => socket.close(), 120);
-    });
-  } catch {
-  }
+  return;
 }
 
 function buildSyncUrl() {

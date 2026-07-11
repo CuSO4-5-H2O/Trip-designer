@@ -98,7 +98,9 @@ server.on("upgrade", (req, socket) => {
   ensureRoom(roomId).peers.add(socket);
 
   socket.on("data", (chunk) => {
-    for (const message of decodeFrames(chunk)) handleMessage(socket, message);
+    for (const message of decodeFrames(chunk)) {
+      handleMessage(socket, message);
+    }
   });
   socket.on("close", () => removePeer(socket));
   socket.on("error", () => removePeer(socket));
@@ -111,7 +113,11 @@ server.listen(port, () => {
 
 function handleMessage(socket, raw) {
   let message;
-  try { message = JSON.parse(raw); } catch { return; }
+  try {
+    message = JSON.parse(raw);
+  } catch {
+    return;
+  }
 
   const peer = sockets.get(socket);
   if (!peer) return;
@@ -133,10 +139,22 @@ function handleMessage(socket, raw) {
 
   if (message.type === "state" && message.state) {
     const baseRevision = Number.isFinite(message.baseRevision) ? message.baseRevision : null;
-    if (baseRevision !== null && baseRevision < (room.revision || 0)) {
-      send(socket, { type: "conflict", clientId: "server", state: room.state, revision: room.revision || 0, rejectedReason: message.reason || "stale-write" });
+    const isLegacyWidgetWrite = baseRevision === null && /^(quick-plan|trip-insights):/.test(String(message.clientId || ""));
+    if (isLegacyWidgetWrite) {
+      send(socket, { type: "conflict", clientId: "server", state: room.state, revision: room.revision || 0, rejectedReason: "legacy-widget-write" });
       return;
     }
+    if (baseRevision !== null && baseRevision < (room.revision || 0)) {
+      send(socket, {
+        type: "conflict",
+        clientId: "server",
+        state: room.state,
+        revision: room.revision || 0,
+        rejectedReason: message.reason || "stale-write",
+      });
+      return;
+    }
+
     room.state = message.state;
     room.revision = (room.revision || 0) + 1;
     scheduleSave();
@@ -151,11 +169,15 @@ function handleMessage(socket, raw) {
     return;
   }
 
-  if (message.type === "leave") removePeer(socket);
+  if (message.type === "leave") {
+    removePeer(socket);
+  }
 }
 
 function ensureRoom(roomId) {
-  if (!rooms.has(roomId)) rooms.set(roomId, { state: null, revision: 0, peers: new Set() });
+  if (!rooms.has(roomId)) {
+    rooms.set(roomId, { state: null, revision: 0, peers: new Set() });
+  }
   return rooms.get(roomId);
 }
 
@@ -165,7 +187,11 @@ function loadRooms() {
     const saved = JSON.parse(fs.readFileSync(dataFile, "utf8"));
     for (const [roomId, value] of Object.entries(saved.rooms || {})) {
       const isEnvelope = value && typeof value === "object" && "state" in value;
-      rooms.set(roomId, { state: isEnvelope ? value.state : value, revision: isEnvelope && Number.isFinite(value.revision) ? value.revision : 1, peers: new Set() });
+      rooms.set(roomId, {
+        state: isEnvelope ? value.state : value,
+        revision: isEnvelope && Number.isFinite(value.revision) ? value.revision : 1,
+        peers: new Set(),
+      });
     }
     console.log(`Loaded ${rooms.size} room(s) from disk`);
   } catch (error) {
@@ -181,9 +207,17 @@ function scheduleSave() {
 function saveRooms() {
   const persistedRooms = {};
   for (const [roomId, room] of rooms.entries()) {
-    if (room.state) persistedRooms[roomId] = { revision: room.revision || 0, state: room.state };
+    if (room.state) {
+      persistedRooms[roomId] = { revision: room.revision || 0, state: room.state };
+    }
   }
-  const payload = { version: 2, savedAt: new Date().toISOString(), rooms: persistedRooms };
+
+  const payload = {
+    version: 2,
+    savedAt: new Date().toISOString(),
+    rooms: persistedRooms,
+  };
+
   try {
     fs.mkdirSync(dataDir, { recursive: true });
     const tempFile = `${dataFile}.tmp`;
@@ -196,18 +230,34 @@ function saveRooms() {
 
 async function handleGeocode(requestUrl, res) {
   const query = (requestUrl.searchParams.get("q") || "").trim();
-  if (!query) return sendJson(res, 400, { ok: false, error: "missing query" });
-  if (geocodeCache.has(query)) return sendJson(res, 200, { ok: true, cached: true, results: geocodeCache.get(query) });
+  if (!query) {
+    sendJson(res, 400, { ok: false, error: "missing query" });
+    return;
+  }
+
+  if (geocodeCache.has(query)) {
+    sendJson(res, 200, { ok: true, cached: true, results: geocodeCache.get(query) });
+    return;
+  }
+
   try {
     const url = new URL("https://nominatim.openstreetmap.org/search");
     url.searchParams.set("format", "jsonv2");
     url.searchParams.set("limit", "5");
     url.searchParams.set("accept-language", "zh-CN,zh,en");
     url.searchParams.set("q", query);
-    const response = await fetch(url, { headers: { "User-Agent": "TripDesigner/1.0 (https://tripdesigner.onrender.com)" } });
+    const response = await fetch(url, {
+      headers: { "User-Agent": "TripDesigner/1.0 (https://tripdesigner.onrender.com)" },
+    });
     if (!response.ok) throw new Error(`geocode ${response.status}`);
     const raw = await response.json();
-    const results = raw.map((item) => ({ label: item.display_name, lat: Number(item.lat), lon: Number(item.lon), type: item.type || "", importance: Number(item.importance || 0) })).filter((item) => Number.isFinite(item.lat) && Number.isFinite(item.lon));
+    const results = raw.map((item) => ({
+      label: item.display_name,
+      lat: Number(item.lat),
+      lon: Number(item.lon),
+      type: item.type || "",
+      importance: Number(item.importance || 0),
+    })).filter((item) => Number.isFinite(item.lat) && Number.isFinite(item.lon));
     geocodeCache.set(query, results);
     sendJson(res, 200, { ok: true, cached: false, results });
   } catch (error) {
@@ -216,9 +266,17 @@ async function handleGeocode(requestUrl, res) {
 }
 
 async function handleAiRecommend(req, res) {
-  if (req.method !== "POST") return sendJson(res, 405, { ok: false, error: "method not allowed" });
+  if (req.method !== "POST") {
+    sendJson(res, 405, { ok: false, error: "method not allowed" });
+    return;
+  }
+
   const apiKey = process.env.deepseek || process.env.DEEPSEEK_API_KEY;
-  if (!apiKey) return sendJson(res, 503, { ok: false, error: "missing deepseek api key" });
+  if (!apiKey) {
+    sendJson(res, 503, { ok: false, error: "missing deepseek api key" });
+    return;
+  }
+
   try {
     const body = JSON.parse(await readBody(req));
     const day = body.day || {};
@@ -233,14 +291,27 @@ async function handleAiRecommend(req, res) {
       `住宿：${day.stay || ""}`,
       `已有事项：${JSON.stringify(day.activities || [])}`,
     ].join("\n");
+
     const response = await fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "deepseek-chat", temperature: 0.6, response_format: { type: "json_object" }, messages: [{ role: "system", content: "你只输出可解析 JSON。" }, { role: "user", content: prompt }] }),
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        temperature: 0.6,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: "你只输出可解析 JSON。" },
+          { role: "user", content: prompt },
+        ],
+      }),
     });
     if (!response.ok) throw new Error(`deepseek ${response.status}`);
     const data = await response.json();
-    const parsed = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+    const content = data.choices?.[0]?.message?.content || "{}";
+    const parsed = JSON.parse(content);
     sendJson(res, 200, { ok: true, recommendations: parsed.recommendations || [] });
   } catch (error) {
     sendJson(res, 502, { ok: false, error: "ai recommend failed", detail: error.message });
@@ -252,7 +323,10 @@ function readBody(req) {
     let body = "";
     req.on("data", (chunk) => {
       body += chunk;
-      if (body.length > 200000) { reject(new Error("request too large")); req.destroy(); }
+      if (body.length > 200000) {
+        reject(new Error("request too large"));
+        req.destroy();
+      }
     });
     req.on("end", () => resolve(body || "{}"));
     req.on("error", reject);
@@ -260,7 +334,10 @@ function readBody(req) {
 }
 
 function sendJson(res, status, payload) {
-  res.writeHead(status, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
+  res.writeHead(status, {
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store",
+  });
   res.end(JSON.stringify(payload));
 }
 
@@ -281,21 +358,27 @@ function removePeer(socket) {
   const peer = sockets.get(socket);
   if (!peer) return;
   sockets.delete(socket);
-  rooms.get(peer.roomId)?.peers.delete(socket);
+  const room = rooms.get(peer.roomId);
+  room?.peers.delete(socket);
   broadcastMembers(peer.roomId);
 }
 
 function broadcastMembers(roomId) {
   const room = rooms.get(roomId);
   if (!room) return;
-  const members = Array.from(room.peers).map((socket) => sockets.get(socket)).filter(Boolean).map(({ clientId, name }) => ({ clientId, name }));
+  const members = Array.from(room.peers)
+    .map((socket) => sockets.get(socket))
+    .filter(Boolean)
+    .map(({ clientId, name }) => ({ clientId, name }));
   broadcast(roomId, { type: "members", members }, null);
 }
 
 function broadcast(roomId, message, excludeSocket) {
   const room = rooms.get(roomId);
   if (!room) return;
-  for (const socket of room.peers) if (socket !== excludeSocket) send(socket, message);
+  for (const socket of room.peers) {
+    if (socket !== excludeSocket) send(socket, message);
+  }
 }
 
 function send(socket, payload) {
@@ -313,8 +396,13 @@ function decodeFrames(buffer) {
     if (opcode === 0x8) break;
     let length = second & 0x7f;
     let lengthOffset = 2;
-    if (length === 126) { length = buffer.readUInt16BE(offset + 2); lengthOffset = 4; }
-    else if (length === 127) { length = Number(buffer.readBigUInt64BE(offset + 2)); lengthOffset = 10; }
+    if (length === 126) {
+      length = buffer.readUInt16BE(offset + 2);
+      lengthOffset = 4;
+    } else if (length === 127) {
+      length = Number(buffer.readBigUInt64BE(offset + 2));
+      lengthOffset = 10;
+    }
     const masked = Boolean(second & 0x80);
     const maskStart = offset + lengthOffset;
     const dataStart = masked ? maskStart + 4 : maskStart;
@@ -326,7 +414,9 @@ function decodeFrames(buffer) {
       const decoded = Buffer.alloc(payload.length);
       for (let i = 0; i < payload.length; i += 1) decoded[i] = payload[i] ^ mask[i % 4];
       messages.push(decoded.toString("utf8"));
-    } else messages.push(payload.toString("utf8"));
+    } else {
+      messages.push(payload.toString("utf8"));
+    }
     offset = frameEnd;
   }
   return messages;
@@ -336,8 +426,18 @@ function encodeFrame(message) {
   const payload = Buffer.from(message);
   const length = payload.length;
   let header;
-  if (length < 126) header = Buffer.from([0x81, length]);
-  else if (length < 65536) { header = Buffer.alloc(4); header[0] = 0x81; header[1] = 126; header.writeUInt16BE(length, 2); }
-  else { header = Buffer.alloc(10); header[0] = 0x81; header[1] = 127; header.writeBigUInt64BE(BigInt(length), 2); }
+  if (length < 126) {
+    header = Buffer.from([0x81, length]);
+  } else if (length < 65536) {
+    header = Buffer.alloc(4);
+    header[0] = 0x81;
+    header[1] = 126;
+    header.writeUInt16BE(length, 2);
+  } else {
+    header = Buffer.alloc(10);
+    header[0] = 0x81;
+    header[1] = 127;
+    header.writeBigUInt64BE(BigInt(length), 2);
+  }
   return Buffer.concat([header, payload]);
 }

@@ -339,6 +339,11 @@ function getQuickActiveTrip(library) {
 }
 
 function publishQuickLibrary(library, reason) {
+  if (window.TripPlanner?.saveExternalLibrary) {
+    window.TripPlanner.saveExternalLibrary(library, reason);
+    window.setTimeout(renderQuickPlanSegments, 80);
+    return;
+  }
   if (!library) return;
   const list = library.lists.find((item) => item.id === library.activeListId) || library.lists[0];
   const trip = list?.trip;
@@ -353,16 +358,7 @@ function publishQuickLibrary(library, reason) {
 }
 
 function sendQuickRemoteState(library, reason) {
-  const endpoint = buildQuickSyncUrl();
-  if (!endpoint) return;
-  try {
-    const socket = new WebSocket(endpoint);
-    socket.addEventListener("open", () => {
-      socket.send(JSON.stringify({ type: "state", clientId: quickPlanClientId, roomId: quickPlanRoomId, state: library, reason }));
-      window.setTimeout(() => socket.close(), 120);
-    });
-  } catch {
-  }
+  return;
 }
 
 function buildQuickSyncUrl() {

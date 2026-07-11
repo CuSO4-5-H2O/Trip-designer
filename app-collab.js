@@ -61,7 +61,12 @@ function bind(){
   els.stay.oninput=()=>{ selectedDay().stay=els.stay.value; save("day-stay"); renderLight(); };
   els.clearTransport.onclick=()=>{ els.tabs.dataset.type=""; els.from.value=els.to.value=els.depart.value=els.arrive.value=""; renderTabs(); };
   els.cancel.onclick=()=>resetForm(); els.form.onsubmit=saveActivity;
-  channel?.addEventListener("message",e=>{ if(e.data?.type==="library"&&e.data.clientId!==clientId) applyRemote(e.data.library,"同浏览器标签页已同步",false); });
+  channel?.addEventListener("message",e=>{
+    if(e.data?.type!=="library"||e.data.clientId===clientId) return;
+    applyRemote(e.data.library,"同浏览器标签页已同步",false);
+    const externalId=String(e.data.clientId||"");
+    if(externalId.startsWith("quick-plan:")||externalId.startsWith("trip-insights:")) save(e.data.reason||"external-widget");
+  });
   window.addEventListener("beforeunload",()=>send({type:"leave",clientId}));
 }
 function render(){ const t=trip(), l=activeList(); els.title.value=t.tripTitle; els.start.value=t.startDate; els.origin.value=t.originCity||""; els.member.value=localStorage.getItem(nameKey)||"我"; els.listName.value=l.name; els.room.textContent=roomId; els.dayLimit.value=t.dayLimit; els.dayLimitValue.textContent=`${t.dayLimit} 天`; renderTabs(); ensurePanels(); renderLists(); renderStats(); renderMembers(); renderDays(); renderDetail(); renderSmart(); }
@@ -81,7 +86,7 @@ function addDay(){ const t=trip(); if(t.days.length>=t.dayLimit) return toast("�
 function deleteDay(id){ const t=trip(); if(t.days.length<=1) return toast("至少保留一天"); const i=t.days.findIndex(d=>d.id===id); if(i<0) return; t.days.splice(i,1); t.selectedDayId=t.days[Math.max(0,i-1)]?.id||t.days[0].id; save("delete-day"); render(); }
 function deleteList(id){ if(library.lists.length<=1) return toast("至少保留一个行程单"); const i=library.lists.findIndex(l=>l.id===id); library.lists.splice(i,1); if(library.activeListId===id) library.activeListId=library.lists[Math.max(0,i-1)]?.id||library.lists[0].id; save("delete-list"); render(); }
 function bindDrag(el){ el.addEventListener("dragstart",e=>{ drag={type:el.classList.contains("day-card")?"day":"activity", id:el.dataset.dayId||el.dataset.activityId, el}; el.classList.add("dragging","live-drag-source"); e.dataTransfer.effectAllowed="move"; }); el.addEventListener("dragover",e=>{ if(!drag) return; e.preventDefault(); const target=e.currentTarget; if(target===drag.el) return; const before=e.clientY < target.getBoundingClientRect().top + target.offsetHeight/2; before?target.before(drag.el):target.after(drag.el); }); el.addEventListener("dragend",()=>{ commitDomOrder(); clearDrag(); }); el.addEventListener("drop",e=>{ e.preventDefault(); commitDomOrder(); clearDrag(); }); }
-function commitDomOrder(){ if(!drag) return; const t=trip(); if(drag.type==="day"){ const ids=$$(".day-card",els.dayList).map(x=>x.dataset.dayId); t.days=ids.map(id=>t.days.find(d=>d.id===id)).filter(Boolean); t.selectedDayId=drag.id; save("reorder-days"); render(); } }
+function commitDomOrder(){ if(!drag) return; const t=trip(); if(drag.type==="day"){ const ids=$$(".day-card",els.dayList).map(x=>x.dataset.dayId); t.days=ids.map(id=>t.days.find(d=>d.id===id)).filter(Boolean); t.selectedDayId=drag.id; save("reorder-days"); render(); return; } const rows=$$(".activity-row",els.dayList); const byDay=new Map(t.days.map(d=>[d.id,[]])); rows.forEach(row=>{ const dayId=row.closest(".day-card")?.dataset.dayId||row.dataset.dayId; const activity=t.days.flatMap(d=>d.activities).find(a=>a.id===row.dataset.activityId); if(dayId&&activity&&byDay.has(dayId)) byDay.get(dayId).push(activity); }); t.days.forEach(d=>{ if(byDay.has(d.id)) d.activities=byDay.get(d.id); }); save("reorder-activities"); render(); }
 function clearDrag(){ drag=null; $$(".dragging,.live-drag-source").forEach(n=>n.classList.remove("dragging","live-drag-source")); }
 function ensurePanels(){ ensureListToggle(); ensureSmartPanel(); }
 function ensureListToggle(){ const head=$(".list-panel .section-heading"); if(!head||$(".list-collapse-toggle",head)) return; const b=document.createElement("button"); b.className="list-collapse-toggle"; b.type="button"; b.textContent="⌄"; b.onclick=()=>$(".list-panel")?.classList.toggle("is-collapsed"); head.append(b); }
