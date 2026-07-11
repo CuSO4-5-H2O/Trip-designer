@@ -7,9 +7,10 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317211f'/%3E%3Cpath d='M13 34 28 11l8 19 17-7-14 30-8-19-18 7Z' fill='white'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./room-loading.css?v=20260711a" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQvL8D81R4bEF3M1H6mBQm4mT7dYQ1E=" crossorigin="" />
     <link rel="stylesheet" href="./trip-insights.css?v=budget-20260711d" />
     <link rel="stylesheet" href="./quick-plan.css?v=quick-20260711a" />
-    <link rel="stylesheet" href="./travel-tools.css?v=ai-map-20260711a" />
+    <link rel="stylesheet" href="./ux-polish.css?v=ux-20260711a" />
     <script src="./room-bootstrap.js?v=perf-20260712b"></script>
   </head>
   <body>
@@ -95,14 +96,8 @@
               <span id="dayCount">0 &#22825;</span>
             </div>
             <div class="stat-grid">
-              <div>
-                <strong id="activityCount">0</strong>
-                <span>&#20107;&#39033;</span>
-              </div>
-              <div>
-                <strong id="stayCount">0</strong>
-                <span>&#20303;&#23487;</span>
-              </div>
+              <div><strong id="activityCount">0</strong><span>&#20107;&#39033;</span></div>
+              <div><strong id="stayCount">0</strong><span>&#20303;&#23487;</span></div>
             </div>
             <div class="transport-summary" id="transportSummary"></div>
           </section>
@@ -131,26 +126,16 @@
               <p id="detailLabel">&#31532; 1 &#22825;</p>
               <span class="detail-heading-actions">
                 <button class="icon-button mobile-detail-close" id="mobileDetailCloseBtn" type="button" aria-label="&#25910;&#36215;&#32534;&#36753;&#38754;&#26495;" title="&#25910;&#36215;&#32534;&#36753;&#38754;&#26495;">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M18 6 6 18M6 6l12 12" />
-                  </svg>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
                 </button>
                 <button class="icon-button danger" id="deleteDayBtn" type="button" aria-label="&#21024;&#38500;&#24403;&#22825;" title="&#21024;&#38500;&#24403;&#22825;">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15" />
-                  </svg>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15" /></svg>
                 </button>
               </span>
             </div>
 
-            <label class="field">
-              <span>&#24403;&#22825;&#22320;&#28857;</span>
-              <input id="detailLocation" type="text" placeholder="&#20363;&#22914;&#65306;&#19996;&#20140; / &#27827;&#21475;&#28246;" />
-            </label>
-            <label class="field">
-              <span>&#20303;&#23487;</span>
-              <input id="detailStay" type="text" placeholder="&#37202;&#24215;&#12289;&#27665;&#23487;&#25110;&#38706;&#33829;&#22320;" />
-            </label>
+            <label class="field"><span>&#24403;&#22825;&#22320;&#28857;</span><input id="detailLocation" type="text" placeholder="&#20363;&#22914;&#65306;&#19996;&#20140; / &#27827;&#21475;&#28246;" /></label>
+            <label class="field"><span>&#20303;&#23487;</span><input id="detailStay" type="text" placeholder="&#37202;&#24215;&#12289;&#27665;&#23487;&#25110;&#38706;&#33829;&#22320;" /></label>
 
             <form class="activity-form" id="activityForm">
               <span class="field-label" id="activityFormLabel">&#28155;&#21152;&#20107;&#39033;</span>
@@ -160,29 +145,15 @@
               </div>
               <input id="activityTitle" type="text" placeholder="&#35201;&#20570;&#30340;&#20107;&#24773;" required aria-label="&#20107;&#39033;&#26631;&#39064;" />
               <div class="activity-transport">
-                <div class="form-subheading">
-                  <span class="field-label">&#20107;&#39033;&#20132;&#36890;</span>
-                  <button class="mini-action muted" id="clearTransportBtn" type="button">&#26080;&#20132;&#36890;</button>
-                </div>
+                <div class="form-subheading"><span class="field-label">&#20107;&#39033;&#20132;&#36890;</span><button class="mini-action muted" id="clearTransportBtn" type="button">&#26080;&#20132;&#36890;</button></div>
                 <div class="transport-tabs" id="transportTabs"></div>
-                <div class="two-col">
-                  <input id="transportFrom" type="text" placeholder="&#20986;&#21457;&#22320;" aria-label="&#20132;&#36890;&#20986;&#21457;&#22320;" />
-                  <input id="transportTo" type="text" placeholder="&#21040;&#36798;&#22320;" aria-label="&#20132;&#36890;&#21040;&#36798;&#22320;" />
-                </div>
-                <div class="two-col">
-                  <input id="transportDepart" type="time" aria-label="&#20986;&#21457;&#26102;&#38388;" />
-                  <input id="transportArrive" type="time" aria-label="&#21040;&#36798;&#26102;&#38388;" />
-                </div>
+                <div class="two-col"><input id="transportFrom" type="text" placeholder="&#20986;&#21457;&#22320;" aria-label="&#20132;&#36890;&#20986;&#21457;&#22320;" /><input id="transportTo" type="text" placeholder="&#21040;&#36798;&#22320;" aria-label="&#20132;&#36890;&#21040;&#36798;&#22320;" /></div>
+                <div class="two-col"><input id="transportDepart" type="time" aria-label="&#20986;&#21457;&#26102;&#38388;" /><input id="transportArrive" type="time" aria-label="&#21040;&#36798;&#26102;&#38388;" /></div>
               </div>
               <textarea id="activityNote" rows="3" placeholder="&#22791;&#27880;&#12289;&#31080;&#21495;&#12289;&#38598;&#21512;&#28857;"></textarea>
               <div class="form-actions">
                 <button class="ghost-action full hidden" id="cancelEditActivityBtn" type="button">&#21462;&#28040;&#32534;&#36753;</button>
-                <button class="primary-action full" id="activitySubmitBtn" type="submit">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 5v14M5 12h14" />
-                  </svg>
-                  <span id="activitySubmitText">&#28155;&#21152;&#20107;&#39033;</span>
-                </button>
+                <button class="primary-action full" id="activitySubmitBtn" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg><span id="activitySubmitText">&#28155;&#21152;&#20107;&#39033;</span></button>
               </div>
             </form>
           </div>
@@ -192,27 +163,10 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <template id="dayCardTemplate">
-      <article class="day-card">
-        <button class="day-main" type="button">
-          <span class="day-index"></span>
-          <span class="day-date"></span>
-          <span class="day-weekday"></span>
-        </button>
-        <div class="day-content">
-          <div class="day-meta"></div>
-          <div class="activity-list"></div>
-        </div>
-      </article>
-    </template>
-
-    <script src="./config.js?v=context-perf-20260712b"></script>
-    <script src="./app.js" type="module"></script>
-    <script src="./mobile-fast-edit.js?v=context-editor-20260712b" defer></script>
-    <script src="./order-controls.js?v=module-20260712b" type="module"></script>
-    <script src="./trip-insights.js?v=budget-20260712b" type="module"></script>
-    <script src="./quick-plan.js?v=quick-20260712b" type="module"></script>
-    <script src="./travel-tools.js?v=ai-map-20260711a" defer></script>
-    <script src="./travel-tools-actions.js?v=ai-actions-20260711a" defer></script>
+    <script src="./config.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+    <script src="./app-collab.js" type="module"></script>
+    <script src="./trip-insights.js?v=budget-20260711d" defer></script>
+    <script src="./quick-plan.js?v=quick-20260711a" defer></script>
   </body>
 </html>
