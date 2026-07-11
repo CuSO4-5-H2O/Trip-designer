@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "Collaborative itinerary planner with shareable room links.",
-  "main": "server.js",
+  "main": "runtime.js",
   "scripts": {
-    "start": "node prepare-seed.js"
+    "start": "node runtime.js"
   },
   "engines": {
     "node": ">=20"
