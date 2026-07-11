@@ -143,21 +143,23 @@ function renderBudgetPanel(trip) {
 
 function renderActivityCostChips(trip) {
   document.querySelectorAll(".activity-row[data-day-id][data-activity-id]").forEach((row) => {
-    if (row.querySelector(".cost-chip")) return;
     const result = findActivity(trip, row.dataset.dayId, row.dataset.activityId);
     if (!result) return;
-    const chip = document.createElement("button");
-    chip.className = "cost-chip";
-    chip.type = "button";
-    chip.title = "点击修改预算";
+    let chip = row.querySelector(".cost-chip");
+    if (!chip) {
+      chip = document.createElement("button");
+      chip.className = "cost-chip";
+      chip.type = "button";
+      chip.title = "点击修改预算";
+      row.querySelector(".activity-body")?.append(chip);
+    }
     const budget = getActivityBudget(trip, result.activity);
     chip.textContent = budget.cost ? formatMoney(budget.cost) : "加预算";
-    chip.addEventListener("click", (event) => {
+    chip.onclick = (event) => {
       event.preventDefault();
       event.stopPropagation();
       editActivityBudget(row.dataset.dayId, row.dataset.activityId);
-    });
-    row.querySelector(".activity-body")?.append(chip);
+    };
   });
 }
 
