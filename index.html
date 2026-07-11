@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>同行日程</title>
+    <title>&#21516;&#34892;&#26085;&#31243;</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317211f'/%3E%3Cpath d='M13 34 28 11l8 19 17-7-14 30-8-19-18 7Z' fill='white'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./trip-insights.css?v=budget-20260711d" />
@@ -19,16 +19,16 @@
             </svg>
           </span>
           <div>
-            <p class="eyeline">同行日程</p>
-            <input id="tripTitle" class="title-input" aria-label="行程名称" />
+            <p class="eyeline">&#21516;&#34892;&#26085;&#31243;</p>
+            <input id="tripTitle" class="title-input" aria-label="&#34892;&#31243;&#21517;&#31216;" />
           </div>
         </div>
         <div class="top-actions">
           <div class="sync-state" id="syncState">
             <span class="pulse"></span>
-            <span id="syncText">本地保存</span>
+            <span id="syncText">&#26412;&#22320;&#20445;&#23384;</span>
           </div>
-          <button class="icon-button" id="copyLinkBtn" type="button" aria-label="复制协作链接" title="复制协作链接">
+          <button class="icon-button" id="copyLinkBtn" type="button" aria-label="&#22797;&#21046;&#21327;&#20316;&#38142;&#25509;" title="&#22797;&#21046;&#21327;&#20316;&#38142;&#25509;">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M10 13a5 5 0 0 0 7.54.54l2-2a5 5 0 0 0-7.07-7.08l-1.15 1.15" />
               <path d="M14 11a5 5 0 0 0-7.54-.54l-2 2a5 5 0 0 0 7.07 7.08l1.15-1.15" />
@@ -38,140 +38,147 @@
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 5v14M5 12h14" />
             </svg>
-            添加日期
+            &#28155;&#21152;&#26085;&#26399;
           </button>
         </div>
       </header>
 
       <main class="workspace">
-        <aside class="sidebar" aria-label="行程设置">
+        <aside class="sidebar" aria-label="&#34892;&#31243;&#35774;&#32622;">
           <section class="panel list-panel">
             <div class="section-heading">
-              <p>行程单</p>
+              <p>&#34892;&#31243;&#21333;</p>
               <button class="mini-action" id="addListBtn" type="button">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 5v14M5 12h14" />
                 </svg>
-                新建
+                &#26032;&#24314;
               </button>
             </div>
             <div class="trip-list" id="tripList"></div>
             <label class="field list-name-field">
-              <span>重命名当前 list</span>
-              <input id="listNameInput" type="text" placeholder="例如：大阪周末行" />
+              <span>&#37325;&#21629;&#21517;&#24403;&#21069; list</span>
+              <input id="listNameInput" type="text" placeholder="&#20363;&#22914;&#65306;&#22823;&#38442;&#21608;&#26411;&#34892;" />
             </label>
           </section>
 
           <section class="panel trip-panel">
             <div class="section-heading">
-              <p>行程设置</p>
+              <p>&#34892;&#31243;&#35774;&#32622;</p>
               <span id="roomCode">LOCAL</span>
             </div>
             <label class="field">
-              <span>开始日期</span>
+              <span>&#24320;&#22987;&#26085;&#26399;</span>
               <input id="startDate" type="date" />
             </label>
             <label class="field range-field">
-              <span>天数上限 <strong id="dayLimitValue">30 天</strong></span>
+              <span>&#22825;&#25968;&#19978;&#38480; <strong id="dayLimitValue">30 &#22825;</strong></span>
               <input id="dayLimitInput" type="range" min="1" max="60" step="1" />
             </label>
             <label class="field">
-              <span>出发城市</span>
-              <input id="originCity" type="text" placeholder="例如：上海" />
+              <span>&#20986;&#21457;&#22478;&#24066;</span>
+              <input id="originCity" type="text" placeholder="&#20363;&#22914;&#65306;&#19978;&#28023;" />
             </label>
             <label class="field">
-              <span>同行成员</span>
-              <input id="memberName" type="text" placeholder="输入你的名字" />
+              <span>&#21516;&#34892;&#25104;&#21592;</span>
+              <input id="memberName" type="text" placeholder="&#36755;&#20837;&#20320;&#30340;&#21517;&#23383;" />
             </label>
             <div class="member-strip" id="memberStrip"></div>
           </section>
 
           <section class="panel compact-panel">
             <div class="section-heading">
-              <p>概览</p>
-              <span id="dayCount">0 天</span>
+              <p>&#27010;&#35272;</p>
+              <span id="dayCount">0 &#22825;</span>
             </div>
             <div class="stat-grid">
               <div>
                 <strong id="activityCount">0</strong>
-                <span>事项</span>
+                <span>&#20107;&#39033;</span>
               </div>
               <div>
                 <strong id="stayCount">0</strong>
-                <span>住宿</span>
+                <span>&#20303;&#23487;</span>
               </div>
             </div>
             <div class="transport-summary" id="transportSummary"></div>
           </section>
         </aside>
 
-        <section class="timeline-section" aria-label="每日行程列表">
+        <section class="timeline-section" aria-label="&#27599;&#26085;&#34892;&#31243;&#21015;&#34920;">
           <div class="timeline-head">
             <div>
-              <p class="eyeline">每日列表</p>
-              <h1>把每天要做的事排清楚</h1>
+              <p class="eyeline">&#27599;&#26085;&#21015;&#34920;</p>
+              <h1>&#25226;&#27599;&#22825;&#35201;&#20570;&#30340;&#20107;&#25490;&#28165;&#26970;</h1>
             </div>
             <button class="ghost-action" id="addDayBtn" type="button">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M8 2v4M16 2v4M3 10h18" />
                 <path d="M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z" />
               </svg>
-              添加日期
+              &#28155;&#21152;&#26085;&#26399;
             </button>
           </div>
           <div class="day-list" id="dayList"></div>
         </section>
 
-        <aside class="detail-panel" aria-label="当天详情">
+        <aside class="detail-panel" aria-label="&#24403;&#22825;&#35814;&#24773;">
           <div class="detail-sticky">
             <div class="section-heading">
-              <p id="detailLabel">第 1 天</p>
-              <button class="icon-button danger" id="deleteDayBtn" type="button" aria-label="删除当天" title="删除当天">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15" />
-                </svg>
-              </button>
+              <p id="detailLabel">&#31532; 1 &#22825;</p>
+              <span class="detail-heading-actions">
+                <button class="icon-button mobile-detail-close" id="mobileDetailCloseBtn" type="button" aria-label="&#25910;&#36215;&#32534;&#36753;&#38754;&#26495;" title="&#25910;&#36215;&#32534;&#36753;&#38754;&#26495;">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
+                <button class="icon-button danger" id="deleteDayBtn" type="button" aria-label="&#21024;&#38500;&#24403;&#22825;" title="&#21024;&#38500;&#24403;&#22825;">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15" />
+                  </svg>
+                </button>
+              </span>
             </div>
 
             <label class="field">
-              <span>当天地点</span>
-              <input id="detailLocation" type="text" placeholder="例如：东京 / 河口湖" />
+              <span>&#24403;&#22825;&#22320;&#28857;</span>
+              <input id="detailLocation" type="text" placeholder="&#20363;&#22914;&#65306;&#19996;&#20140; / &#27827;&#21475;&#28246;" />
             </label>
             <label class="field">
-              <span>住宿</span>
-              <input id="detailStay" type="text" placeholder="酒店、民宿或露营地" />
+              <span>&#20303;&#23487;</span>
+              <input id="detailStay" type="text" placeholder="&#37202;&#24215;&#12289;&#27665;&#23487;&#25110;&#38706;&#33829;&#22320;" />
             </label>
 
             <form class="activity-form" id="activityForm">
-              <span class="field-label" id="activityFormLabel">添加事项</span>
+              <span class="field-label" id="activityFormLabel">&#28155;&#21152;&#20107;&#39033;</span>
               <div class="two-col compact">
-                <input id="activityTime" type="time" required aria-label="事项时间" />
-                <input id="activityPlace" type="text" placeholder="地点" aria-label="事项地点" />
+                <input id="activityTime" type="time" required aria-label="&#20107;&#39033;&#26102;&#38388;" />
+                <input id="activityPlace" type="text" placeholder="&#22320;&#28857;" aria-label="&#20107;&#39033;&#22320;&#28857;" />
               </div>
-              <input id="activityTitle" type="text" placeholder="要做的事情" required aria-label="事项标题" />
+              <input id="activityTitle" type="text" placeholder="&#35201;&#20570;&#30340;&#20107;&#24773;" required aria-label="&#20107;&#39033;&#26631;&#39064;" />
               <div class="activity-transport">
                 <div class="form-subheading">
-                  <span class="field-label">事项交通</span>
-                  <button class="mini-action muted" id="clearTransportBtn" type="button">无交通</button>
+                  <span class="field-label">&#20107;&#39033;&#20132;&#36890;</span>
+                  <button class="mini-action muted" id="clearTransportBtn" type="button">&#26080;&#20132;&#36890;</button>
                 </div>
                 <div class="transport-tabs" id="transportTabs"></div>
                 <div class="two-col">
-                  <input id="transportFrom" type="text" placeholder="出发地" aria-label="交通出发地" />
-                  <input id="transportTo" type="text" placeholder="到达地" aria-label="交通到达地" />
+                  <input id="transportFrom" type="text" placeholder="&#20986;&#21457;&#22320;" aria-label="&#20132;&#36890;&#20986;&#21457;&#22320;" />
+                  <input id="transportTo" type="text" placeholder="&#21040;&#36798;&#22320;" aria-label="&#20132;&#36890;&#21040;&#36798;&#22320;" />
                 </div>
                 <div class="two-col">
-                  <input id="transportDepart" type="time" aria-label="出发时间" />
-                  <input id="transportArrive" type="time" aria-label="到达时间" />
+                  <input id="transportDepart" type="time" aria-label="&#20986;&#21457;&#26102;&#38388;" />
+                  <input id="transportArrive" type="time" aria-label="&#21040;&#36798;&#26102;&#38388;" />
                 </div>
               </div>
-              <textarea id="activityNote" rows="3" placeholder="备注、票号、集合点"></textarea>
+              <textarea id="activityNote" rows="3" placeholder="&#22791;&#27880;&#12289;&#31080;&#21495;&#12289;&#38598;&#21512;&#28857;"></textarea>
               <div class="form-actions">
-                <button class="ghost-action full hidden" id="cancelEditActivityBtn" type="button">取消编辑</button>
+                <button class="ghost-action full hidden" id="cancelEditActivityBtn" type="button">&#21462;&#28040;&#32534;&#36753;</button>
                 <button class="primary-action full" id="activitySubmitBtn" type="submit">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12 5v14M5 12h14" />
                   </svg>
-                  <span id="activitySubmitText">添加事项</span>
+                  <span id="activitySubmitText">&#28155;&#21152;&#20107;&#39033;</span>
                 </button>
               </div>
             </form>
