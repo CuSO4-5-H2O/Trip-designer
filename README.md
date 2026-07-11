@@ -82,6 +82,61 @@ https://your-trip-planner.onrender.com/?room=5E114D33
 
 同一个 room 链接里的所有人都可以直接修改并同步。
 
+## AI 推荐与路线地图
+
+网站右下角提供两个入口：
+
+- `路线地图`：按天或按整份行程查看地点标记和连接路线。
+- `AI 推荐`：把当天地点、住宿和事项发送到网站服务端，再由服务端调用 DeepSeek 生成当地景点、餐饮和体验建议。
+
+AI 推荐卡支持：
+
+- 选择综合体验、省钱、慢游、拍照、美食或历史文化偏好。
+- 一键把推荐加入所选日期。
+- 新增事项自动同步给同一个房间里的其他用户。
+- 跳转到对应日期的地图。
+
+### Render 环境变量
+
+在 Render Dashboard 的 `Environment` 页面添加：
+
+```text
+DEEPSEEK_API_KEY=你的 DeepSeek API Key
+```
+
+可选设置：
+
+```text
+DEEPSEEK_API_BASE=https://api.deepseek.com
+DEEPSEEK_MODEL=deepseek-v4-flash
+TRIP_DESIGNER_CONTACT=用于地图服务联系的邮箱
+NOMINATIM_USER_AGENT=TripDesigner/1.0 (your-contact@example.com)
+```
+
+保存环境变量后，需要让 Render 重新部署或重启服务。API Key 只由 `server.js` 读取，不要写进 `index.html`、`config.js`、任何前端 JavaScript 文件或 `data/rooms.json`。
+
+可以访问以下接口检查配置：
+
+```text
+GET /healthz
+GET /api/ai-status
+```
+
+`/api/ai-status` 只返回是否已配置以及模型名称，不会返回 API Key。
+
+### 地图说明
+
+地图使用 Leaflet 显示 OpenStreetMap 底图，并由服务端通过 Nominatim 把事项地点转换为经纬度。为了提高定位准确率，事项地点建议填写完整名称，例如：
+
+```text
+雅典卫城
+罗马斗兽场
+圣托里尼伊亚镇
+```
+
+当前路线按照事项在行程中的顺序连接，适合查看一天内的大致空间关系。飞机、火车、渡轮和跨城市线路仅作示意，不代表实时导航线路。
+
+AI 推荐可能不包含最新营业时间、票价、临时闭馆和实时余票，出发前仍应核对景点、餐厅或交通运营方的官方信息。
 
 ## GitHub Pages + Cloudflare 域名 + Render 后端
 
@@ -125,6 +180,8 @@ window.TRIP_PLANNER_CONFIG = {
 ```
 
 这样即使网页地址是 GitHub Pages 或 Cloudflare 域名，实时同步也会连接到 Render 后端。
+
+需要注意：如果前端托管在 GitHub Pages，而 AI 和地图接口仍在 Render，则还需要把前端的 `/api/...` 请求改为完整的 Render 地址，或者通过 Cloudflare 反向代理把 `/api` 转发到 Render。直接使用 Render 同时托管前后端时不需要额外配置。
 
 ### 4. 绑定 Cloudflare 域名
 
@@ -176,5 +233,4 @@ DATA_FILE=/var/data/rooms.json
 - 房间密码
 - 只读分享链接和可编辑链接分开
 - 删除行程单的管理员权限
-
-
+- AI 接口的账户级限流或访问权限
