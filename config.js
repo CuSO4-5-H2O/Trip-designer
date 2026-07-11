@@ -5,15 +5,12 @@ window.TRIP_PLANNER_CONFIG = {
 };
 
 (() => {
-  loadStyle("context-editor-performance", "./context-editor-performance.css?v=context-perf-20260712b");
   loadStyle("activity-tags", "./activity-tags.css?v=tags-20260712a");
+  loadStyle("context-editor-performance", "./context-editor-performance.css?v=context-perf-20260712b");
+  loadStyle("context-popover-fixes", "./context-popover-fixes.css?v=context-popovers-20260712a");
 
-  if (!document.querySelector('script[data-activity-tags="true"]')) {
-    const script = document.createElement("script");
-    script.src = "./activity-tags.js?v=tags-20260712a";
-    script.dataset.activityTags = "true";
-    document.body.append(script);
-  }
+  loadScript("activity-tags", "./activity-tags.js?v=tags-20260712a");
+  loadScript("context-popover-fixes", "./context-popover-fixes.js?v=context-popovers-20260712a");
 
   function loadStyle(name, href) {
     if (document.querySelector(`link[data-trip-style="${name}"]`)) return;
@@ -22,5 +19,14 @@ window.TRIP_PLANNER_CONFIG = {
     link.href = href;
     link.dataset.tripStyle = name;
     document.head.append(link);
+  }
+
+  function loadScript(name, src) {
+    if (document.querySelector(`script[data-trip-script="${name}"]`)) return;
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = false;
+    script.dataset.tripScript = name;
+    document.body.append(script);
   }
 })();
