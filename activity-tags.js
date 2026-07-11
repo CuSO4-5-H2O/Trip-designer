@@ -174,6 +174,7 @@
 
   function addTagToActiveRow(value) {
     if (!activeRow) return;
+    const row = activeRow;
     const tag = normalizeTag(value);
     if (!tag) return;
     const current = parseStoredTags(popover.dataset.currentTags);
@@ -183,7 +184,7 @@
       return;
     }
     closePopover();
-    saveTagsThroughEditor(activeRow, [...current, tag]);
+    saveTagsThroughEditor(row, [...current, tag]);
   }
 
   function prepareFormForVisibleEditing(row) {
@@ -198,7 +199,7 @@
   function saveTagsThroughEditor(row, tags) {
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
-    const editButton = row.querySelector('[data-action="edit"]');
+    const editButton = row?.querySelector('[data-action="edit"]');
     if (!editButton) return;
 
     editButton.click();
