@@ -9,6 +9,7 @@ window.TRIP_PLANNER_CONFIG = {
   loadStyle("context-editor-performance", "./context-editor-performance.css?v=context-perf-20260712b");
   loadStyle("context-popover-fixes", "./context-popover-fixes.css?v=context-popovers-20260712a");
 
+  loadScript("input-performance", "./input-performance.js?v=input-perf-20260712a");
   loadScript("activity-tags", "./activity-tags.js?v=tags-20260712a");
   loadScript("context-popover-fixes", "./context-popover-fixes.js?v=context-popovers-20260712a");
 
