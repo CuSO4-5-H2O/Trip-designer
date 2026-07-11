@@ -12,6 +12,16 @@
 - 推荐结果一键加入对应日期
 - 点击事项后，在该事项旁边弹出编辑界面
 
+## 修改记录
+
+完整的功能变更、性能修复、环境变量、部署影响和测试说明记录在：
+
+```text
+CHANGELOG.md
+```
+
+后续每轮功能修改或问题修复完成后，都应同步更新该文件。
+
 ## 本地运行
 
 ```bash
@@ -78,6 +88,9 @@ deepseek=你的 API Key
 ```text
 DEEPSEEK_API_BASE=https://api.deepseek.com
 DEEPSEEK_MODEL=deepseek-chat
+AI_RATE_LIMIT=12
+AI_RATE_WINDOW_MS=600000
+AI_CONCURRENCY_LIMIT=3
 ```
 
 未设置模型时默认使用：
@@ -164,9 +177,9 @@ window.TRIP_PLANNER_CONFIG = {
 
 ## 安全说明
 
-当前房间采用“拿到链接即可编辑”的模式。正式公开使用前，建议继续增加：
+当前房间采用“拿到链接即可编辑”的模式。AI 推荐接口已经具有基础按 IP 限流和并发保护。正式公开使用前，仍建议继续增加：
 
 - 房间密码
 - 只读链接与编辑链接分离
 - 管理员删除权限
-- AI 接口限流和访问权限
+- 用户级 AI 配额或登录权限
