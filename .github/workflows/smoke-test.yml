@@ -38,7 +38,9 @@ jobs:
           export PORT=4177
           export DATA_DIR="$RUNNER_TEMP/trip-designer-data"
           export deepseek="ci-placeholder-key"
-          node prepare-seed.js >"$RUNNER_TEMP/server.log" 2>&1 &
+          export AI_RATE_LIMIT=12
+          export AI_CONCURRENCY_LIMIT=3
+          node runtime.js >"$RUNNER_TEMP/server.log" 2>&1 &
           SERVER_PID=$!
           trap 'kill "$SERVER_PID" 2>/dev/null || true; cat "$RUNNER_TEMP/server.log"' EXIT
 
@@ -57,3 +59,6 @@ jobs:
           cat "$RUNNER_TEMP/ai-status.json"
           grep -q '"configured":true' "$RUNNER_TEMP/ai-status.json"
           grep -q '"model":"deepseek-chat"' "$RUNNER_TEMP/ai-status.json"
+
+          curl --fail --silent http://127.0.0.1:4177/ >"$RUNNER_TEMP/index.html"
+          grep -q 'context-editor-20260712b' "$RUNNER_TEMP/index.html"
