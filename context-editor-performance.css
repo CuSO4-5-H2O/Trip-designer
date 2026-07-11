@@ -1,0 +1,199 @@
+/* Contextual editor and performance overrides */
+
+.day-card,
+.activity-row,
+.panel,
+.detail-sticky {
+  will-change: auto !important;
+}
+
+.day-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 260px;
+  animation: none !important;
+}
+
+.activity-row {
+  contain: layout style;
+}
+
+/* The editor is opened beside the selected itinerary item instead of occupying
+   a permanent desktop column or a fixed mobile top/bottom drawer. */
+.workspace {
+  grid-template-columns: minmax(220px, 270px) minmax(0, 1fr) !important;
+}
+
+.detail-panel {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 120 !important;
+  display: none !important;
+  pointer-events: none !important;
+}
+
+body.context-editor-open .detail-panel {
+  display: block !important;
+}
+
+.detail-panel::before {
+  display: none !important;
+}
+
+.detail-sticky {
+  position: fixed !important;
+  top: 12px;
+  left: 12px;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 121;
+  display: grid;
+  width: min(430px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px) !important;
+  margin: 0 !important;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 15px;
+  border: 1px solid rgba(15, 143, 131, 0.26);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.985);
+  box-shadow: 0 24px 70px rgba(23, 33, 31, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(5px) scale(0.985) !important;
+  transform-origin: var(--context-origin-x, 50%) var(--context-origin-y, 0%);
+  transition: opacity 140ms ease, transform 140ms ease, visibility 0s linear 140ms;
+}
+
+body.context-editor-open .detail-sticky {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1) !important;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.detail-sticky .section-heading {
+  position: sticky !important;
+  top: -15px !important;
+  z-index: 5;
+  margin: -15px -15px 12px !important;
+  padding: 12px 15px !important;
+  border-bottom: 1px solid var(--line);
+  background: #fff !important;
+  backdrop-filter: none !important;
+}
+
+.mobile-detail-close {
+  display: grid !important;
+}
+
+.context-editor-pointer {
+  position: fixed;
+  z-index: 119;
+  display: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(15, 143, 131, 0.24);
+  border-right: 0;
+  border-bottom: 0;
+  background: #fff;
+  pointer-events: none;
+  transform: rotate(45deg);
+}
+
+body.context-editor-open .context-editor-pointer {
+  display: block;
+}
+
+.day-quick-actions {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.day-quick-button {
+  min-height: 34px !important;
+}
+
+.activity-row.context-editor-anchor,
+.day-card.context-editor-anchor {
+  border-color: rgba(15, 143, 131, 0.68) !important;
+  box-shadow: 0 0 0 3px rgba(15, 143, 131, 0.10), var(--shadow-soft) !important;
+}
+
+/* Avoid expensive effects on long itinerary pages. */
+.topbar,
+.detail-sticky {
+  backdrop-filter: none !important;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .day-card:hover,
+  .activity-row:hover,
+  .primary-action:hover,
+  .ghost-action:hover,
+  .icon-button:hover {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .workspace {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sidebar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .app-shell {
+    padding: 10px;
+  }
+
+  .sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-sticky {
+    width: min(400px, calc(100vw - 16px));
+    max-height: min(76vh, 660px) !important;
+    padding: 13px;
+    border-radius: 12px;
+  }
+
+  .detail-sticky .section-heading {
+    top: -13px !important;
+    margin: -13px -13px 10px !important;
+    padding: 11px 13px !important;
+  }
+
+  .day-quick-actions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .day-quick-button {
+    min-height: 39px !important;
+    padding: 0 7px !important;
+    font-size: 12px !important;
+  }
+
+  .topbar {
+    background: #fff !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
