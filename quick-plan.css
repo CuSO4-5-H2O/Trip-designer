@@ -1,0 +1,224 @@
+.quick-plan-panel {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 12px;
+  border: 1px solid rgba(213, 223, 220, 0.86);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 12px 34px rgba(23, 33, 31, 0.06);
+  animation: rise 300ms var(--ease) both;
+}
+
+.quick-plan-heading {
+  margin-bottom: 0;
+}
+
+.quick-plan-heading span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.quick-plan-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) 96px auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.quick-plan-form .field,
+.quick-segment-item label {
+  margin: 0;
+}
+
+.quick-add {
+  min-height: 42px;
+  white-space: nowrap;
+}
+
+.quick-plan-batch {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.quick-plan-batch textarea {
+  min-height: 48px;
+  resize: vertical;
+}
+
+.quick-batch {
+  min-height: 48px;
+  white-space: nowrap;
+}
+
+.quick-segment-list {
+  display: grid;
+  gap: 8px;
+}
+
+.quick-segment-item {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 88px auto;
+  gap: 8px;
+  align-items: end;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  transition:
+    transform 180ms var(--ease),
+    border-color 180ms var(--ease),
+    box-shadow 180ms var(--ease),
+    background 180ms var(--ease);
+}
+
+.quick-segment-item:hover {
+  border-color: rgba(15, 143, 131, 0.3);
+  background: #fbfffd;
+  transform: translateY(-1px);
+}
+
+.quick-segment-item.dragging {
+  opacity: 0.48;
+  transform: scale(0.99);
+}
+
+.quick-segment-item.drop-before {
+  box-shadow: inset 0 3px 0 var(--teal), var(--shadow-soft);
+}
+
+.quick-segment-item.drop-after {
+  box-shadow: inset 0 -3px 0 var(--teal), var(--shadow-soft);
+}
+
+.quick-drag,
+.quick-segment-actions button {
+  display: inline-grid;
+  place-items: center;
+  min-width: 32px;
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 840;
+  transition:
+    transform 160ms var(--ease),
+    color 160ms var(--ease),
+    border-color 160ms var(--ease),
+    background 160ms var(--ease);
+}
+
+.quick-drag svg {
+  width: 18px;
+  height: 18px;
+}
+
+.quick-drag:hover,
+.quick-drag:focus-visible,
+.quick-segment-actions button:hover,
+.quick-segment-actions button:focus-visible {
+  border-color: rgba(15, 143, 131, 0.34);
+  background: var(--teal-soft);
+  color: var(--teal-dark);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.quick-segment-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+  transform: none;
+}
+
+.quick-segment-actions button.danger {
+  border-color: rgba(239, 115, 95, 0.24);
+  color: #a93929;
+}
+
+.quick-segment-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 32px);
+  gap: 5px;
+}
+
+.quick-segment-city,
+.quick-segment-days {
+  display: grid;
+  gap: 5px;
+}
+
+.quick-segment-city span,
+.quick-segment-days span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.quick-segment-item input {
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fbfffd;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 820;
+}
+
+.quick-segment-item input:focus {
+  border-color: rgba(15, 143, 131, 0.5);
+  box-shadow: 0 0 0 3px rgba(15, 143, 131, 0.1);
+  outline: none;
+}
+
+@media (max-width: 780px) {
+  .quick-plan-panel {
+    border-radius: 12px;
+    padding: 11px;
+  }
+
+  .quick-plan-heading {
+    display: grid;
+    gap: 3px;
+  }
+
+  .quick-plan-form {
+    grid-template-columns: minmax(0, 1fr) 86px;
+  }
+
+  .quick-add {
+    grid-column: 1 / -1;
+  }
+
+  .quick-plan-batch {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-plan-form input,
+  .quick-plan-batch textarea,
+  .quick-add,
+  .quick-batch,
+  .quick-segment-item input,
+  .quick-segment-actions button,
+  .quick-drag {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .quick-segment-item {
+    grid-template-columns: 42px minmax(0, 1fr) 82px;
+    align-items: end;
+  }
+
+  .quick-segment-actions {
+    grid-column: 2 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
