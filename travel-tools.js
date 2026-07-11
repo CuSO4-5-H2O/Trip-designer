@@ -8,7 +8,6 @@
   let map = null;
   let mapLayerGroup = null;
   let leafletPromise = null;
-  let activeTab = "map";
 
   const launcher = document.createElement("div");
   launcher.className = "travel-tools-launcher";
@@ -112,7 +111,6 @@
   }
 
   function openTools(tab) {
-    activeTab = tab;
     backdrop.hidden = false;
     document.body.style.overflow = "hidden";
     refreshDaySelectors();
@@ -126,7 +124,6 @@
   }
 
   function setActiveTab(tab) {
-    activeTab = tab;
     backdrop.querySelectorAll("[data-tool-tab]").forEach((button) => {
       button.classList.toggle("active", button.dataset.toolTab === tab);
     });
@@ -160,7 +157,7 @@
     const currentAi = aiDaySelect.value;
     const selectedIndex = Math.max(0, trip.days.findIndex((day) => day.id === trip.selectedDayId));
 
-    routeDaySelect.replaceChildren(createOption("all", `全部行程（最多显示 25 个地点）`));
+    routeDaySelect.replaceChildren(createOption("all", "全部行程（最多显示 25 个地点）"));
     aiDaySelect.replaceChildren();
 
     trip.days.forEach((day, index) => {
@@ -193,6 +190,7 @@
 
     refreshRouteBtn.disabled = true;
     refreshRouteBtn.textContent = "定位中…";
+    destroyMap();
     mapNode.innerHTML = `<div class="route-map-empty">正在定位行程地点…</div>`;
 
     try {
@@ -200,7 +198,6 @@
       const entries = collectRouteEntries(trip, routeDaySelect.value).slice(0, 25);
       if (!entries.length) {
         mapNode.innerHTML = `<div class="route-map-empty">所选日期还没有可定位的事项。请为事项填写地点或名称。</div>`;
-        destroyMap();
         return;
       }
 
@@ -212,22 +209,16 @@
 
       if (!located.length) {
         mapNode.innerHTML = `<div class="route-map-empty">没有找到这些地点。请把地点填写得更具体，例如“雅典卫城”或“罗马斗兽场”。</div>`;
-        destroyMap();
         return;
       }
 
-      if (!map) {
-        mapNode.replaceChildren();
-        map = L.map(mapNode, { zoomControl: true });
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 19,
-          attribution: "&copy; OpenStreetMap contributors",
-        }).addTo(map);
-      } else {
-        map.invalidateSize();
-      }
+      mapNode.replaceChildren();
+      map = L.map(mapNode, { zoomControl: true });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors",
+      }).addTo(map);
 
-      mapLayerGroup?.remove();
       mapLayerGroup = L.layerGroup().addTo(map);
       const bounds = [];
 
@@ -251,8 +242,8 @@
         map.setView(bounds[0], 14);
       }
     } catch (error) {
-      mapNode.innerHTML = `<div class="route-map-empty">路线生成失败：${safeText(error.message || "未知错误")}</div>`;
       destroyMap();
+      mapNode.innerHTML = `<div class="route-map-empty">路线生成失败：${safeText(error.message || "未知错误")}</div>`;
     } finally {
       refreshRouteBtn.disabled = false;
       refreshRouteBtn.textContent = "生成路线";
@@ -275,7 +266,8 @@
   }
 
   async function geocodeEntry(entry, trip) {
-    const query = [entry.activity.place || entry.activity.title, entry.day.location, trip.originCity]
+    const localContext = entry.day.location || trip.originCity;
+    const query = [entry.activity.place || entry.activity.title, localContext]
       .filter(Boolean)
       .join(", ");
     if (geocodeCache.has(query)) return geocodeCache.get(query);
