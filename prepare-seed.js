@@ -33,29 +33,21 @@ try {
   }
 
   const existing = payload.rooms[seed.roomId];
-  if (existing?.lists?.length) {
-    const index = existing.lists.findIndex((item) => item.id === seed.list.id);
-    if (index >= 0) {
-      existing.lists[index] = seed.list;
-    } else {
-      existing.lists.push(seed.list);
-    }
-    existing.activeListId = seed.list.id;
-    existing.updatedAt = Math.max(existing.updatedAt || 0, seed.list.updatedAt);
-  } else {
+  if (!existing?.lists?.length) {
     payload.rooms[seed.roomId] = {
       version: 2,
       activeListId: seed.list.id,
       lists: [seed.list],
       updatedAt: seed.list.updatedAt,
     };
+    payload.savedAt = new Date().toISOString();
+    fs.writeFileSync(dataFile, JSON.stringify(payload, null, 2));
+    console.log(`Initialized itinerary room ${seed.roomId}`);
+  } else {
+    console.log(`Preserved existing itinerary room ${seed.roomId}`);
   }
-
-  payload.savedAt = new Date().toISOString();
-  fs.writeFileSync(dataFile, JSON.stringify(payload, null, 2));
-  console.log(`Imported itinerary list into room ${seed.roomId}`);
 } catch (error) {
-  console.warn(`Could not import itinerary seed: ${error.message}`);
+  console.warn(`Could not initialize itinerary seed: ${error.message}`);
 }
 
 require("./server");
