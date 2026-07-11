@@ -1,0 +1,17 @@
+.room-loading .app-shell {
+  visibility: hidden;
+}
+
+.room-loading body::before {
+  content: "正在载入共享行程…";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: #f7f8f6;
+  color: #52605d;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
