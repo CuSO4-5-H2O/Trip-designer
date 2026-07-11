@@ -252,6 +252,25 @@ svg {
   font-weight: 780;
 }
 
+.range-field span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.range-field strong {
+  color: var(--teal-dark);
+  font-size: 12px;
+  font-weight: 840;
+}
+
+input[type="range"] {
+  min-height: 30px;
+  padding: 0;
+  accent-color: var(--teal);
+}
+
 input,
 textarea {
   width: 100%;
@@ -422,6 +441,14 @@ textarea:focus {
   transform: translateY(0);
 }
 
+.primary-action:disabled,
+.ghost-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+  transform: none;
+  box-shadow: none;
+}
+
 .primary-action.full {
   width: 100%;
 }
@@ -477,6 +504,30 @@ textarea:focus {
   box-shadow: 0 26px 72px rgba(15, 143, 131, 0.16);
 }
 
+.day-card.dragging,
+.activity-row.dragging {
+  opacity: 0.42;
+  transform: scale(0.99);
+}
+
+.day-card.drop-before,
+.activity-row.drop-before {
+  border-top-color: var(--teal);
+  box-shadow: inset 0 3px 0 var(--teal), var(--shadow-soft);
+}
+
+.day-card.drop-after,
+.activity-row.drop-after {
+  border-bottom-color: var(--teal);
+  box-shadow: inset 0 -3px 0 var(--teal), var(--shadow-soft);
+}
+
+.day-card.drop-activity,
+.activity-list.drop-activity {
+  outline: 2px dashed rgba(15, 143, 131, 0.36);
+  outline-offset: 4px;
+}
+
 .day-main {
   width: 100%;
   justify-content: start;
@@ -515,6 +566,35 @@ textarea:focus {
   color: var(--teal-dark);
   font-size: 12px;
   font-weight: 820;
+}
+
+.drag-handle,
+.activity-drag-handle {
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  cursor: grab;
+}
+
+.drag-handle {
+  width: 34px;
+  height: 34px;
+  margin-left: auto;
+}
+
+.drag-handle:hover,
+.activity-drag-handle:hover,
+.drag-handle:focus-visible,
+.activity-drag-handle:focus-visible {
+  background: var(--teal-soft);
+  color: var(--teal-dark);
+  outline: none;
+}
+
+.drag-handle:active,
+.activity-drag-handle:active {
+  cursor: grabbing;
 }
 
 .day-content {
@@ -671,6 +751,7 @@ textarea:focus {
   gap: 4px;
 }
 
+.activity-drag-handle,
 .edit-activity,
 .remove-activity {
   display: grid;
@@ -681,6 +762,11 @@ textarea:focus {
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--muted);
+}
+
+.activity-drag-handle {
+  border: 0;
+  background: transparent;
 }
 
 .edit-activity:hover {
@@ -1041,3 +1127,5 @@ textarea:focus {
   width: 17px;
   height: 17px;
 }
+
+
