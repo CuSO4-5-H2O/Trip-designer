@@ -1,4 +1,6 @@
 (() => {
+  installOptimizedMutationObserver();
+
   const params = new URLSearchParams(location.search);
   const roomId = params.get("room");
   if (!roomId) return;
@@ -71,4 +73,49 @@
     reveal();
     window.setTimeout(() => document.documentElement.classList.remove("room-loading"), 8000);
   });
+
+  function installOptimizedMutationObserver() {
+    if (window.__tripDesignerMutationObserverOptimized) return;
+    const NativeMutationObserver = window.MutationObserver;
+    if (!NativeMutationObserver) return;
+
+    class OptimizedMutationObserver {
+      constructor(callback) {
+        this.callback = callback;
+        this.nativeObserver = new NativeMutationObserver((records) => callback(records, this));
+      }
+
+      observe(target, options = {}) {
+        let observedTarget = target;
+        let observedOptions = { ...options };
+
+        // Several optional feature scripts used to observe the entire app shell.
+        // Their own DOM writes then triggered another full render indefinitely.
+        // All itinerary changes replace the direct children of #dayList, so that
+        // is the only mutation surface those scripts need to watch.
+        if (target?.classList?.contains("app-shell")) {
+          const dayList = document.querySelector("#dayList");
+          if (dayList) {
+            observedTarget = dayList;
+            observedOptions = { childList: true, subtree: false };
+          }
+        } else if (target?.id === "dayList" && observedOptions.childList) {
+          observedOptions = { childList: true, subtree: false };
+        }
+
+        return this.nativeObserver.observe(observedTarget, observedOptions);
+      }
+
+      disconnect() {
+        return this.nativeObserver.disconnect();
+      }
+
+      takeRecords() {
+        return this.nativeObserver.takeRecords();
+      }
+    }
+
+    window.MutationObserver = OptimizedMutationObserver;
+    window.__tripDesignerMutationObserverOptimized = true;
+  }
 })();
