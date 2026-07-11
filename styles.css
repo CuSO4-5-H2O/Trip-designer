@@ -577,10 +577,53 @@ textarea:focus {
   cursor: grab;
 }
 
+.day-order-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.order-button,
+.activity-order-button {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+  transition:
+    background 160ms var(--ease),
+    color 160ms var(--ease),
+    opacity 160ms var(--ease);
+}
+
+.order-button:hover:not(:disabled),
+.activity-order-button:hover:not(:disabled),
+.order-button:focus-visible,
+.activity-order-button:focus-visible {
+  background: var(--teal-soft);
+  color: var(--teal-dark);
+  outline: none;
+}
+
+.order-button:disabled,
+.activity-order-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.34;
+}
+
 .drag-handle {
   width: 34px;
   height: 34px;
   margin-left: auto;
+}
+
+.day-order-actions .drag-handle {
+  margin-left: 0;
 }
 
 .drag-handle:hover,
@@ -751,6 +794,7 @@ textarea:focus {
   gap: 4px;
 }
 
+.activity-order-button,
 .activity-drag-handle,
 .edit-activity,
 .remove-activity {
@@ -957,7 +1001,11 @@ textarea:focus {
 
   .day-main {
     display: grid;
-    grid-template-columns: minmax(58px, auto) minmax(0, 1fr) auto;
+    grid-template-columns: minmax(58px, auto) minmax(0, 1fr) auto auto;
+  }
+
+  .day-order-actions {
+    gap: 2px;
   }
 
   .day-date {
@@ -974,7 +1022,8 @@ textarea:focus {
   }
 
   .activity-actions {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 30px);
   }
 
   .two-col,
