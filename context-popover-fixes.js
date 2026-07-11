@@ -19,6 +19,10 @@
       requestAnimationFrame(positionBudgetEditor);
       window.setTimeout(positionBudgetEditor, 30);
     }
+
+    if (event.target.closest?.(".remove-activity, #deleteDayBtn")) {
+      window.setTimeout(closeMainEditor, 0);
+    }
   }, true);
 
   document.addEventListener("pointerdown", (event) => {
@@ -85,6 +89,12 @@
 
     setStyle(element, "left", `${Math.round(left)}px`, true);
     setStyle(element, "top", `${Math.round(top)}px`, true);
+  }
+
+  function closeMainEditor() {
+    document.body.classList.remove("context-editor-open");
+    document.querySelector(".detail-panel")?.setAttribute("aria-hidden", "true");
+    document.querySelectorAll(".context-editor-anchor").forEach((node) => node.classList.remove("context-editor-anchor"));
   }
 
   function setStyle(element, property, value, important) {
