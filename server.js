@@ -10,7 +10,10 @@ const dataDir = process.env.DATA_DIR || (fs.existsSync(renderDiskDir) ? renderDi
 const dataFile = process.env.DATA_FILE || path.join(dataDir, "rooms.json");
 const rooms = new Map();
 const sockets = new Map();
+const geocodeCache = new Map();
 let saveTimer = null;
+let geocodeQueue = Promise.resolve();
+let lastGeocodeAt = 0;
 
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
@@ -22,20 +25,46 @@ const mimeTypes = {
 
 loadRooms();
 
-const server = http.createServer((req, res) => {
-  if (req.url === "/healthz") {
-    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-    res.end(JSON.stringify({ ok: true }));
+const server = http.createServer(async (req, res) => {
+  const requestUrl = new URL(req.url, `http://${req.headers.host}`);
+
+  if (requestUrl.pathname === "/healthz") {
+    sendJson(res, 200, {
+      ok: true,
+      aiConfigured: Boolean(process.env.DEEPSEEK_API_KEY),
+    });
     return;
   }
 
-  if (req.url.startsWith("/sync")) {
+  if (requestUrl.pathname === "/api/ai-status" && req.method === "GET") {
+    sendJson(res, 200, {
+      configured: Boolean(process.env.DEEPSEEK_API_KEY),
+      model: process.env.DEEPSEEK_MODEL || "deepseek-v4-flash",
+    });
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/travel-recommendations" && req.method === "POST") {
+    await handleTravelRecommendations(req, res);
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/geocode" && req.method === "GET") {
+    await handleGeocode(requestUrl, res);
+    return;
+  }
+
+  if (requestUrl.pathname.startsWith("/api/")) {
+    sendJson(res, 404, { error: "API endpoint not found" });
+    return;
+  }
+
+  if (requestUrl.pathname.startsWith("/sync")) {
     res.writeHead(426, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("WebSocket endpoint");
     return;
   }
 
-  const requestUrl = new URL(req.url, `http://${req.headers.host}`);
   const pathname = decodeURIComponent(requestUrl.pathname === "/" ? "/index.html" : requestUrl.pathname);
   const filePath = path.normalize(path.join(root, pathname));
 
@@ -100,7 +129,239 @@ server.on("upgrade", (req, socket) => {
 server.listen(port, () => {
   console.log(`Trip planner is running at http://localhost:${port}`);
   console.log(`Room data file: ${dataFile}`);
+  console.log(`DeepSeek travel assistant: ${process.env.DEEPSEEK_API_KEY ? "configured" : "not configured"}`);
 });
+
+async function handleTravelRecommendations(req, res) {
+  if (!process.env.DEEPSEEK_API_KEY) {
+    sendJson(res, 503, {
+      error: "AI 推荐尚未配置。请在 Render 环境变量中添加 DEEPSEEK_API_KEY。",
+    });
+    return;
+  }
+
+  try {
+    const body = await readJsonBody(req, 120000);
+    const preference = cleanText(body.preference, 80) || "综合体验";
+    const trip = body.trip && typeof body.trip === "object" ? body.trip : {};
+    const day = body.day && typeof body.day === "object" ? body.day : {};
+    const activities = Array.isArray(day.activities)
+      ? day.activities.slice(0, 20).map((activity) => ({
+          time: cleanText(activity.time, 20),
+          title: cleanText(activity.title, 160),
+          place: cleanText(activity.place, 160),
+          note: cleanText(activity.note, 240),
+        }))
+      : [];
+
+    const safeContext = {
+      preference,
+      tripTitle: cleanText(trip.title, 160),
+      startDate: cleanText(trip.startDate, 32),
+      originCity: cleanText(trip.originCity, 100),
+      destinations: Array.isArray(trip.destinations)
+        ? trip.destinations.slice(0, 40).map((value) => cleanText(value, 100)).filter(Boolean)
+        : [],
+      day: {
+        number: Number(day.number) || 1,
+        location: cleanText(day.location, 160),
+        stay: cleanText(day.stay, 160),
+        activities,
+      },
+    };
+
+    if (!safeContext.day.location && activities.length === 0) {
+      sendJson(res, 400, { error: "请先填写当天地点或至少一个行程事项。" });
+      return;
+    }
+
+    const baseUrl = (process.env.DEEPSEEK_API_BASE || "https://api.deepseek.com").replace(/\/$/, "");
+    const model = process.env.DEEPSEEK_MODEL || "deepseek-v4-flash";
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45000);
+
+    let response;
+    try {
+      response = await fetch(`${baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            {
+              role: "system",
+              content: [
+                "你是谨慎、实用的中文旅行规划助手。",
+                "根据用户已有行程推荐当地可补充的景点、街区、餐饮或体验，避免重复已有事项。",
+                "不要声称掌握实时营业时间、实时票价或实时余票。",
+                "必须输出合法 JSON，不要使用 Markdown。",
+                "JSON 结构必须为：{summary:string,recommendations:[{name:string,category:string,reason:string,area:string,suggestedTime:string,duration:string,tips:string}],cautions:string[]}。",
+                "recommendations 返回 3 到 6 项，优先考虑路线顺畅、距离合理和用户偏好。",
+              ].join("\n"),
+            },
+            {
+              role: "user",
+              content: `请分析以下行程上下文并给出推荐：\n${JSON.stringify(safeContext)}`,
+            },
+          ],
+          response_format: { type: "json_object" },
+          temperature: 0.45,
+          max_tokens: 1800,
+        }),
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const upstreamMessage = payload?.error?.message || `DeepSeek API returned ${response.status}`;
+      throw new Error(upstreamMessage);
+    }
+
+    const content = payload?.choices?.[0]?.message?.content;
+    if (!content) throw new Error("DeepSeek 没有返回推荐内容");
+    const parsed = JSON.parse(content);
+    const recommendations = Array.isArray(parsed.recommendations)
+      ? parsed.recommendations.slice(0, 6).map(normalizeRecommendation).filter((item) => item.name)
+      : [];
+
+    sendJson(res, 200, {
+      summary: cleanText(parsed.summary, 1000),
+      recommendations,
+      cautions: Array.isArray(parsed.cautions)
+        ? parsed.cautions.slice(0, 6).map((value) => cleanText(value, 300)).filter(Boolean)
+        : [],
+      model,
+    });
+  } catch (error) {
+    const message = error.name === "AbortError" ? "AI 推荐请求超时，请稍后重试。" : error.message;
+    console.warn(`Travel recommendation failed: ${message}`);
+    sendJson(res, 502, { error: `AI 推荐生成失败：${message}` });
+  }
+}
+
+async function handleGeocode(requestUrl, res) {
+  const query = cleanText(requestUrl.searchParams.get("q"), 240);
+  if (!query) {
+    sendJson(res, 400, { error: "缺少地点关键词" });
+    return;
+  }
+
+  if (geocodeCache.has(query)) {
+    sendJson(res, 200, { result: geocodeCache.get(query), cached: true });
+    return;
+  }
+
+  try {
+    const result = await enqueueGeocode(query);
+    geocodeCache.set(query, result);
+    if (geocodeCache.size > 800) {
+      const oldestKey = geocodeCache.keys().next().value;
+      geocodeCache.delete(oldestKey);
+    }
+    sendJson(res, 200, { result, cached: false });
+  } catch (error) {
+    console.warn(`Geocoding failed for ${query}: ${error.message}`);
+    sendJson(res, 502, { error: "地点定位服务暂时不可用，请稍后重试。" });
+  }
+}
+
+function enqueueGeocode(query) {
+  const task = geocodeQueue.then(async () => {
+    const elapsed = Date.now() - lastGeocodeAt;
+    if (elapsed < 1050) await delay(1050 - elapsed);
+    lastGeocodeAt = Date.now();
+
+    const url = new URL("https://nominatim.openstreetmap.org/search");
+    url.searchParams.set("format", "jsonv2");
+    url.searchParams.set("limit", "1");
+    url.searchParams.set("addressdetails", "1");
+    url.searchParams.set("accept-language", "zh-CN,zh,en");
+    url.searchParams.set("q", query);
+    if (process.env.TRIP_DESIGNER_CONTACT) {
+      url.searchParams.set("email", process.env.TRIP_DESIGNER_CONTACT);
+    }
+
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": process.env.NOMINATIM_USER_AGENT || "TripDesigner/1.0 (collaborative itinerary planner)",
+        Accept: "application/json",
+      },
+    });
+    if (!response.ok) throw new Error(`Nominatim returned ${response.status}`);
+    const results = await response.json();
+    const first = Array.isArray(results) ? results[0] : null;
+    if (!first) return null;
+    return {
+      lat: Number(first.lat),
+      lng: Number(first.lon),
+      displayName: cleanText(first.display_name, 300),
+      type: cleanText(first.type, 80),
+    };
+  });
+
+  geocodeQueue = task.catch(() => null);
+  return task;
+}
+
+function normalizeRecommendation(item) {
+  if (!item || typeof item !== "object") return {};
+  return {
+    name: cleanText(item.name, 180),
+    category: cleanText(item.category, 80),
+    reason: cleanText(item.reason || item.description, 600),
+    area: cleanText(item.area, 160),
+    suggestedTime: cleanText(item.suggestedTime, 100),
+    duration: cleanText(item.duration, 80),
+    tips: cleanText(item.tips, 400),
+  };
+}
+
+function readJsonBody(req, maxBytes) {
+  return new Promise((resolve, reject) => {
+    let size = 0;
+    const chunks = [];
+    req.on("data", (chunk) => {
+      size += chunk.length;
+      if (size > maxBytes) {
+        reject(new Error("请求内容过大"));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on("end", () => {
+      try {
+        resolve(JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}"));
+      } catch {
+        reject(new Error("请求 JSON 格式无效"));
+      }
+    });
+    req.on("error", reject);
+  });
+}
+
+function sendJson(res, status, payload) {
+  res.writeHead(status, {
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store",
+  });
+  res.end(JSON.stringify(payload));
+}
+
+function cleanText(value, maxLength) {
+  if (value === null || value === undefined) return "";
+  return String(value).replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, maxLength);
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 function handleMessage(socket, raw) {
   let message;
