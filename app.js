@@ -34,6 +34,8 @@ let toastTimer = 0;
 let members = new Map();
 let editingActivityId = "";
 let draftTransportType = "";
+let dragState = null;
+let mouseDragState = null;
 
 const els = {
   tripTitle: document.querySelector("#tripTitle"),
@@ -46,6 +48,8 @@ const els = {
   addListBtn: document.querySelector("#addListBtn"),
   listNameInput: document.querySelector("#listNameInput"),
   dayCount: document.querySelector("#dayCount"),
+  dayLimitInput: document.querySelector("#dayLimitInput"),
+  dayLimitValue: document.querySelector("#dayLimitValue"),
   activityCount: document.querySelector("#activityCount"),
   stayCount: document.querySelector("#stayCount"),
   transportSummary: document.querySelector("#transportSummary"),
@@ -97,6 +101,7 @@ function createSeedTrip() {
     startDate: start,
     originCity: "上海",
     selectedDayId: "",
+    dayLimit: 30,
     updatedAt: Date.now(),
     days: [
       {
@@ -143,6 +148,7 @@ function createBlankTrip(title) {
     startDate: toDateInputValue(new Date()),
     originCity: "",
     selectedDayId: firstDay.id,
+    dayLimit: 30,
     updatedAt: Date.now(),
     days: [firstDay],
   };
@@ -206,6 +212,7 @@ function normalizeLibrary(input) {
       list.trip = trip;
       list.trip.tripTitle = list.trip.tripTitle || name;
       list.trip.selectedDayId = list.trip.selectedDayId || list.trip.days[0].id;
+      list.trip.dayLimit = Math.max(list.trip.days.length, Math.min(60, Math.max(1, Number(list.trip.dayLimit) || 30)));
       list.trip.updatedAt = list.trip.updatedAt || Date.now();
       list.createdAt = list.createdAt || Date.now();
       list.updatedAt = list.updatedAt || list.trip.updatedAt;
@@ -228,6 +235,7 @@ function normalizeTrip(trip) {
   const days = (trip.days || []).filter(Boolean).map(normalizeDay);
   return {
     ...trip,
+    dayLimit: Math.max(days.length || 1, Math.min(60, Math.max(1, Number(trip.dayLimit) || 30))),
     days: days.length ? days : createBlankTrip(trip.tripTitle || "新行程单").days,
   };
 }
@@ -284,6 +292,7 @@ function wrapLegacyRemote(remoteTrip) {
 function bindEvents() {
   els.tripTitle.addEventListener("input", () => updateState({ tripTitle: els.tripTitle.value }));
   els.startDate.addEventListener("change", () => updateState({ startDate: els.startDate.value }));
+  els.dayLimitInput.addEventListener("input", () => setDayLimit(els.dayLimitInput.value));
   els.originCity.addEventListener("input", () => updateState({ originCity: els.originCity.value }));
   els.listNameInput.addEventListener("input", () => renameActiveList(els.listNameInput.value));
   els.addListBtn.addEventListener("click", addList);
@@ -324,6 +333,8 @@ function render() {
   els.originCity.value = state.originCity || "";
   els.memberName.value = localStorage.getItem(localNameKey) || "我";
   els.listNameInput.value = getActiveList().name;
+  els.dayLimitInput.value = state.dayLimit;
+  els.dayLimitValue.textContent = `${state.dayLimit} 天`;
   els.roomCode.textContent = roomId;
 
   renderTripLists();
@@ -331,6 +342,7 @@ function render() {
   renderMembers();
   renderDays();
   renderDetail();
+  updateDayLimitControls();
 }
 
 function renderTripLists() {
@@ -376,7 +388,7 @@ function renderStats() {
   const activities = state.days.flatMap((day) => day.activities);
   const activityTotal = activities.length;
   const stayTotal = state.days.filter((day) => day.stay.trim()).length;
-  els.dayCount.textContent = `${state.days.length} 天`;
+  els.dayCount.textContent = `${state.days.length} / ${state.dayLimit} 天`;
   els.activityCount.textContent = activityTotal;
   els.stayCount.textContent = stayTotal;
 
@@ -420,16 +432,27 @@ function renderDays() {
     const card = els.dayCardTemplate.content.firstElementChild.cloneNode(true);
     const dayDate = getDayDate(index);
     const isActive = day.id === selectedDayId;
+    card.dataset.dayId = day.id;
+    card.draggable = true;
     card.classList.toggle("active", isActive);
     card.querySelector(".day-index").textContent = `第 ${index + 1} 天`;
     card.querySelector(".day-date").textContent = dateFormatter.format(dayDate);
     card.querySelector(".day-weekday").textContent = weekdayFormatter.format(dayDate);
-    card.querySelector(".day-main").addEventListener("click", () => {
+    const dragHandle = document.createElement("span");
+    dragHandle.className = "drag-handle day-drag-handle";
+    dragHandle.draggable = true;
+    dragHandle.title = "拖动调整日期顺序";
+    dragHandle.ariaLabel = "拖动调整日期顺序";
+    dragHandle.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h.01M16 5h.01M8 12h.01M16 12h.01M8 19h.01M16 19h.01" /></svg>`;
+    card.querySelector(".day-main").append(dragHandle);
+    card.querySelector(".day-main").addEventListener("click", (event) => {
+      if (event.target.closest(".drag-handle")) return;
       selectedDayId = day.id;
       state.selectedDayId = day.id;
       persistAndBroadcast("selection");
       render();
     });
+    bindDayDrag(card, day.id);
 
     const meta = card.querySelector(".day-meta");
     meta.append(
@@ -438,16 +461,15 @@ function renderDays() {
     );
 
     const list = card.querySelector(".activity-list");
+    list.dataset.dayId = day.id;
+    bindActivityListDrop(list, day.id);
     if (day.activities.length === 0) {
       const empty = document.createElement("div");
       empty.className = "empty-state";
       empty.textContent = "还没有事项，右侧可以添加。";
       list.append(empty);
     } else {
-      day.activities
-        .slice()
-        .sort((a, b) => a.time.localeCompare(b.time))
-        .forEach((activity) => list.append(createActivityRow(day.id, activity)));
+      day.activities.forEach((activity) => list.append(createActivityRow(day.id, activity)));
     }
     fragment.append(card);
   });
@@ -488,6 +510,9 @@ function createActivityRow(dayId, activity) {
   const row = document.createElement("div");
   const transportLabel = getTransportLabel(activity.transport);
   row.className = "activity-row";
+  row.dataset.dayId = dayId;
+  row.dataset.activityId = activity.id;
+  row.draggable = true;
   row.classList.toggle("editing", editingActivityId === activity.id);
   row.innerHTML = `
     <span class="activity-time">${escapeHtml(activity.time)}</span>
@@ -500,6 +525,9 @@ function createActivityRow(dayId, activity) {
       </button>
     </span>
     <span class="activity-actions">
+      <button class="activity-drag-handle" type="button" data-action="drag" draggable="true" aria-label="拖动事项" title="拖动调整事项顺序">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h.01M16 5h.01M8 12h.01M16 12h.01M8 19h.01M16 19h.01" /></svg>
+      </button>
       <button class="edit-activity" type="button" data-action="edit" aria-label="编辑事项" title="编辑事项">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" /></svg>
       </button>
@@ -509,6 +537,37 @@ function createActivityRow(dayId, activity) {
     </span>
   `;
 
+  const activityDragHandle = row.querySelector('[data-action="drag"]');
+  activityDragHandle.addEventListener("dragstart", (event) => {
+    event.stopPropagation();
+    dragState = { type: "activity", dayId, activityId: activity.id };
+    mouseDragState = { sourceElement: row, lastTarget: null };
+    row.classList.add("dragging");
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", JSON.stringify(dragState));
+  });
+  row.addEventListener("dragstart", (event) => {
+    if (!event.target.closest('[data-action="drag"]')) {
+      event.preventDefault();
+    }
+  });
+  row.addEventListener("dragend", () => clearDragState());
+  row.addEventListener("dragover", (event) => {
+    if (dragState?.type !== "activity") return;
+    event.preventDefault();
+    row.classList.toggle("drop-before", isBeforeDrop(row, event));
+    row.classList.toggle("drop-after", !isBeforeDrop(row, event));
+  });
+  row.addEventListener("dragleave", () => row.classList.remove("drop-before", "drop-after"));
+  row.addEventListener("drop", (event) => {
+    if (dragState?.type !== "activity") return;
+    event.preventDefault();
+    const position = isBeforeDrop(row, event) ? "before" : "after";
+    moveActivity(dragState.dayId, dragState.activityId, dayId, activity.id, position);
+  });
+  activityDragHandle.addEventListener("mousedown", (event) => startMouseDrag("activity", { dayId, activityId: activity.id }, row, event));
+  activityDragHandle.addEventListener("pointerdown", (event) => startMouseDrag("activity", { dayId, activityId: activity.id }, row, event));
+  activityDragHandle.addEventListener("click", (event) => event.preventDefault());
   row.querySelector('[data-action="transport"]').addEventListener("click", (event) => {
     event.stopPropagation();
     loadActivityForEdit(dayId, activity.id, { focusTransport: true });
@@ -720,6 +779,11 @@ function renameActiveList(rawName) {
 }
 
 function addDay() {
+  if (state.days.length >= state.dayLimit) {
+    showToast(`已达到 ${state.dayLimit} 天上限`);
+    updateDayLimitControls();
+    return;
+  }
   const newDay = {
     id: crypto.randomUUID(),
     location: "",
@@ -734,6 +798,219 @@ function addDay() {
     document.querySelector(".day-card.active")?.scrollIntoView({ behavior: "smooth", block: "center" });
   });
   showToast("已添加新日期");
+}
+
+function setDayLimit(value) {
+  const nextLimit = Math.max(state.days.length, Math.min(60, Math.max(1, Number(value) || 30)));
+  state.dayLimit = nextLimit;
+  persistAndBroadcast("update-day-limit");
+  render();
+}
+
+function updateDayLimitControls() {
+  const isAtLimit = state.days.length >= state.dayLimit;
+  els.addDayBtn.disabled = isAtLimit;
+  els.addDayTopBtn.disabled = isAtLimit;
+  els.addDayBtn.title = isAtLimit ? `已达到 ${state.dayLimit} 天上限` : "添加日期";
+  els.addDayTopBtn.title = isAtLimit ? `已达到 ${state.dayLimit} 天上限` : "添加日期";
+}
+
+function bindDayDrag(card, dayId) {
+  const dayDragHandle = card.querySelector(".day-drag-handle");
+  dayDragHandle.addEventListener("dragstart", (event) => {
+    event.stopPropagation();
+    dragState = { type: "day", dayId };
+    mouseDragState = { sourceElement: card, lastTarget: null };
+    card.classList.add("dragging");
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", JSON.stringify(dragState));
+  });
+  card.addEventListener("dragstart", (event) => {
+    if (!event.target.closest(".day-drag-handle")) {
+      event.preventDefault();
+    }
+  });
+  dayDragHandle.addEventListener("mousedown", (event) => startMouseDrag("day", { dayId }, card, event));
+  dayDragHandle.addEventListener("pointerdown", (event) => startMouseDrag("day", { dayId }, card, event));
+  card.addEventListener("dragend", () => clearDragState());
+  card.addEventListener("dragover", (event) => {
+    if (!dragState) return;
+    event.preventDefault();
+    if (dragState.type === "day") {
+      card.classList.toggle("drop-before", isBeforeDrop(card, event));
+      card.classList.toggle("drop-after", !isBeforeDrop(card, event));
+      return;
+    }
+    if (dragState.type === "activity") {
+      card.classList.add("drop-activity");
+    }
+  });
+  card.addEventListener("dragleave", () => card.classList.remove("drop-before", "drop-after", "drop-activity"));
+  card.addEventListener("drop", (event) => {
+    if (!dragState) return;
+    event.preventDefault();
+    if (dragState.type === "day") {
+      const position = isBeforeDrop(card, event) ? "before" : "after";
+      moveDay(dragState.dayId, dayId, position);
+      return;
+    }
+    if (dragState.type === "activity" && !event.target.closest(".activity-row")) {
+      moveActivity(dragState.dayId, dragState.activityId, dayId, "", "end");
+    }
+  });
+}
+
+function bindActivityListDrop(list, dayId) {
+  list.addEventListener("dragover", (event) => {
+    if (dragState?.type !== "activity") return;
+    event.preventDefault();
+    list.classList.add("drop-activity");
+  });
+  list.addEventListener("dragleave", () => list.classList.remove("drop-activity"));
+  list.addEventListener("drop", (event) => {
+    if (dragState?.type !== "activity" || event.target.closest(".activity-row")) return;
+    event.preventDefault();
+    moveActivity(dragState.dayId, dragState.activityId, dayId, "", "end");
+  });
+}
+
+function moveDay(sourceDayId, targetDayId, position) {
+  if (sourceDayId === targetDayId) {
+    clearDragState();
+    return;
+  }
+  const sourceIndex = state.days.findIndex((day) => day.id === sourceDayId);
+  const targetIndex = state.days.findIndex((day) => day.id === targetDayId);
+  if (sourceIndex < 0 || targetIndex < 0) return;
+  const [moved] = state.days.splice(sourceIndex, 1);
+  let insertIndex = state.days.findIndex((day) => day.id === targetDayId);
+  if (position === "after") insertIndex += 1;
+  state.days.splice(insertIndex, 0, moved);
+  selectedDayId = sourceDayId;
+  persistAndBroadcast("reorder-days");
+  clearDragState();
+  render();
+  showToast("日期顺序已调整");
+}
+
+function moveActivity(sourceDayId, activityId, targetDayId, targetActivityId, position) {
+  const sourceDay = state.days.find((day) => day.id === sourceDayId);
+  const targetDay = state.days.find((day) => day.id === targetDayId);
+  if (!sourceDay || !targetDay) return;
+  const sourceIndex = sourceDay.activities.findIndex((activity) => activity.id === activityId);
+  if (sourceIndex < 0) return;
+  const [moved] = sourceDay.activities.splice(sourceIndex, 1);
+  let insertIndex = targetDay.activities.length;
+  if (targetActivityId) {
+    insertIndex = targetDay.activities.findIndex((activity) => activity.id === targetActivityId);
+    if (insertIndex < 0) insertIndex = targetDay.activities.length;
+    if (position === "after") insertIndex += 1;
+  }
+  if (sourceDay === targetDay && sourceIndex < insertIndex) insertIndex -= 1;
+  targetDay.activities.splice(insertIndex, 0, moved);
+  selectedDayId = targetDayId;
+  if (editingActivityId === activityId) editingActivityId = "";
+  persistAndBroadcast("reorder-activities");
+  clearDragState();
+  render();
+  showToast(sourceDayId === targetDayId ? "事项顺序已调整" : "事项已移动到新日期");
+}
+
+function startMouseDrag(type, payload, sourceElement, event) {
+  event.preventDefault();
+  event.stopPropagation();
+  dragState = { type, ...payload };
+  mouseDragState = { sourceElement, lastTarget: null };
+  sourceElement.classList.add("dragging");
+  document.addEventListener("mousemove", handleMouseDragMove);
+  document.addEventListener("mouseup", handleMouseDragEnd);
+  document.addEventListener("pointermove", handleMouseDragMove);
+  document.addEventListener("pointerup", handleMouseDragEnd);
+}
+
+function handleMouseDragMove(event) {
+  if (!dragState || !mouseDragState) return;
+  document.querySelectorAll(".drop-before, .drop-after, .drop-activity").forEach((node) => {
+    node.classList.remove("drop-before", "drop-after", "drop-activity");
+  });
+  const target = getDropTarget(event);
+  mouseDragState.lastTarget = target;
+  if (!target) return;
+  if (dragState.type === "day" && target.dayCard) {
+    target.dayCard.classList.toggle("drop-before", target.position === "before");
+    target.dayCard.classList.toggle("drop-after", target.position === "after");
+  }
+  if (dragState.type === "activity") {
+    if (target.activityRow) {
+      target.activityRow.classList.toggle("drop-before", target.position === "before");
+      target.activityRow.classList.toggle("drop-after", target.position === "after");
+      return;
+    }
+    target.dayCard?.classList.add("drop-activity");
+    target.activityList?.classList.add("drop-activity");
+  }
+}
+
+function handleMouseDragEnd(event) {
+  if (!dragState) return;
+  const target = mouseDragState?.lastTarget || getDropTarget(event);
+  if (dragState.type === "day" && target?.dayId) {
+    moveDay(dragState.dayId, target.dayId, target.position || "after");
+    return;
+  }
+  if (dragState.type === "activity" && target?.dayId) {
+    moveActivity(dragState.dayId, dragState.activityId, target.dayId, target.activityId || "", target.position || "end");
+    return;
+  }
+  clearDragState();
+}
+
+function getDropTarget(event) {
+  const element = document.elementFromPoint(event.clientX, event.clientY);
+  if (!element) return null;
+  if (dragState?.type === "activity") {
+    const activityRow = element.closest(".activity-row");
+    if (activityRow) {
+      return {
+        activityRow,
+        activityId: activityRow.dataset.activityId,
+        dayId: activityRow.dataset.dayId,
+        position: isBeforeDrop(activityRow, event) ? "before" : "after",
+      };
+    }
+    const activityList = element.closest(".activity-list");
+    if (activityList) {
+      return {
+        activityList,
+        dayId: activityList.dataset.dayId,
+        position: "end",
+      };
+    }
+  }
+  const dayCard = element.closest(".day-card");
+  if (!dayCard) return null;
+  return {
+    dayCard,
+    dayId: dayCard.dataset.dayId,
+    position: isBeforeDrop(dayCard, event) ? "before" : "after",
+  };
+}
+
+function isBeforeDrop(element, event) {
+  const rect = element.getBoundingClientRect();
+  return event.clientY < rect.top + rect.height / 2;
+}
+
+function clearDragState() {
+  dragState = null;
+  mouseDragState = null;
+  document.removeEventListener("mousemove", handleMouseDragMove);
+  document.removeEventListener("mouseup", handleMouseDragEnd);
+  document.removeEventListener("pointermove", handleMouseDragMove);
+  document.removeEventListener("pointerup", handleMouseDragEnd);
+  document.querySelectorAll(".dragging, .drop-before, .drop-after, .drop-activity").forEach((node) => {
+    node.classList.remove("dragging", "drop-before", "drop-after", "drop-activity");
+  });
 }
 
 function deleteSelectedDay() {
@@ -1005,3 +1282,10 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
+
+
+
+
+
+
