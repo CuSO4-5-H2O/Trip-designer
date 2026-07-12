@@ -2,6 +2,37 @@
 
 本文件记录 Trip-designer 的主要功能更新、性能修复、部署变更和兼容性说明。
 
+## 2026-07-12：Smoke test 断言修复
+
+### 修复问题
+
+- 修复 GitHub Actions `Smoke test` 持续失败的问题。
+- 失败原因是测试仍在检查旧资源标识 `context-editor-20260712b`，但当前首页已经不再加载该资源。
+- 连续 GitHub 提交会连续触发该过时断言，因此用户会反复收到 `smoketest fail` 通知。
+
+### 变更内容
+
+- 将首页资源检查更新为当前真实入口：
+
+```text
+./app-collab.js
+./map-providers.js?v=map-20260712a
+./map-providers.css?v=map-20260712a
+```
+
+- 增加 `/api/map-config` smoke test，确认地图代理接口可启动并识别高德和 Google 环境变量。
+- 确认首页不再加载 Leaflet 资源。
+
+### 部署影响
+
+- 不涉及任何房间数据迁移。
+- 不修改 `data/rooms.json` 或 Render Persistent Disk 中已有行程。
+- 该修改只影响 GitHub Actions 测试，不改变用户行程数据。
+
+### 主要提交
+
+- `待本次提交生成`：更新 `.github/workflows/smoke-test.yml` 的过时断言。
+
 ## 2026-07-12：高德地图与 Google Maps 路线接入
 
 ### 新增功能
