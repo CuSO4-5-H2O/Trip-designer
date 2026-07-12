@@ -2,6 +2,79 @@
 
 本文件记录 Trip-designer 的主要功能更新、性能修复、部署变更和兼容性说明。
 
+## 2026-07-12：高德地图与 Google Maps 路线接入
+
+### 新增功能
+
+- 地图组件由 Leaflet + OpenStreetMap 替换为可切换的高德地图和 Google Maps。
+- 地图面板新增服务选择：自动、高德、Google。
+- 服务端新增地图代理接口：
+
+```text
+GET /api/map-config
+POST /api/map/plan
+```
+
+- `/api/map/plan` 会根据当前行程地点、住宿和事项地点生成定位点。
+- 地点按行程顺序绘制 marker，并按顺序生成路线段。
+- 路线段会结合事项交通方式计算：飞机、火车、大巴、船、车、步行。
+- 飞机和船等地图服务不稳定支持的交通方式使用直线距离估算时间，并在 UI 中标记为估算。
+- 点击单日时显示当天地点和路线；点击 list 时显示该行程单全部地点和路线。
+
+### 环境变量
+
+Render 需要配置以下变量之一或多个：
+
+```text
+gaodemap_key=高德地图 Web/API Key
+gaodemap_securitycode=高德地图 JS 安全密钥
+googlemap=Google Maps API Key
+```
+
+兼容的大写变量名：
+
+```text
+GAODEMAP_KEY
+AMAP_KEY
+GAODEMAP_SECURITYCODE
+AMAP_SECURITY_CODE
+GOOGLEMAP
+GOOGLE_MAPS_API_KEY
+```
+
+默认优先级：
+
+1. 已配置高德时默认使用高德；
+2. 未配置高德但配置 Google 时默认使用 Google；
+3. 前端可手动切换地图服务。
+
+### 部署影响
+
+- 不涉及任何房间数据迁移。
+- 不修改 `data/rooms.json` 或 Render Persistent Disk 中已有行程。
+- Render 重新部署后即可生效。
+- 如果地图无法加载，请检查地图 key 是否限制了正确域名：
+
+```text
+https://tripdesigner.onrender.com
+```
+
+### 用户界面影响
+
+- 页面不再加载 Leaflet 资源。
+- 地图卡片新增地图服务下拉框。
+- 地图下方新增路线总距离、总时长和分段路线摘要。
+- 移动端路线摘要会自动换行，避免横向滚动。
+
+### 主要提交
+
+- `4d57104`：新增服务端地图代理运行文件。
+- `4d1ae4e`：新增高德与 Google 前端地图替换层。
+- `50dbc28`：新增地图服务切换与路线摘要样式。
+- `7725ac3`：在 `runtime.js` 中接入地图代理。
+- `fbe4aaf`：页面移除 Leaflet 并加载新地图组件。
+- `d1f4c52`：限制地图重渲染监听范围，避免重复路线请求。
+
 ## 2026-07-12：AI、地图、标签与性能重构
 
 ### 新增功能
