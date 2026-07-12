@@ -52,46 +52,93 @@
   transform: translateY(-1px);
 }
 
-.inline-activity-editor {
+.selected-context {
+  outline: 2px solid rgba(15, 143, 131, 0.78) !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(15, 143, 131, 0.11) !important;
+}
+
+.activity-row .selected-context {
+  border-radius: 999px;
+}
+
+.floating-editor.hidden {
+  display: none;
+}
+
+.floating-editor {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
   display: grid;
+  align-items: start;
+  justify-content: end;
+  padding: 86px 22px 22px;
+  background: rgba(9, 18, 16, 0.16);
+  pointer-events: auto;
+}
+
+.floating-editor-card {
+  display: grid;
+  width: min(720px, calc(100vw - 44px));
+  max-height: calc(100vh - 108px);
+  overflow: auto;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(15, 143, 131, 0.2);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 26px 80px rgba(23, 33, 31, 0.22);
+  backdrop-filter: blur(18px);
+}
+
+.floating-editor-head,
+.floating-editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  margin: 10px 0 12px;
-  padding: 12px;
-  border: 1px solid rgba(15, 143, 131, 0.22);
-  border-radius: var(--radius-sm);
-  background: #fbfffd;
-  box-shadow: 0 12px 30px rgba(23, 33, 31, 0.08);
 }
 
-.inline-editor-grid,
-.inline-editor-budget {
+.floating-editor-head p {
+  margin: 0 0 2px;
+  color: var(--teal-dark);
+  font-size: 12px;
+  font-weight: 820;
+}
+
+.floating-editor-head h2 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.floating-editor-grid {
   display: grid;
-  gap: 8px;
+  grid-template-columns: 110px minmax(180px, 1fr) minmax(150px, 0.8fr);
+  gap: 9px;
 }
 
-.inline-editor-grid {
-  grid-template-columns: 116px minmax(180px, 1fr) minmax(160px, 0.8fr);
-}
-
-.inline-editor-budget {
-  grid-template-columns: minmax(140px, 0.8fr) minmax(96px, 0.4fr) minmax(130px, 0.6fr);
-}
-
-.inline-activity-editor label {
+.floating-editor-grid label,
+.floating-editor-card label {
   display: grid;
   gap: 5px;
   margin: 0;
 }
 
-.inline-activity-editor label span {
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 820;
+.floating-editor-grid .wide {
+  grid-column: span 2;
 }
 
-.inline-activity-editor input,
-.inline-activity-editor select,
-.inline-activity-editor textarea {
+.floating-editor-card label span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 840;
+}
+
+.floating-editor-card input,
+.floating-editor-card select,
+.floating-editor-card textarea {
   width: 100%;
   min-height: 40px;
   padding: 0 10px;
@@ -104,24 +151,26 @@
   font-weight: 760;
 }
 
-.inline-activity-editor textarea {
-  min-height: 58px;
+.floating-editor-card textarea {
+  min-height: 70px;
   padding-top: 9px;
   resize: vertical;
 }
 
-.inline-activity-editor input:focus,
-.inline-activity-editor select:focus,
-.inline-activity-editor textarea:focus {
+.floating-editor-card input:focus,
+.floating-editor-card select:focus,
+.floating-editor-card textarea:focus {
   border-color: rgba(15, 143, 131, 0.45);
   box-shadow: 0 0 0 3px rgba(15, 143, 131, 0.1);
   outline: none;
 }
 
-.inline-editor-actions {
-  display: flex;
+.floating-editor-actions {
   justify-content: flex-end;
-  gap: 8px;
+}
+
+.inline-activity-editor {
+  display: none;
 }
 
 .quick-entry-actions button,
@@ -146,12 +195,8 @@
 }
 
 @keyframes entryPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 rgba(15, 143, 131, 0);
-  }
-  35% {
-    box-shadow: 0 0 0 5px rgba(15, 143, 131, 0.13), var(--shadow-soft);
-  }
+  0%, 100% { box-shadow: 0 0 0 rgba(15, 143, 131, 0); }
+  35% { box-shadow: 0 0 0 5px rgba(15, 143, 131, 0.13), var(--shadow-soft); }
 }
 
 @media (max-width: 780px) {
@@ -168,12 +213,26 @@
     grid-template-columns: 1fr;
   }
 
-  .inline-editor-grid,
-  .inline-editor-budget {
+  .floating-editor {
+    justify-content: center;
+    align-items: end;
+    padding: 16px 12px 76px;
+  }
+
+  .floating-editor-card {
+    width: 100%;
+    max-height: min(82vh, 720px);
+  }
+
+  .floating-editor-grid {
     grid-template-columns: 1fr;
   }
 
-  .inline-editor-actions {
+  .floating-editor-grid .wide {
+    grid-column: auto;
+  }
+
+  .floating-editor-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
@@ -182,10 +241,10 @@
   .preset-heading-actions button,
   .quick-plan-toggle,
   .day-header-plus,
-  .inline-activity-editor input,
-  .inline-activity-editor select,
-  .inline-activity-editor textarea,
-  .inline-editor-actions button {
+  .floating-editor-card input,
+  .floating-editor-card select,
+  .floating-editor-card textarea,
+  .floating-editor-actions button {
     min-height: 44px;
     font-size: 14px;
   }
