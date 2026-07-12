@@ -1,8 +1,6 @@
-window.TRIP_PLANNER_CONFIG = {
-  // Put your Render Web Service websocket endpoint here when the frontend is hosted on GitHub Pages.
-  // Example: syncEndpoint: "wss://your-trip-planner.onrender.com/sync"
-  syncEndpoint: "",
-};
+window.TRIP_PLANNER_CONFIG = Object.freeze({
+  deployment: "render-same-origin",
+});
 
 (() => {
   loadStyle("activity-tags", "./activity-tags.css?v=tags-20260712a");
