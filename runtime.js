@@ -1,6 +1,7 @@
 "use strict";
 
 const http = require("http");
+const { handleMapRuntime } = require("./map-runtime");
 
 const deepSeekKey = process.env.DEEPSEEK_API_KEY || process.env.deepseek || process.env.DEEPSEEK;
 if (deepSeekKey && !process.env.DEEPSEEK_API_KEY) {
@@ -35,6 +36,16 @@ function wrapRequestListener(listener) {
       pathname = new URL(req.url, `http://${req.headers.host || "localhost"}`).pathname;
     } catch {
       pathname = req.url || "";
+    }
+
+    try {
+      if (await handleMapRuntime(req, res, pathname)) return;
+    } catch (error) {
+      if (!res.headersSent) {
+        return sendJson(res, 500, { error: "服务器处理地图请求时出现错误。" });
+      }
+      res.destroy(error);
+      return;
     }
 
     if (pathname !== "/api/travel-recommendations" || req.method !== "POST") {
