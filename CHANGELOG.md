@@ -31,7 +31,7 @@
 
 ### 主要提交
 
-- `待本次提交生成`：更新 `.github/workflows/smoke-test.yml` 的过时断言。
+- `14d4592`：更新 `.github/workflows/smoke-test.yml` 的过时断言。
 
 ## 2026-07-12：高德地图与 Google Maps 路线接入
 
