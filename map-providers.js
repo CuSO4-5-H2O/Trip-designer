@@ -71,17 +71,18 @@
     if (!panel || !canvas || !status || !window.TripPlanner?.getLibrary) return;
 
     installToolbar(panel);
+    syncScopeFromUi();
     const entries = buildEntries();
     if (!entries.length) {
-      status.textContent = "还没有可定位地点";
+      status.textContent = scope === "day" ? "当天还没有可定位地点" : "当前 list 还没有可定位地点";
       setRouteStatus("");
-      resetRuntime(false);
+      resetRuntime(true);
       canvas.classList.add("is-provider-map");
       return;
     }
 
     const token = ++renderToken;
-    status.textContent = "正在定位行程地点";
+    status.textContent = scope === "day" ? "正在定位当天地点" : "正在定位当前 list 地点";
     setRouteStatus("正在计算路线和时间");
 
     try {
@@ -97,20 +98,30 @@
       const response = await fetch("/api/map/plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ provider, entries }),
+        body: JSON.stringify({ provider, entries, scope }),
       });
       const plan = await response.json();
       if (!response.ok || !plan.ok) throw new Error(plan.error || "地图路线生成失败");
       if (token !== renderToken) return;
 
+      const located = (plan.points || []).filter((point) => point.located !== false).length;
+      const failed = (plan.points || []).length - located;
+      if (!located) {
+        resetRuntime(true);
+        canvas.classList.add("is-provider-map");
+        status.textContent = failed ? `已定位 0 个地点，${failed} 个未定位` : "没有可定位地点";
+        setRouteStatus(scope === "day" ? "当天地点无法定位，请填写更具体的城市、景点或酒店名" : "当前 list 地点无法定位，请填写更具体的城市、景点或酒店名");
+        return;
+      }
+
       if (provider === "google") drawGoogle(canvas, plan);
       else drawAmap(canvas, plan);
       renderRouteSummary(plan);
-      const located = (plan.points || []).filter((point) => point.located !== false).length;
-      const failed = (plan.points || []).length - located;
       status.textContent = failed ? `已定位 ${located} 个地点，${failed} 个未定位` : `已定位 ${located} 个地点`;
     } catch (error) {
       if (token !== renderToken) return;
+      resetRuntime(true);
+      canvas.classList.add("is-provider-map");
       status.textContent = error.message || "地图加载失败";
       setRouteStatus("请检查地点是否足够具体，或切换地图服务后重试");
     }
@@ -118,8 +129,15 @@
 
   function installToolbar(panel) {
     const head = panel.querySelector(".smart-panel-head");
-    if (!head || head.querySelector(".map-provider-toolbar")) return;
-    const segmented = head.querySelector(".segmented");
+    if (!head) return;
+    const segmented = head.querySelector(".segmented") || panel.querySelector(".segmented");
+    if (segmented) {
+      const listButton = segmented.querySelector('[data-map="list"]');
+      if (listButton) listButton.textContent = "当前list";
+      const dayButton = segmented.querySelector('[data-map="day"]');
+      if (dayButton) dayButton.textContent = "当天";
+    }
+    if (head.querySelector(".map-provider-toolbar")) return;
     const toolbar = document.createElement("div");
     toolbar.className = "map-provider-toolbar";
     if (segmented) toolbar.append(segmented);
@@ -139,6 +157,11 @@
     if (!panel.querySelector("#routeStatus")) {
       panel.insertAdjacentHTML("beforeend", `<div class="route-status" id="routeStatus"></div>`);
     }
+  }
+
+  function syncScopeFromUi() {
+    const active = document.querySelector(".smart-map-panel [data-map].active");
+    if (active?.dataset.map) scope = active.dataset.map;
   }
 
   function buildEntries() {
