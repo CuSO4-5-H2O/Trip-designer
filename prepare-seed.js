@@ -33,12 +33,18 @@ try {
   }
 
   const existing = payload.rooms[seed.roomId];
-  if (!existing?.lists?.length) {
+  const existingState = existing?.state || existing;
+  const hasExistingRoom = Array.isArray(existingState?.lists) && existingState.lists.length > 0;
+
+  if (!hasExistingRoom) {
     payload.rooms[seed.roomId] = {
-      version: 2,
-      activeListId: seed.list.id,
-      lists: [seed.list],
-      updatedAt: seed.list.updatedAt,
+      revision: 1,
+      state: {
+        version: 2,
+        activeListId: seed.list.id,
+        lists: [seed.list],
+        updatedAt: seed.list.updatedAt,
+      },
     };
     payload.savedAt = new Date().toISOString();
     fs.writeFileSync(dataFile, JSON.stringify(payload, null, 2));

@@ -41,6 +41,11 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (requestUrl.pathname === "/api/room-state") {
+    handleRoomState(req, requestUrl, res);
+    return;
+  }
+
   if (requestUrl.pathname === "/sync") {
     res.writeHead(426, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("WebSocket endpoint");
@@ -228,6 +233,48 @@ function saveRooms() {
   }
 }
 
+async function handleRoomState(req, requestUrl, res) {
+  const roomId = requestUrl.searchParams.get("room") || "LOCAL";
+  const room = ensureRoom(roomId);
+
+  if (req.method === "GET") {
+    sendJson(res, 200, { ok: true, roomId, revision: room.revision || 0, state: room.state });
+    return;
+  }
+
+  if (req.method !== "POST") {
+    sendJson(res, 405, { ok: false, error: "method not allowed" });
+    return;
+  }
+
+  try {
+    const message = JSON.parse(await readBody(req));
+    if (!message.state) {
+      sendJson(res, 400, { ok: false, error: "missing state" });
+      return;
+    }
+
+    const baseRevision = Number.isFinite(message.baseRevision) ? message.baseRevision : null;
+    const isLegacyWidgetWrite = baseRevision === null && /^(quick-plan|trip-insights):/.test(String(message.clientId || ""));
+    if (isLegacyWidgetWrite) {
+      sendJson(res, 409, { ok: false, error: "legacy-widget-write", revision: room.revision || 0, state: room.state });
+      return;
+    }
+
+    if (baseRevision !== null && baseRevision < (room.revision || 0)) {
+      sendJson(res, 409, { ok: false, error: message.reason || "stale-write", revision: room.revision || 0, state: room.state });
+      return;
+    }
+
+    room.state = message.state;
+    room.revision = (room.revision || 0) + 1;
+    scheduleSave();
+    broadcast(roomId, { type: "state", clientId: message.clientId || "http", roomId, state: room.state, reason: message.reason || "http-state", revision: room.revision }, null);
+    sendJson(res, 200, { ok: true, revision: room.revision });
+  } catch (error) {
+    sendJson(res, 400, { ok: false, error: "invalid state request", detail: error.message });
+  }
+}
 async function handleGeocode(requestUrl, res) {
   const query = (requestUrl.searchParams.get("q") || "").trim();
   if (!query) {
