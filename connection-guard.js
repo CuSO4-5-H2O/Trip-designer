@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const BUILD_ID = "render-20260713c";
+  const BUILD_ID = "render-20260713d";
   const params = new URLSearchParams(location.search);
   const roomId = params.get("room");
   const syncText = document.querySelector("#syncText");
@@ -15,12 +15,16 @@
 
   syncState.title = `${BUILD_ID} · ${location.host}`;
   document.documentElement.dataset.build = BUILD_ID;
+  setStatus(`检测 Render · ${BUILD_ID}`, false);
 
   const observer = new MutationObserver(() => {
-    if (!httpAvailable) return;
     const current = syncText.textContent.trim();
-    if (/已连接服务器|已同步|已保存到服务器|HTTP 同步可用/.test(current)) return;
-    setStatus(`HTTP 同步可用 · ${BUILD_ID}`, true);
+    if (current.includes(BUILD_ID)) return;
+    if (httpAvailable) {
+      setStatus(`HTTP 同步可用 · ${BUILD_ID}`, true);
+      return;
+    }
+    if (current === "连接中") setStatus(`检测 Render · ${BUILD_ID}`, false);
   });
   observer.observe(syncText, { childList: true, characterData: true, subtree: true });
 
@@ -40,6 +44,7 @@
   async function probe() {
     if (probing) return;
     probing = true;
+    setStatus(`检测 Render · ${BUILD_ID}`, false);
     try {
       const response = await fetchWithTimeout(
         `/api/room-state?room=${encodeURIComponent(roomId)}&build=${encodeURIComponent(BUILD_ID)}`,
