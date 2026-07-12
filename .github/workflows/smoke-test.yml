@@ -20,7 +20,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Check JavaScript syntax
         shell: bash
@@ -58,10 +58,10 @@ jobs:
           grep -q '"ok":true' "$RUNNER_TEMP/health.json"
           grep -q '"aiConfigured":true' "$RUNNER_TEMP/health.json"
 
-          curl --fail --silent http://127.0.0.1:4177/api/ai-status >"$RUNNER_TEMP/ai-status.json"
-          cat "$RUNNER_TEMP/ai-status.json"
-          grep -q '"configured":true' "$RUNNER_TEMP/ai-status.json"
-          grep -q '"model":"deepseek-chat"' "$RUNNER_TEMP/ai-status.json"
+          ai_status_code=$(curl --silent --output "$RUNNER_TEMP/ai-recommend-method.json" --write-out "%{http_code}" http://127.0.0.1:4177/api/ai/recommend)
+          cat "$RUNNER_TEMP/ai-recommend-method.json"
+          test "$ai_status_code" = "405"
+          grep -q '"method not allowed"' "$RUNNER_TEMP/ai-recommend-method.json"
 
           curl --fail --silent http://127.0.0.1:4177/api/map-config >"$RUNNER_TEMP/map-config.json"
           cat "$RUNNER_TEMP/map-config.json"
@@ -70,6 +70,7 @@ jobs:
           grep -q '"google"' "$RUNNER_TEMP/map-config.json"
 
           curl --fail --silent http://127.0.0.1:4177/ >"$RUNNER_TEMP/index.html"
+          grep -q './server-first.js?v=server-first-20260712a' "$RUNNER_TEMP/index.html"
           grep -q './app-collab.js' "$RUNNER_TEMP/index.html"
           grep -q './map-providers.js?v=map-20260712b' "$RUNNER_TEMP/index.html"
           grep -q './map-providers.css?v=map-20260712b' "$RUNNER_TEMP/index.html"
