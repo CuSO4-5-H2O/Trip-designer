@@ -2,6 +2,15 @@
   "use strict";
 
   const quickCollapsedKey = "tripdesigner:quick-plan-collapsed";
+  const budgetCategories = [
+    ["transport", "交通"],
+    ["lodging", "住宿"],
+    ["food", "餐饮"],
+    ["play", "游玩"],
+    ["shopping", "购物"],
+    ["other", "其他"],
+  ];
+  const currencyOptions = ["CNY", "USD", "EUR"];
   let actionTimer = 0;
 
   function init() {
@@ -49,7 +58,6 @@
         <button class="ghost-action" type="button" data-entry-action="new-list">新建行程单</button>
         <button class="primary-action" type="button" data-entry-action="add-day">加一天</button>
         <button class="ghost-action" type="button" data-entry-action="add-activity">加事项</button>
-        <button class="ghost-action" type="button" data-entry-action="budget">预算</button>
       `;
       const form = panel.querySelector(".quick-plan-form");
       if (form) panel.insertBefore(bar, form);
@@ -63,10 +71,7 @@
     if (!heading || heading.querySelector(".preset-heading-actions")) return;
     const actions = document.createElement("div");
     actions.className = "preset-heading-actions";
-    actions.innerHTML = `
-      <button class="mini-action" type="button" data-entry-action="add-day">加一天</button>
-      <button class="mini-action" type="button" data-entry-action="budget">预算</button>
-    `;
+    actions.innerHTML = `<button class="mini-action" type="button" data-entry-action="add-day">加一天</button>`;
     heading.append(actions);
     actions.addEventListener("click", handleEntryAction);
   }
@@ -79,21 +84,23 @@
       <button type="button" data-entry-action="quick-plan">规划</button>
       <button type="button" data-entry-action="add-day">加一天</button>
       <button type="button" data-entry-action="add-activity">加事项</button>
-      <button type="button" data-entry-action="budget">预算</button>
     `;
     bar.addEventListener("click", handleEntryAction);
   }
 
   function enhanceDayCards() {
     document.querySelectorAll(".day-card[data-day-id]").forEach((card) => {
-      const meta = card.querySelector(".day-meta");
-      if (!meta || meta.querySelector(".day-inline-add")) return;
+      card.querySelectorAll(".day-inline-add,.day-direct-actions").forEach((node) => node.remove());
+      const actions = card.querySelector(".day-inline-actions");
+      if (!actions || actions.querySelector(".day-header-plus")) return;
       const add = document.createElement("button");
-      add.className = "day-inline-add";
+      add.className = "day-header-plus";
       add.type = "button";
       add.dataset.entryAction = "open-inline-editor";
-      add.innerHTML = `<span>+</span> 事项`;
-      meta.append(add);
+      add.setAttribute("aria-label", "添加事项");
+      add.title = "添加事项";
+      add.textContent = "+";
+      actions.prepend(add);
       add.addEventListener("click", handleEntryAction);
     });
   }
@@ -109,6 +116,9 @@
       const content = freshCard.querySelector(".day-content");
       const list = freshCard.querySelector(".activity-list");
       if (!content || !list) return showToast("添加入口暂未加载");
+      const library = window.TripPlanner?.getLibrary?.();
+      const activeList = getActiveList(library);
+      const currency = getTripCurrency(activeList?.trip);
       const editor = document.createElement("form");
       editor.className = "inline-activity-editor";
       editor.innerHTML = `
@@ -116,6 +126,11 @@
           <label><span>时间</span><input name="time" type="time" value="09:00"></label>
           <label class="inline-title"><span>事项</span><input name="title" type="text" placeholder="要做什么" required></label>
           <label><span>地点</span><input name="place" type="text" placeholder="地点"></label>
+        </div>
+        <div class="inline-editor-budget">
+          <label><span>金额</span><input name="cost" type="number" min="0" step="0.01" inputmode="decimal" placeholder="可不填"></label>
+          <label><span>币种</span><select name="currency">${currencyOptions.map((item) => `<option value="${item}" ${item === currency ? "selected" : ""}>${item}</option>`).join("")}</select></label>
+          <label><span>分类</span><select name="category">${budgetCategories.map(([id, label]) => `<option value="${id}">${label}</option>`).join("")}</select></label>
         </div>
         <textarea name="note" rows="2" placeholder="备注、票号、集合点"></textarea>
         <div class="inline-editor-actions">
@@ -138,11 +153,13 @@
     if (!title) return form.querySelector('input[name="title"]')?.focus();
     const library = window.TripPlanner?.getLibrary?.();
     const list = getActiveList(library);
-    const day = list?.trip?.days?.find((item) => item.id === dayId);
-    if (!library || !list || !day) return showToast("未找到当天行程");
+    const trip = list?.trip;
+    const day = trip?.days?.find((item) => item.id === dayId);
+    if (!library || !list || !trip || !day) return showToast("未找到当天行程");
+    const activityId = crypto.randomUUID();
     day.activities = Array.isArray(day.activities) ? day.activities : [];
     day.activities.push({
-      id: crypto.randomUUID(),
+      id: activityId,
       time: String(data.get("time") || ""),
       title,
       place: String(data.get("place") || "").trim(),
@@ -151,7 +168,15 @@
       budget: null,
       transport: null,
     });
-    list.trip.selectedDayId = dayId;
+    ensureBudget(trip);
+    const currency = String(data.get("currency") || trip.budget.currency || "CNY");
+    trip.budget.currency = currencyOptions.includes(currency) ? currency : "CNY";
+    const cost = toAmount(data.get("cost"));
+    trip.budget.items[activityId] = {
+      cost,
+      category: budgetCategories.some(([id]) => id === data.get("category")) ? String(data.get("category")) : inferCategory(title),
+    };
+    trip.selectedDayId = dayId;
     window.TripPlanner.saveExternalLibrary(library, "add-inline-activity");
     showToast("事项已添加");
   }
@@ -177,13 +202,12 @@
     if (action === "add-day") return clickAndToast("#addDayTopBtn, #addDayBtn", "已添加一天");
     if (action === "add-activity") return openInlineEditorForSelectedDay();
     if (action === "open-inline-editor") return openInlineEditor(button);
-    if (action === "budget") return scrollToTarget("#budgetPanel", true);
     if (action === "quick-plan") return showQuickPlan();
   }
 
   function openInlineEditorForSelectedDay() {
     const selected = document.querySelector(".day-card.active[data-day-id]") || document.querySelector(".day-card[data-day-id]");
-    const button = selected?.querySelector(".day-inline-add");
+    const button = selected?.querySelector(".day-header-plus");
     if (button) return openInlineEditor(button);
     showToast("添加入口暂未加载");
   }
@@ -211,16 +235,6 @@
     scrollToElement(panel);
   }
 
-  function scrollToTarget(selector, pulse) {
-    const target = document.querySelector(selector);
-    if (!target) return showToast("入口暂未加载");
-    scrollToElement(target);
-    if (pulse) {
-      target.classList.add("entry-pulse");
-      window.setTimeout(() => target.classList.remove("entry-pulse"), 900);
-    }
-  }
-
   function scrollToElement(target) {
     target.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -228,6 +242,31 @@
   function getActiveList(library) {
     if (!library?.lists?.length) return null;
     return library.lists.find((item) => item.id === library.activeListId) || library.lists[0];
+  }
+
+  function ensureBudget(trip) {
+    trip.budget = trip.budget && typeof trip.budget === "object" ? trip.budget : {};
+    trip.budget.currency = getTripCurrency(trip);
+    trip.budget.items = trip.budget.items && typeof trip.budget.items === "object" ? trip.budget.items : {};
+  }
+
+  function getTripCurrency(trip) {
+    const value = trip?.budget?.currency;
+    return currencyOptions.includes(value) ? value : "CNY";
+  }
+
+  function inferCategory(text) {
+    if (/车|飞机|火车|大巴|船|交通|打车|自驾/.test(text)) return "transport";
+    if (/酒店|住宿|入住|民宿|旅馆/.test(text)) return "lodging";
+    if (/餐|饭|咖啡|早餐|午餐|晚餐|夜宵/.test(text)) return "food";
+    if (/购物|商场|买/.test(text)) return "shopping";
+    if (/景点|游览|门票|博物馆|公园|骑行/.test(text)) return "play";
+    return "other";
+  }
+
+  function toAmount(value) {
+    const number = Number(value);
+    return Number.isFinite(number) && number > 0 ? number : 0;
   }
 
   function cssEscape(value) {
