@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const http = require("http");
 const path = require("path");
+const { handleMapRuntime } = require("./map-runtime");
 
 const root = __dirname;
 const port = Number(process.env.PORT || 4177);
@@ -23,8 +24,12 @@ const mimeTypes = {
 
 loadRooms();
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host}`);
+
+  if (await handleMapRuntime(req, res, requestUrl.pathname)) {
+    return;
+  }
 
   if (requestUrl.pathname === "/healthz") {
     sendJson(res, 200, { ok: true, aiConfigured: Boolean(process.env.deepseek || process.env.DEEPSEEK_API_KEY) });
