@@ -1,0 +1,123 @@
+.map-provider-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.map-provider-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.map-provider-field select {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.route-status {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.route-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.route-total span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.route-list {
+  display: grid;
+  gap: 6px;
+}
+
+.route-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(17, 31, 28, 0.08);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.route-row strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.route-row small {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.route-mode-chip {
+  min-width: 42px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: var(--mint);
+  color: var(--ink);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.map-canvas.is-provider-map {
+  min-height: 320px;
+  overflow: hidden;
+}
+
+@media (max-width: 780px) {
+  .smart-panel-head {
+    gap: 10px;
+  }
+
+  .map-provider-toolbar {
+    justify-content: stretch;
+    width: 100%;
+  }
+
+  .map-provider-field,
+  .map-provider-field select {
+    width: 100%;
+  }
+
+  .route-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .route-row small {
+    grid-column: 2;
+  }
+}
