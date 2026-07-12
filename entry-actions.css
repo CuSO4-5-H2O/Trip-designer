@@ -4,11 +4,22 @@
 }
 
 .quick-plan-title-actions,
-.preset-heading-actions {
+.preset-heading-actions,
+.list-io-actions {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   margin-left: auto;
+}
+
+.list-io-actions .mini-action {
+  min-height: 34px;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+.list-io-actions .hidden {
+  display: none !important;
 }
 
 .quick-entry-actions {
@@ -207,6 +218,16 @@
 
   .quick-plan-heading > span {
     grid-column: 1 / -1;
+  }
+
+  .list-io-actions {
+    width: 100%;
+    justify-content: stretch;
+    margin-left: 0;
+  }
+
+  .list-io-actions .mini-action {
+    flex: 1;
   }
 
   .quick-entry-actions {
