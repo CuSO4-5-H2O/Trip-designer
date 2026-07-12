@@ -1,34 +1,24 @@
-const quickPlanClientId = `quick-plan:${crypto.randomUUID()}`;
 const quickPlanParams = new URLSearchParams(location.search);
 const quickPlanRoomId = quickPlanParams.get("room");
-const quickPlanConfig = window.TRIP_PLANNER_CONFIG || {};
 const quickPlanStorageKey = quickPlanRoomId ? `trip-planner-library:${quickPlanRoomId}` : "";
-const quickPlanChannel = quickPlanStorageKey && "BroadcastChannel" in window ? new BroadcastChannel(quickPlanStorageKey) : null;
 let quickPlanRenderTimer = 0;
 let draggedSegmentIndex = -1;
 
 window.addEventListener("load", initQuickPlan);
+window.addEventListener("tripplanner:render", scheduleQuickPlanRender);
 
 function initQuickPlan() {
   if (!quickPlanStorageKey) return;
-  requestQuickLibraryPersist();
   injectQuickPlanPanel();
   renderQuickPlanSegments();
   window.setTimeout(renderQuickPlanSegments, 140);
-  const shell = document.querySelector(".app-shell");
-  if (shell) {
-    new MutationObserver(() => {
-      clearTimeout(quickPlanRenderTimer);
-      quickPlanRenderTimer = window.setTimeout(renderQuickPlanSegments, 60);
-    }).observe(shell, { childList: true, subtree: true });
-  }
 }
 
-function requestQuickLibraryPersist() {
-  if (readQuickLibrary()) return;
-  const originInput = document.querySelector("#originCity");
-  originInput?.dispatchEvent(new Event("input", { bubbles: true }));
+function scheduleQuickPlanRender() {
+  clearTimeout(quickPlanRenderTimer);
+  quickPlanRenderTimer = window.setTimeout(renderQuickPlanSegments, 80);
 }
+
 function injectQuickPlanPanel() {
   const timelineHead = document.querySelector(".timeline-head");
   if (!timelineHead || document.querySelector("#quickPlanPanel")) return;
@@ -109,9 +99,7 @@ function createQuickSegmentItem(segment, index, total) {
   item.addEventListener("dragend", () => {
     draggedSegmentIndex = -1;
     item.classList.remove("dragging");
-    document.querySelectorAll(".quick-segment-item.drop-before, .quick-segment-item.drop-after").forEach((node) => {
-      node.classList.remove("drop-before", "drop-after");
-    });
+    document.querySelectorAll(".quick-segment-item.drop-before, .quick-segment-item.drop-after").forEach((node) => node.classList.remove("drop-before", "drop-after"));
   });
   item.addEventListener("dragover", (event) => {
     if (draggedSegmentIndex < 0 || draggedSegmentIndex === index) return;
@@ -183,9 +171,7 @@ function appendQuickSegments(segments, reason) {
   let used = 0;
   segments.forEach((segment) => {
     const count = Math.min(segment.count, Math.max(0, available - used));
-    for (let index = 0; index < count; index += 1) {
-      trip.days.push(createQuickDay(segment.city));
-    }
+    for (let index = 0; index < count; index += 1) trip.days.push(createQuickDay(segment.city));
     used += count;
   });
   if (!used) {
@@ -206,8 +192,10 @@ function updateQuickSegmentCity(segmentIndex, rawCity) {
   const segments = getCitySegments(trip);
   const segment = segments[segmentIndex];
   if (!trip || !segment) return;
+  const stamp = Date.now();
   for (let index = segment.start; index <= segment.end; index += 1) {
     trip.days[index].location = city;
+    trip.days[index].updatedAt = stamp;
   }
   publishQuickLibrary(library, "update-quick-city");
   showQuickToast("\u57ce\u5e02\u5df2\u66f4\u65b0");
@@ -231,6 +219,9 @@ function updateQuickSegmentDays(segmentIndex, rawCount) {
     const removeCount = Math.min(segment.count - 1, Math.abs(delta));
     trip.days.splice(segment.end - removeCount + 1, removeCount);
   }
+  const stamp = Date.now();
+  trip.updatedAt = stamp;
+  trip.orderUpdatedAt = stamp;
   trip.dayLimit = Math.max(trip.days.length, trip.dayLimit || 30);
   trip.selectedDayId = trip.days[Math.min(segment.start, trip.days.length - 1)]?.id || trip.days[0]?.id || "";
   publishQuickLibrary(library, "update-quick-days");
@@ -247,6 +238,9 @@ function deleteQuickSegment(segmentIndex) {
   if (!trip.days.length) trip.days.push(createQuickDay("\u672a\u5b9a"));
   trip.selectedDayId = trip.days[Math.min(segment.start, trip.days.length - 1)]?.id || trip.days[0]?.id || "";
   trip.dayLimit = Math.max(trip.days.length, trip.dayLimit || 30);
+  const stamp = Date.now();
+  trip.updatedAt = stamp;
+  trip.orderUpdatedAt = stamp;
   publishQuickLibrary(library, "delete-quick-segment");
   showQuickToast("\u57ce\u5e02\u6bb5\u5df2\u5220\u9664");
 }
@@ -264,6 +258,9 @@ function moveQuickSegment(sourceIndex, targetIndex, position) {
   blocks.splice(Math.max(0, insertIndex), 0, moved);
   trip.days = blocks.flat();
   trip.selectedDayId = moved[0]?.id || trip.days[0]?.id || "";
+  const stamp = Date.now();
+  trip.updatedAt = stamp;
+  trip.orderUpdatedAt = stamp;
   publishQuickLibrary(library, "reorder-quick-segments");
   showQuickToast("\u57ce\u5e02\u987a\u5e8f\u5df2\u8c03\u6574");
 }
@@ -285,11 +282,14 @@ function getCitySegments(trip) {
 }
 
 function createQuickDay(city) {
+  const stamp = Date.now();
   return {
     id: crypto.randomUUID(),
     location: city,
     stay: "",
     activities: [],
+    updatedAt: stamp,
+    orderUpdatedAt: stamp,
   };
 }
 
@@ -326,11 +326,9 @@ function isBeforeQuickDrop(element, event) {
 }
 
 function readQuickLibrary() {
-  try {
-    return JSON.parse(localStorage.getItem(quickPlanStorageKey));
-  } catch {
-    return null;
-  }
+  if (window.TripPlanner?.getLibrary) return window.TripPlanner.getLibrary();
+  try { return JSON.parse(localStorage.getItem(quickPlanStorageKey)); }
+  catch { return null; }
 }
 
 function getQuickActiveTrip(library) {
@@ -339,41 +337,12 @@ function getQuickActiveTrip(library) {
 }
 
 function publishQuickLibrary(library, reason) {
-  if (window.TripPlanner?.saveExternalLibrary) {
-    window.TripPlanner.saveExternalLibrary(library, reason);
-    window.setTimeout(renderQuickPlanSegments, 80);
+  if (!library || !window.TripPlanner?.saveExternalLibrary) {
+    showQuickToast("行程数据还在加载，请稍后再试");
     return;
   }
-  if (!library) return;
-  const list = library.lists.find((item) => item.id === library.activeListId) || library.lists[0];
-  const trip = list?.trip;
-  const now = Date.now();
-  if (trip) trip.updatedAt = now;
-  if (list) list.updatedAt = now;
-  library.updatedAt = now;
-  localStorage.setItem(quickPlanStorageKey, JSON.stringify(library));
-  quickPlanChannel?.postMessage({ type: "library", clientId: quickPlanClientId, library, reason });
-  sendQuickRemoteState(library, reason);
+  window.TripPlanner.saveExternalLibrary(library, reason);
   window.setTimeout(renderQuickPlanSegments, 80);
-}
-
-function sendQuickRemoteState(library, reason) {
-  return;
-}
-
-function buildQuickSyncUrl() {
-  const configuredEndpoint = quickPlanParams.get("sync") || quickPlanConfig.syncEndpoint || "";
-  const endpoint = configuredEndpoint.trim() || `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/sync`;
-  try {
-    const url = new URL(endpoint, location.href);
-    if (url.protocol === "http:") url.protocol = "ws:";
-    if (url.protocol === "https:") url.protocol = "wss:";
-    if (url.protocol !== "ws:" && url.protocol !== "wss:") return "";
-    url.searchParams.set("room", quickPlanRoomId);
-    return url.toString();
-  } catch {
-    return "";
-  }
 }
 
 function showQuickToast(text) {
