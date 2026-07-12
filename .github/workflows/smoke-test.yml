@@ -31,6 +31,31 @@ jobs:
             node --check "$file"
           done < <(find . -maxdepth 2 -name '*.js' -print0)
 
+      - name: Verify legacy frontend files are removed
+        shell: bash
+        run: |
+          set -euo pipefail
+          legacy_files=(
+            app.js
+            mobile-fast-edit.js
+            order-controls.js
+            trip-insights.js
+            trip-insights.css
+            travel-tools.js
+            travel-tools-actions.js
+            travel-tools.css
+            activity-tags.js
+            activity-tags.css
+            context-popover-fixes.js
+            context-popover-fixes.css
+            config.js
+            server-first.js
+            seed-room-1075424A.js
+          )
+          for file in "${legacy_files[@]}"; do
+            test ! -e "$file"
+          done
+
       - name: Start runtime and verify endpoints
         shell: bash
         run: |
@@ -69,16 +94,39 @@ jobs:
           grep -q '"defaultProvider":"amap"' "$RUNNER_TEMP/map-config.json"
           grep -q '"google"' "$RUNNER_TEMP/map-config.json"
 
-          curl --fail --silent http://127.0.0.1:4177/ >"$RUNNER_TEMP/index.html"
-          grep -q './server-first.js?v=server-first-20260712a' "$RUNNER_TEMP/index.html"
+          curl --fail --silent 'http://127.0.0.1:4177/api/room-state?room=1075424A' >"$RUNNER_TEMP/room-state.json"
+          grep -q '"ok":true' "$RUNNER_TEMP/room-state.json"
+
+          curl --fail --silent 'http://127.0.0.1:4177/?room=1075424A' >"$RUNNER_TEMP/index.html"
+          grep -q './room-bootstrap.js?v=perf-20260713a' "$RUNNER_TEMP/index.html"
+          grep -q './input-performance.js?v=input-perf-20260713a' "$RUNNER_TEMP/index.html"
           grep -q './app-collab.js' "$RUNNER_TEMP/index.html"
           grep -q './map-providers.js?v=map-20260712b' "$RUNNER_TEMP/index.html"
           grep -q './map-providers.css?v=map-20260712b' "$RUNNER_TEMP/index.html"
           grep -q './quick-plan.js?v=quick-20260712b' "$RUNNER_TEMP/index.html"
-          grep -q './entry-actions.js?v=entry-20260712c' "$RUNNER_TEMP/index.html"
-          grep -q './entry-actions.css?v=entry-20260712c' "$RUNNER_TEMP/index.html"
-          ! grep -q 'trip-insights.js' "$RUNNER_TEMP/index.html"
-          ! grep -q 'leaflet' "$RUNNER_TEMP/index.html"
+          grep -q './context-editor-performance.css?v=context-perf-20260713a' "$RUNNER_TEMP/index.html"
+          grep -q './entry-actions.js?v=entry-20260713a' "$RUNNER_TEMP/index.html"
+          grep -q './entry-actions.css?v=entry-20260713a' "$RUNNER_TEMP/index.html"
+          ! grep -Eq 'config\.js|server-first\.js|trip-insights|travel-tools|activity-tags|context-popover-fixes|leaflet' "$RUNNER_TEMP/index.html"
+
+          assets=(
+            room-bootstrap.js
+            input-performance.js
+            app-collab.js
+            map-providers.js
+            quick-plan.js
+            entry-actions.js
+            styles.css
+            room-loading.css
+            quick-plan.css
+            ux-polish.css
+            context-editor-performance.css
+            map-providers.css
+            entry-actions.css
+          )
+          for asset in "${assets[@]}"; do
+            curl --fail --silent "http://127.0.0.1:4177/$asset" >/dev/null
+          done
 
       - name: Verify direct Render server entry
         shell: bash
