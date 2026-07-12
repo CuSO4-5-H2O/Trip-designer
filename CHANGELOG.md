@@ -2,6 +2,47 @@
 
 本文件记录 Trip-designer 的主要功能更新、性能修复、部署变更和兼容性说明。
 
+## 2026-07-12：单日添加入口与 Render 地图接口修复
+
+### 修复问题
+
+- 单日卡片展开后仍然只能看到“还没有事项”，无法在当天卡片里直接添加事项。
+- 移动端需要滚到很下面才能找添加表单，导致用户感觉没有任何添加行程入口。
+- Render 上地图面板报错 `Unexpected token 'N', "Not found" is not valid JSON`。
+- 地图错误原因是 `/api/map-config` 或 `/api/map/plan` 在某些 Render 启动方式下返回了 404 `Not found`，前端再按 JSON 解析就会报错。
+
+### 变更内容
+
+- 在每个展开的单日卡片内新增直接操作区：
+
+```text
+添加事项
+预算
+```
+
+- 点击“添加事项”会选中对应日期、滚动到事项表单并聚焦标题输入框。
+- `server.js` 直接接入地图代理接口，确保 Render 即使使用 `node server.js` 作为 Start Command，也能响应：
+
+```text
+GET /api/map-config
+POST /api/map/plan
+```
+
+- Smoke test 新增 `node server.js` 直启检查，专门覆盖 Render 可能使用的启动入口。
+
+### 部署影响
+
+- 不涉及任何房间数据迁移。
+- 不修改 `data/rooms.json` 或 Render Persistent Disk 中已有行程。
+- Render 部署最新 `main` 后生效。
+
+### 主要提交
+
+- `3e8ff6f`：单日卡片新增直接“添加事项 / 预算”入口。
+- `af26f1a`：`server.js` 直接提供地图接口，避免 Render 直启时 404。
+- `b17e737`：补充单日直接入口样式。
+- `6e2529e`：Smoke test 覆盖 `node server.js` 下的地图接口。
+
 ## 2026-07-12：快速添加和移动端入口补齐
 
 ### 修复问题
