@@ -38,15 +38,18 @@ http://localhost:4177
 
 ## 部署到 Render
 
+本项目只采用 Render Web Service 同源部署。前端、WebSocket、AI 接口、地图接口和房间数据接口均由同一个 Render 服务提供，不再保留其他前端托管平台的适配配置。
+
 创建 Render Web Service 后使用：
 
 ```text
 Runtime: Node
 Build Command: npm install
 Start Command: npm start
+Health Check Path: /healthz
 ```
 
-服务端会自动读取 Render 提供的 `PORT`。
+服务端会自动读取 Render 提供的 `PORT`。建议将生产分支设置为 `main`，并在 GitHub 检查通过后再自动部署。
 
 ### Persistent Disk
 
@@ -189,19 +192,7 @@ https://tripdesigner.onrender.com
 - 移除大量长期 `will-change`、重复入场动画和高成本模糊效果
 - 保留核心 WebSocket 协作连接，降低无意义的每字符同步
 
-仓库包含 GitHub Actions 烟雾测试，会检查 JavaScript 语法、Node 20 启动、健康接口以及小写 `deepseek` 环境变量兼容性。
-
-## GitHub Pages + Render 后端
-
-如果前端部署在 GitHub Pages，而同步和 API 仍由 Render 提供，可以在 `config.js` 设置：
-
-```js
-window.TRIP_PLANNER_CONFIG = {
-  syncEndpoint: "wss://your-trip-planner.onrender.com/sync",
-};
-```
-
-需要注意：AI 和地图使用 `/api/...`。当前端与 Render 不同域时，还需要把这些请求改为完整的 Render 地址，或通过 Cloudflare 等反向代理转发 `/api`。
+仓库包含 GitHub Actions 烟雾测试，会检查 JavaScript 语法、Node 运行、健康接口以及小写 `deepseek` 环境变量兼容性。
 
 ## 安全说明
 
