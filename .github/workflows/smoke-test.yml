@@ -73,8 +73,8 @@ jobs:
           grep -q './app-collab.js' "$RUNNER_TEMP/index.html"
           grep -q './map-providers.js?v=map-20260712a' "$RUNNER_TEMP/index.html"
           grep -q './map-providers.css?v=map-20260712a' "$RUNNER_TEMP/index.html"
-          grep -q './entry-actions.js?v=entry-20260712a' "$RUNNER_TEMP/index.html"
-          grep -q './entry-actions.css?v=entry-20260712a' "$RUNNER_TEMP/index.html"
+          grep -q './entry-actions.js?v=entry-20260712b' "$RUNNER_TEMP/index.html"
+          grep -q './entry-actions.css?v=entry-20260712b' "$RUNNER_TEMP/index.html"
           ! grep -q 'leaflet' "$RUNNER_TEMP/index.html"
 
       - name: Verify direct Render server entry
