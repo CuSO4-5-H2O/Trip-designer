@@ -21,10 +21,27 @@
   }
 
   function enhanceVisibleActions() {
+    enhanceImportExportActions();
     enhanceQuickPlanPanel();
     enhancePresetPanel();
     enhanceMobileQuickbar();
     enhanceDayCards();
+  }
+
+  function enhanceImportExportActions() {
+    const panel = document.querySelector(".list-panel");
+    const heading = panel?.querySelector(".section-heading");
+    if (!panel || !heading || heading.querySelector(".list-io-actions")) return;
+    const actions = document.createElement("div");
+    actions.className = "list-io-actions";
+    actions.innerHTML = `
+      <button class="mini-action" type="button" data-entry-action="export-list">导出</button>
+      <button class="mini-action" type="button" data-entry-action="import-list">导入</button>
+      <input class="hidden" id="listImportInput" type="file" accept=".html,.json,.txt,application/json,text/html,text/plain">
+    `;
+    heading.append(actions);
+    actions.addEventListener("click", handleEntryAction);
+    actions.querySelector("#listImportInput")?.addEventListener("change", importListFile);
   }
 
   function enhanceQuickPlanPanel() {
@@ -155,6 +172,8 @@
     if (action === "add-day") return clickAndToast("#addDayTopBtn, #addDayBtn", "已添加一天");
     if (action === "add-activity") return openFloatingEditor(getSelectedDayId(), "", "");
     if (action === "quick-plan") return showQuickPlan();
+    if (action === "export-list") return exportCurrentList();
+    if (action === "import-list") return document.querySelector("#listImportInput")?.click();
   }
 
   function openFloatingEditor(dayId, activityId = "", field = "") {
@@ -240,6 +259,111 @@
     showToast(activity ? "事项已更新" : "事项已添加");
   }
 
+  function exportCurrentList() {
+    const library = window.TripPlanner?.getLibrary?.();
+    const list = getActiveList(library);
+    if (!list?.trip) return showToast("没有可导出的行程单");
+    const routePlan = window.TripDesignerMap?.getLastPlan?.() || null;
+    const payload = { type: "tripdesigner-list-export", version: 2, exportedAt: new Date().toISOString(), list, routePlan };
+    const routeSummary = routePlan?.summary ? `${formatKm(routePlan.summary.distance)} · ${formatDuration(routePlan.summary.duration)} · ${routePlan.summary.segmentCount || 0} 段路线` : "未计算路线";
+    const html = `<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(list.name || "行程导出")}</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:32px;color:#10201d;background:#f7fbf9}main{max-width:900px;margin:auto}.day{background:#fff;border:1px solid #d8e5e1;border-radius:10px;margin:16px 0;padding:16px}.activity{border-top:1px solid #edf3f1;padding:10px 0}.meta{color:#64736f;font-weight:700}.tag{display:inline-block;border:1px solid #cfe3dd;border-radius:999px;padding:2px 8px;margin:2px}.route{background:#edf8f4;border-radius:10px;padding:12px;margin:16px 0}</style></head><body><main><h1>${escapeHtml(list.name || "行程导出")}</h1><p class="meta">导出时间 ${escapeHtml(payload.exportedAt)} · ${escapeHtml((list.trip.days || []).length)} 天</p><section class="route"><strong>路线摘要</strong><p>${escapeHtml(routeSummary)}</p>${routePlan ? `<p><a href="https://www.google.com/maps/dir/${encodeURIComponent((routePlan.points || []).filter((p)=>p.located !== false).map((p)=>`${p.lat},${p.lng}`).join("/"))}" target="_blank" rel="noreferrer">Google Maps 路线链接</a></p>` : ""}</section>${renderExportDays(list.trip)}</main><script id="tripdesigner-export-data" type="application/json">${JSON.stringify(payload).replace(/</g,"\\u003c")}</script></body></html>`;
+    downloadText(`${safeFileName(list.name || "trip-list")}.html`, html, "text/html;charset=utf-8");
+    showToast("当前 list 已导出");
+  }
+
+  async function importListFile(event) {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    input.value = "";
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const payload = parseImportedPayload(text);
+      const library = window.TripPlanner?.getLibrary?.();
+      if (!library?.lists) throw new Error("当前行程库未加载");
+      const importedList = remapImportedList(payload.list || payload, file.name);
+      library.lists.push(importedList);
+      library.activeListId = importedList.id;
+      window.TripPlanner.saveExternalLibrary(library, "import-list");
+      showToast("已导入为新 list");
+    } catch (error) {
+      showToast(error.message || "导入失败");
+    }
+  }
+
+  function parseImportedPayload(text) {
+    const trimmed = String(text || "").trim();
+    const match = trimmed.match(/<script[^>]*id=["']tripdesigner-export-data["'][^>]*>([\s\S]*?)<\/script>/i);
+    const source = match ? match[1] : trimmed;
+    let payload;
+    try { payload = JSON.parse(source); }
+    catch { payload = buildListFromPlainText(trimmed); }
+    const list = payload?.list || payload;
+    if (!list?.trip?.days) throw new Error("没有识别到可导入的行程 list");
+    return payload;
+  }
+
+  function remapImportedList(source, fileName) {
+    const now = Date.now();
+    const list = structuredClone(source);
+    const oldDayIds = new Map();
+    const oldActivityIds = new Map();
+    list.id = crypto.randomUUID();
+    list.name = `导入 - ${list.name || fileName || "行程"}`;
+    list.updatedAt = now;
+    list.orderUpdatedAt = now;
+    list.trip = list.trip || {};
+    list.trip.id = crypto.randomUUID();
+    list.trip.updatedAt = now;
+    list.trip.members = Array.isArray(list.trip.members) ? list.trip.members.map((member) => ({ ...member, id: crypto.randomUUID(), updatedAt: now })) : [];
+    list.trip.days = Array.isArray(list.trip.days) ? list.trip.days.map((day) => {
+      const oldDayId = day.id;
+      const newDayId = crypto.randomUUID();
+      oldDayIds.set(oldDayId, newDayId);
+      const activities = Array.isArray(day.activities) ? day.activities.map((activity) => {
+        const oldActivityId = activity.id;
+        const newActivityId = crypto.randomUUID();
+        oldActivityIds.set(oldActivityId, newActivityId);
+        return { ...activity, id: newActivityId, updatedAt: now, orderUpdatedAt: now };
+      }) : [];
+      return { ...day, id: newDayId, activities, updatedAt: now, orderUpdatedAt: now };
+    }) : [];
+    list.trip.selectedDayId = oldDayIds.get(list.trip.selectedDayId) || list.trip.days[0]?.id || "";
+    if (list.trip.budget?.items) {
+      const nextItems = {};
+      Object.entries(list.trip.budget.items).forEach(([key, value]) => {
+        nextItems[oldActivityIds.get(key) || key] = { ...(value || {}), updatedAt: now };
+      });
+      list.trip.budget.items = nextItems;
+      list.trip.budget.updatedAt = now;
+    }
+    return list;
+  }
+
+  function buildListFromPlainText(text) {
+    const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).slice(0, 80);
+    if (!lines.length) throw new Error("导入文件为空");
+    const now = Date.now();
+    const days = [];
+    let current = null;
+    lines.forEach((line) => {
+      const dayMatch = line.match(/^(第?\s*\d+\s*天|day\s*\d+|\d+\/\d+|\d{4}-\d{1,2}-\d{1,2})[:：\s-]*(.*)$/i);
+      if (!current || dayMatch) {
+        current = { id: crypto.randomUUID(), dateOffset: days.length, location: dayMatch?.[2] || "", stay: "", activities: [], updatedAt: now, orderUpdatedAt: now };
+        days.push(current);
+      } else {
+        current.activities.push({ id: crypto.randomUUID(), time: "09:00", title: line, place: current.location || "", note: "", tags: [], transport: null, updatedAt: now, orderUpdatedAt: now });
+      }
+    });
+    return { list: { id: crypto.randomUUID(), name: "导入文本行程", updatedAt: now, orderUpdatedAt: now, trip: { id: crypto.randomUUID(), title: "导入文本行程", startDate: new Date().toISOString().slice(0,10), originCity: "", dayLimit: Math.max(1, days.length), selectedDayId: days[0]?.id || "", members: [], days, budget: { currency: "CNY", items: {}, updatedAt: now }, updatedAt: now } } };
+  }
+
+  function renderExportDays(trip) {
+    const budget = trip.budget?.items || {};
+    return (trip.days || []).map((day, index) => `<section class="day"><h2>第 ${index + 1} 天 ${escapeHtml(day.location || "未填写地点")}</h2><p class="meta">住宿 ${escapeHtml(day.stay || "未填写")}</p>${(day.activities || []).map((activity) => { const itemBudget = budget[activity.id] || {}; const tags = (activity.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join(""); return `<div class="activity"><strong>${escapeHtml(activity.time || "")} ${escapeHtml(activity.title || "未命名事项")}</strong><p>${escapeHtml(activity.place || "")}</p><p class="meta">交通 ${escapeHtml(labelTransport(activity.transport?.type || ""))} · 预算 ${escapeHtml(formatBudget(itemBudget, trip.budget?.currency || "CNY"))}</p>${tags}<p>${escapeHtml(activity.note || "")}</p></div>`; }).join("")}</section>`).join("");
+  }
+
   function closeFloatingEditor() { document.querySelector("#floatingActivityEditor")?.classList.add("hidden"); }
   function focusField(form, field) {
     const map = { time: "time", title: "title", place: "place", note: "note", transport: "transportType", budget: "cost", tags: "tags" };
@@ -255,6 +379,14 @@
   function inferCategory(text) { if (/车|飞机|火车|大巴|船|交通|打车|自驾/.test(text)) return "transport"; if (/酒店|住宿|入住|民宿|旅馆/.test(text)) return "lodging"; if (/餐|饭|咖啡|早餐|午餐|晚餐|夜宵/.test(text)) return "food"; if (/购物|商场|买/.test(text)) return "shopping"; if (/景点|游览|门票|博物馆|公园|骑行/.test(text)) return "play"; return "other"; }
   function toAmount(value) { const number = Number(value); return Number.isFinite(number) && number > 0 ? number : 0; }
   function showToast(text) { const toast = document.querySelector("#toast"); if (!toast) return; toast.textContent = text; toast.classList.add("show"); window.setTimeout(() => toast.classList.remove("show"), 1800); }
+  function clone(value) { return structuredClone ? structuredClone(value) : JSON.parse(JSON.stringify(value)); }
+  function escapeHtml(value) { return String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char])); }
+  function safeFileName(value) { return String(value || "trip-list").replace(/[\\/:*?"<>|]+/g, "-").replace(/\s+/g, "-").slice(0, 80); }
+  function downloadText(fileName, content, type) { const blob = new Blob([content], { type }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = fileName; document.body.append(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); }
+  function labelTransport(value) { return transportTypes.find(([id]) => id === value)?.[1] || value || "未填写"; }
+  function formatBudget(item, currency) { const cost = Number(item?.cost || item?.amount || 0); return cost > 0 ? `${currency} ${cost.toFixed(2)}` : "未估算"; }
+  function formatKm(meters) { return `${(Number(meters || 0) / 1000).toFixed(1)} km`; }
+  function formatDuration(seconds) { const minutes = Math.max(1, Math.round(Number(seconds || 0) / 60)); const hours = Math.floor(minutes / 60); const rest = minutes % 60; return hours ? `${hours} 小时 ${rest} 分钟` : `${rest} 分钟`; }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
