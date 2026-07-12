@@ -98,21 +98,24 @@ jobs:
           grep -q '"ok":true' "$RUNNER_TEMP/room-state.json"
 
           curl --fail --silent 'http://127.0.0.1:4177/?room=1075424A' >"$RUNNER_TEMP/index.html"
-          grep -q './room-bootstrap.js?v=perf-20260713a' "$RUNNER_TEMP/index.html"
-          grep -q './input-performance.js?v=input-perf-20260713a' "$RUNNER_TEMP/index.html"
-          grep -q './app-collab.js' "$RUNNER_TEMP/index.html"
-          grep -q './map-providers.js?v=map-20260712b' "$RUNNER_TEMP/index.html"
-          grep -q './map-providers.css?v=map-20260712b' "$RUNNER_TEMP/index.html"
-          grep -q './quick-plan.js?v=quick-20260712b' "$RUNNER_TEMP/index.html"
-          grep -q './context-editor-performance.css?v=context-perf-20260713a' "$RUNNER_TEMP/index.html"
-          grep -q './entry-actions.js?v=entry-20260713a' "$RUNNER_TEMP/index.html"
-          grep -q './entry-actions.css?v=entry-20260713a' "$RUNNER_TEMP/index.html"
+          grep -q 'render-20260713d' "$RUNNER_TEMP/index.html"
+          grep -q './room-bootstrap.js?v=render-20260713d' "$RUNNER_TEMP/index.html"
+          grep -q './input-performance.js?v=render-20260713d' "$RUNNER_TEMP/index.html"
+          grep -q './app-collab.js?v=render-20260713d' "$RUNNER_TEMP/index.html"
+          grep -q './connection-guard.js?v=render-20260713d' "$RUNNER_TEMP/index.html"
+          grep -q './map-providers.js?v=render-20260713d' "$RUNNER_TEMP/index.html"
+          grep -q './map-providers.css?v=render-20260713d' "$RUNNER_TEMP/index.html"
+          grep -q './quick-plan.js?v=render-20260713d' "$RUNNER_TEMP/index.html"
+          grep -q './context-editor-performance.css?v=render-20260713d' "$RUNNER_TEMP/index.html"
+          grep -q './entry-actions.js?v=render-20260713d' "$RUNNER_TEMP/index.html"
+          grep -q './entry-actions.css?v=render-20260713d' "$RUNNER_TEMP/index.html"
           ! grep -Eq 'config\.js|server-first\.js|trip-insights|travel-tools|activity-tags|context-popover-fixes|leaflet' "$RUNNER_TEMP/index.html"
 
           assets=(
             room-bootstrap.js
             input-performance.js
             app-collab.js
+            connection-guard.js
             map-providers.js
             quick-plan.js
             entry-actions.js
