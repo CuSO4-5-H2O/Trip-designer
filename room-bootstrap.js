@@ -1,70 +1,45 @@
 (() => {
-  installOptimizedMutationObserver();
+  "use strict";
 
   const params = new URLSearchParams(location.search);
   const roomId = params.get("room");
   if (!roomId) return;
 
-  document.documentElement.classList.add("room-loading");
+  const root = document.documentElement;
+  root.classList.add("room-loading");
+
+  let revealed = false;
+  const reveal = () => {
+    if (revealed) return;
+    revealed = true;
+    root.classList.remove("room-loading");
+  };
+
+  // Never let a slow backend, a blocked storage API, or an enhancement-script
+  // error leave the whole editor hidden. The editor remains usable with local
+  // state while synchronization retries in the background.
+  window.setTimeout(reveal, 2500);
+  window.addEventListener("pageshow", () => window.setTimeout(reveal, 100));
+  window.addEventListener("error", reveal, { once: true });
+  window.addEventListener("unhandledrejection", reveal, { once: true });
+
   window.addEventListener("DOMContentLoaded", () => {
     const syncText = document.querySelector("#syncText");
-    if (!syncText) {
-      document.documentElement.classList.remove("room-loading");
+    if (!syncText || !window.MutationObserver) {
+      reveal();
       return;
     }
 
-    const reveal = () => {
+    const checkSyncState = () => {
       const text = syncText.textContent.trim();
-      if (text && text !== "\u672c\u5730\u4fdd\u5b58" && text !== "\u8fde\u63a5\u4e2d") {
-        document.documentElement.classList.remove("room-loading");
+      if (text && text !== "本地保存" && text !== "连接中") {
         observer.disconnect();
+        reveal();
       }
     };
 
-    const observer = new MutationObserver(reveal);
+    const observer = new MutationObserver(checkSyncState);
     observer.observe(syncText, { childList: true, characterData: true, subtree: true });
-    reveal();
-    window.setTimeout(() => document.documentElement.classList.remove("room-loading"), 8000);
+    checkSyncState();
   });
-
-  function installOptimizedMutationObserver() {
-    if (window.__tripDesignerMutationObserverOptimized) return;
-    const NativeMutationObserver = window.MutationObserver;
-    if (!NativeMutationObserver) return;
-
-    class OptimizedMutationObserver {
-      constructor(callback) {
-        this.callback = callback;
-        this.nativeObserver = new NativeMutationObserver((records) => callback(records, this));
-      }
-
-      observe(target, options = {}) {
-        let observedTarget = target;
-        let observedOptions = { ...options };
-
-        if (target?.classList?.contains("app-shell")) {
-          const dayList = document.querySelector("#dayList");
-          if (dayList) {
-            observedTarget = dayList;
-            observedOptions = { childList: true, subtree: false };
-          }
-        } else if (target?.id === "dayList" && observedOptions.childList) {
-          observedOptions = { childList: true, subtree: false };
-        }
-
-        return this.nativeObserver.observe(observedTarget, observedOptions);
-      }
-
-      disconnect() {
-        return this.nativeObserver.disconnect();
-      }
-
-      takeRecords() {
-        return this.nativeObserver.takeRecords();
-      }
-    }
-
-    window.MutationObserver = OptimizedMutationObserver;
-    window.__tripDesignerMutationObserverOptimized = true;
-  }
 })();
