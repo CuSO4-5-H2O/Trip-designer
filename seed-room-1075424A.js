@@ -28,7 +28,7 @@ module.exports = {
           "id": "f9057b05-e55d-5b33-85ee-c4808f546957",
           "location": "夜船",
           "stay": "夜船",
-          "transport": {"type": "boat", "from": "Piraeus", "to": "Heraklion", "depart": "21:00", "arrive": "", "},
+          "transport": {"type": "boat", "from": "Piraeus", "to": "Heraklion", "depart": "21:00", "arrive": ""},
           "activities": [
             {"id": "3e23bf54-ac86-5231-bf11-b287aaf231d6", "time": "09:30", "title": "国家考古博物馆", "place": "雅典", "note": "", "done": false},
             {"id": "5e925fc9-4dc1-50d8-9bc4-baa7249b8185", "time": "12:30", "title": "市中心简餐", "place": "Exarchia或市中心", "note": "", "done": false},
