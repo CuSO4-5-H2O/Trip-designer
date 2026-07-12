@@ -7,6 +7,8 @@
   let configPromise = null;
   let renderTimer = 0;
   let renderToken = 0;
+  let dayListObserver = null;
+  let observedDayList = null;
   let activeRuntime = { provider: "", map: null, overlays: [] };
 
   const modeLabels = {
@@ -43,9 +45,18 @@
       }
     });
 
-    const observer = new MutationObserver(() => scheduleRender(180));
-    observer.observe(document.body, { childList: true, subtree: true });
+    dayListObserver = new MutationObserver(() => scheduleRender(180));
+    attachDayListObserver();
+    setInterval(attachDayListObserver, 1500);
     scheduleRender(250);
+  }
+
+  function attachDayListObserver() {
+    const dayList = document.querySelector("#dayList");
+    if (!dayList || dayList === observedDayList || !dayListObserver) return;
+    dayListObserver.disconnect();
+    dayListObserver.observe(dayList, { childList: true, subtree: true });
+    observedDayList = dayList;
   }
 
   function scheduleRender(delay = 80) {
