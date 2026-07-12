@@ -8,7 +8,7 @@
 - 多人实时同步和房间链接分享
 - 事项交通、预算和标签
 - DeepSeek 当地旅行推荐
-- Leaflet + OpenStreetMap 行程地图
+- 高德地图 / Google Maps 行程地图和路线时间估算
 - 推荐结果一键加入对应日期
 - 点击事项后，在该事项旁边弹出编辑界面
 
@@ -121,7 +121,34 @@ AI 推荐不应视为实时营业时间、实时票价、临时闭馆或余票�
 
 ## 路线地图
 
-地图使用 Leaflet 显示 OpenStreetMap 底图，服务端通过 Nominatim 把事项地点转换为坐标。
+地图支持高德地图和 Google Maps，可在地图面板中选择：
+
+```text
+自动
+高德
+Google
+```
+
+服务端会根据当前行程中的城市、住宿、事项地点和事项交通方式生成定位点、路线、距离和时间。点击单日时显示当天路线；点击 list 时显示整份行程单的地点总览。
+
+Render 环境变量：
+
+```text
+gaodemap_key=高德地图 Web/API Key
+gaodemap_securitycode=高德地图 JS 安全密钥
+googlemap=Google Maps API Key
+```
+
+兼容变量名：
+
+```text
+GAODEMAP_KEY
+AMAP_KEY
+GAODEMAP_SECURITYCODE
+AMAP_SECURITY_CODE
+GOOGLEMAP
+GOOGLE_MAPS_API_KEY
+```
 
 为了提高定位准确率，请填写具体地点，例如：
 
@@ -129,15 +156,16 @@ AI 推荐不应视为实时营业时间、实时票价、临时闭馆或余票�
 雅典卫城
 罗马斗兽场
 圣托里尼伊亚镇
+东京 成田机场
+浅草寺
 ```
 
-当前路线按照事项顺序连接，主要用于查看空间关系，并非实时导航路线。
+路线时间优先使用地图服务返回结果。飞机、船或地图服务无法生成路线时，会使用直线距离估算，并在路线摘要中标记“估算”。
 
-可选地图环境变量：
+建议在高德和 Google 控制台把 key 限制到正式域名：
 
 ```text
-TRIP_DESIGNER_CONTACT=用于地图服务联系的邮箱
-NOMINATIM_USER_AGENT=TripDesigner/1.0 (your-contact@example.com)
+https://tripdesigner.onrender.com
 ```
 
 ## 编辑界面
