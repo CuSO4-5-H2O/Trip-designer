@@ -18,6 +18,7 @@
     enhanceQuickPlanPanel();
     enhancePresetPanel();
     enhanceMobileQuickbar();
+    enhanceDayCards();
   }
 
   function enhanceQuickPlanPanel() {
@@ -85,6 +86,23 @@
     bar.addEventListener("click", handleEntryAction);
   }
 
+  function enhanceDayCards() {
+    document.querySelectorAll(".day-card[data-day-id]").forEach((card) => {
+      const content = card.querySelector(".day-content");
+      if (!content || content.querySelector(".day-direct-actions")) return;
+      const actions = document.createElement("div");
+      actions.className = "day-direct-actions";
+      actions.innerHTML = `
+        <button class="primary-action" type="button" data-entry-action="add-activity-for-day">添加事项</button>
+        <button class="ghost-action" type="button" data-entry-action="budget-for-day">预算</button>
+      `;
+      const meta = content.querySelector(".day-meta");
+      if (meta?.nextSibling) content.insertBefore(actions, meta.nextSibling);
+      else content.prepend(actions);
+      actions.addEventListener("click", handleEntryAction);
+    });
+  }
+
   function toggleQuickPlan(panel) {
     const next = !panel.classList.contains("is-collapsed");
     panel.classList.toggle("is-collapsed", next);
@@ -105,7 +123,8 @@
     if (action === "new-list") return clickAndToast("#addListBtn", "已新建行程单");
     if (action === "add-day") return clickAndToast("#addDayTopBtn, #addDayBtn", "已添加一天");
     if (action === "add-activity") return focusActivityForm();
-    if (action === "budget") return scrollToTarget("#budgetPanel", true);
+    if (action === "add-activity-for-day") return focusDayActivity(button);
+    if (action === "budget-for-day" || action === "budget") return scrollToTarget("#budgetPanel", true);
     if (action === "quick-plan") return showQuickPlan();
   }
 
@@ -117,6 +136,13 @@
     }
     button.click();
     showToast(text);
+  }
+
+  function focusDayActivity(button) {
+    const card = button.closest(".day-card[data-day-id]");
+    const dayId = card?.dataset.dayId;
+    if (dayId && window.TripPlanner?.selectDay) window.TripPlanner.selectDay(dayId);
+    window.setTimeout(() => focusActivityForm(), 90);
   }
 
   function focusActivityForm() {
