@@ -12,11 +12,12 @@
   const modeLabels = { plane: "飞机", train: "火车", bus: "大巴", boat: "船", car: "车", walk: "步行" };
 
   function init() {
+    window.TripDesignerMap = { getLastPlan: () => lastPlan, calculate: () => renderProviderMap() };
     document.addEventListener("click", (event) => {
       const mapButton = event.target.closest?.("[data-map]");
       if (mapButton) {
         scope = mapButton.dataset.map || "list";
-        syncToolbarState("待计算路线");
+        invalidateRoute("待计算路线");
         return;
       }
       const calc = event.target.closest?.("#mapCalculateBtn");
@@ -44,14 +45,14 @@
         editRouteTransport(routeEdit.dataset.routeEdit);
         return;
       }
-      if (event.target.closest?.(".day-main,.trip-list-item")) syncToolbarState("待计算路线");
+      if (event.target.closest?.(".day-main,.trip-list-item")) invalidateRoute("待计算路线");
     });
 
     document.addEventListener("change", (event) => {
       if (event.target?.id === "mapProviderSelect") {
         localStorage.setItem(providerStoreKey, event.target.value || "auto");
         resetRuntime();
-        syncToolbarState("已切换地图服务，点击计算路线");
+        invalidateRoute("已切换地图服务，点击计算路线");
       }
     });
 
@@ -81,6 +82,7 @@
       setRouteStatus("");
       resetRuntime(true);
       canvas.classList.add("is-provider-map");
+      lastPlan = null;
       return;
     }
 
@@ -120,6 +122,7 @@
       status.textContent = failed ? `已定位 ${located} 个地点，${failed} 个未定位` : `已定位 ${located} 个地点`;
     } catch (error) {
       if (token !== renderToken) return;
+      lastPlan = null;
       resetRuntime(true);
       canvas.classList.add("is-provider-map");
       status.textContent = error.message || "地图加载失败";
@@ -165,8 +168,14 @@
     if (button) button.textContent = panel.classList.contains("is-collapsed") ? "展开" : "收起";
   }
 
+  function invalidateRoute(text = "待计算路线") {
+    lastPlan = null;
+    syncToolbarState(text);
+    const box = document.querySelector("#routeStatus");
+    if (box && box.innerHTML) setRouteStatus("已切换选择，点击计算路线");
+  }
+
   function syncToolbarState(text = "点击计算路线") {
-    installPanels();
     syncScopeFromUi();
     const status = document.querySelector("#mapStatus");
     if (status && !lastPlan) status.textContent = text;
@@ -225,7 +234,7 @@
   function renderRouteSummary(plan) {
     const summary = plan.summary || {}; const segments = plan.segments || [];
     const total = `<div class="route-total"><strong>${formatDistance(summary.distance)} · ${formatDuration(summary.duration)}</strong><span>${segments.length} 段路线${plan.cached ? " · 已缓存" : ""}</span><button class="mini-action" id="routeCollapseBtn" type="button">收起</button></div>`;
-    const rows = segments.slice(0, 24).map((segment, index) => `<div class="route-row"><span class="route-mode-chip">${modeLabels[segment.mode] || "车"}</span><strong>${escapeHtml(segment.from)} → ${escapeHtml(segment.to)}</strong><small>${formatDistance(segment.distance)} · ${formatDuration(segment.duration)}${segment.estimated ? " · 估算" : ""}</small>${segment.activityId ? `<button class="mini-action" type="button" data-route-edit="${escapeHtml(segment.activityId)}">修改</button>` : ""}</div>`).join("");
+    const rows = segments.slice(0, 24).map((segment) => `<div class="route-row"><span class="route-mode-chip">${modeLabels[segment.mode] || "车"}</span><strong>${escapeHtml(segment.from)} → ${escapeHtml(segment.to)}</strong><small>${formatDistance(segment.distance)} · ${formatDuration(segment.duration)}${segment.estimated ? " · 估算" : ""}</small>${segment.activityId ? `<button class="mini-action" type="button" data-route-edit="${escapeHtml(segment.activityId)}">修改</button>` : ""}</div>`).join("");
     setRouteStatus(total + (rows ? `<div class="route-list">${rows}</div>` : ""));
   }
 
