@@ -31,21 +31,21 @@ jobs:
             node --check "$file"
           done < <(find . -maxdepth 2 -name '*.js' -print0)
 
-      - name: Start server and verify endpoints
+      - name: Start runtime and verify endpoints
         shell: bash
         run: |
           set -euo pipefail
           export PORT=4177
-          export DATA_DIR="$RUNNER_TEMP/trip-designer-data"
+          export DATA_DIR="$RUNNER_TEMP/trip-designer-runtime-data"
           export deepseek="ci-placeholder-key"
           export gaodemap_key="ci-placeholder-amap-key"
           export gaodemap_securitycode="ci-placeholder-amap-security"
           export googlemap="ci-placeholder-google-key"
           export AI_RATE_LIMIT=12
           export AI_CONCURRENCY_LIMIT=3
-          node runtime.js >"$RUNNER_TEMP/server.log" 2>&1 &
+          node runtime.js >"$RUNNER_TEMP/runtime.log" 2>&1 &
           SERVER_PID=$!
-          trap 'kill "$SERVER_PID" 2>/dev/null || true; cat "$RUNNER_TEMP/server.log"' EXIT
+          trap 'kill "$SERVER_PID" 2>/dev/null || true; cat "$RUNNER_TEMP/runtime.log"' EXIT
 
           for attempt in {1..20}; do
             if curl --fail --silent http://127.0.0.1:4177/healthz >"$RUNNER_TEMP/health.json"; then
@@ -76,3 +76,27 @@ jobs:
           grep -q './entry-actions.js?v=entry-20260712a' "$RUNNER_TEMP/index.html"
           grep -q './entry-actions.css?v=entry-20260712a' "$RUNNER_TEMP/index.html"
           ! grep -q 'leaflet' "$RUNNER_TEMP/index.html"
+
+      - name: Verify direct Render server entry
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PORT=4178
+          export DATA_DIR="$RUNNER_TEMP/trip-designer-server-data"
+          export gaodemap_key="ci-placeholder-amap-key"
+          export gaodemap_securitycode="ci-placeholder-amap-security"
+          export googlemap="ci-placeholder-google-key"
+          node server.js >"$RUNNER_TEMP/server.log" 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true; cat "$RUNNER_TEMP/server.log"' EXIT
+
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:4178/api/map-config >"$RUNNER_TEMP/server-map-config.json"; then
+              break
+            fi
+            sleep 0.25
+          done
+
+          cat "$RUNNER_TEMP/server-map-config.json"
+          grep -q '"ok":true' "$RUNNER_TEMP/server-map-config.json"
+          grep -q '"defaultProvider":"amap"' "$RUNNER_TEMP/server-map-config.json"
