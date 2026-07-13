@@ -102,10 +102,10 @@ jobs:
           grep -q '"ok":true' "$RUNNER_TEMP/room-state.json"
 
           curl --fail --silent 'http://127.0.0.1:4177/?room=1075424A' >"$RUNNER_TEMP/index.html"
-          grep -q 'render-20260713s' "$RUNNER_TEMP/index.html"
+          grep -q 'render-20260713t' "$RUNNER_TEMP/index.html"
           grep -q './room-bootstrap.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './input-performance.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
-          grep -q './startup-cache-guard.js?v=render-20260713k' "$RUNNER_TEMP/index.html"
+          grep -q './startup-cache-guard.js?v=render-20260713t' "$RUNNER_TEMP/index.html"
           grep -q './cloud-sync-guard.js?v=render-20260713h' "$RUNNER_TEMP/index.html"
           grep -q './app-collab.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './connection-guard.js?v=render-20260713s' "$RUNNER_TEMP/index.html"
