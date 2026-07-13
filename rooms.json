@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T15:00:35.503Z",
+  "savedAt": "2026-07-13T15:03:01.486Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1026,7 +1026,7 @@
       }
     },
     "94A60693": {
-      "revision": 8,
+      "revision": 9,
       "state": {
         "version": 2,
         "activeListId": "6b37066f-eca3-4353-a402-324044b4eaa9",
@@ -1058,7 +1058,7 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-13",
               "originCity": "",
-              "selectedDayId": "97c7ba33-45ab-466f-9a17-773c00c9b460",
+              "selectedDayId": "9f9c50ae-bb63-43ab-bcf2-637a24523d45",
               "dayLimit": 30,
               "days": [
                 {
@@ -1129,6 +1129,14 @@
                   "updatedAt": 1783952835992,
                   "orderUpdatedAt": 1783952835992,
                   "activities": []
+                },
+                {
+                  "id": "9f9c50ae-bb63-43ab-bcf2-637a24523d45",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1783954980347,
+                  "orderUpdatedAt": 1783954980347
                 }
               ],
               "budget": {
@@ -1137,11 +1145,11 @@
                 "limit": 0,
                 "updatedAt": 1783952761433
               },
-              "updatedAt": 1783954576310,
-              "orderUpdatedAt": 1783954572207
+              "updatedAt": 1783954980347,
+              "orderUpdatedAt": 1783954980347
             },
             "createdAt": 1783952761433,
-            "updatedAt": 1783954576310
+            "updatedAt": 1783954980347
           }
         ],
         "deleted": {
@@ -1153,7 +1161,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1783954577194
+        "updatedAt": 1783954981235
       }
     }
   }
