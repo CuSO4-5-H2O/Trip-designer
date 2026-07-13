@@ -38,13 +38,11 @@ const mimeTypes = {
 main().catch((error) => {
   console.warn(`Startup failed: ${error.message}`);
   loadRoomsFromDisk();
-  seedDefaultRoomIfEmpty();
   startServer();
 });
 
 async function main() {
   await loadRooms();
-  seedDefaultRoomIfEmpty();
   startServer();
 }
 
@@ -166,20 +164,22 @@ function loadRoomsFromDisk() {
   }
 }
 
-function seedDefaultRoomIfEmpty() {
-  if (rooms.size) return;
-  try {
-    const seed = require("./imported-itinerary");
-    rooms.set(seed.roomId, {
-      state: normalizeLibrary({ version: 2, activeListId: seed.list.id, lists: [seed.list], updatedAt: seed.list.updatedAt }),
-      revision: 1,
-      peers: new Set(),
-    });
-    scheduleSave("seed-default-room");
-    console.log(`Initialized itinerary room ${seed.roomId}`);
-  } catch (error) {
-    console.warn(`Could not initialize itinerary seed: ${error.message}`);
-  }
+function createEmptyRoomState(roomId) {
+  const stamp = Date.now();
+  const day = { id: crypto.randomUUID(), location: "", stay: "", activities: [], updatedAt: stamp, orderUpdatedAt: stamp };
+  const trip = {
+    tripTitle: "新行程单",
+    startDate: new Date(stamp).toISOString().slice(0, 10),
+    originCity: "",
+    selectedDayId: day.id,
+    dayLimit: 30,
+    days: [day],
+    budget: { currency: "CNY", items: {}, limit: 0, updatedAt: stamp },
+    updatedAt: stamp,
+    orderUpdatedAt: stamp,
+  };
+  const list = { id: crypto.randomUUID(), name: "新行程单", trip, createdAt: stamp, updatedAt: stamp };
+  return normalizeLibrary({ version: 2, activeListId: list.id, members: [], lists: [list], deleted: normalizeDeleted(), updatedAt: stamp, roomId });
 }
 
 function applyRoomsPayload(saved = {}) {
@@ -284,8 +284,12 @@ function handleMessage(socket, raw) {
 }
 
 function ensureRoom(roomId) {
-  if (!rooms.has(roomId)) rooms.set(roomId, { state: null, revision: 0, peers: new Set() });
-  return rooms.get(roomId);
+  if (!rooms.has(roomId)) {
+    rooms.set(roomId, { state: createEmptyRoomState(roomId), revision: 0, peers: new Set() });
+  }
+  const room = rooms.get(roomId);
+  if (!room.state) room.state = createEmptyRoomState(roomId);
+  return room;
 }
 
 async function handleRoomState(req, requestUrl, res) {
