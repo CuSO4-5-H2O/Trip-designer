@@ -31,7 +31,7 @@
     enhancing = true;
     try {
       enhanceListActions();
-      enhanceQuickPlan();
+      enhanceQuickPlanActions();
       removeNestedDayPlusButtons();
     } finally {
       window.setTimeout(() => {
@@ -49,25 +49,14 @@
     heading.append(box);
   }
 
-  function enhanceQuickPlan() {
+  function enhanceQuickPlanActions() {
     const panel = document.querySelector("#quickPlanPanel");
-    if (!panel) return;
-    const heading = panel.querySelector(".quick-plan-heading");
-    if (heading && !heading.querySelector(".quick-plan-toggle")) {
-      const button = document.createElement("button");
-      button.className = "mini-action quick-plan-toggle";
-      button.type = "button";
-      button.dataset.liteAction = "toggle-quick-plan";
-      button.textContent = panel.classList.contains("is-collapsed") ? "展开" : "收起";
-      heading.append(button);
-    }
-    if (!panel.querySelector(".quick-entry-actions")) {
-      const bar = document.createElement("div");
-      bar.className = "quick-entry-actions";
-      bar.innerHTML = `<button class="ghost-action" type="button" data-lite-action="new-list">新建行程单</button><button class="primary-action" type="button" data-lite-action="add-day">加一天</button><button class="ghost-action" type="button" data-lite-action="add-activity">加事项</button>`;
-      const form = panel.querySelector(".quick-plan-form");
-      if (form) panel.insertBefore(bar, form); else panel.append(bar);
-    }
+    if (!panel || panel.querySelector(".quick-entry-actions")) return;
+    const bar = document.createElement("div");
+    bar.className = "quick-entry-actions";
+    bar.innerHTML = `<button class="ghost-action" type="button" data-lite-action="new-list">新建行程单</button><button class="primary-action" type="button" data-lite-action="add-day">加一天</button><button class="ghost-action" type="button" data-lite-action="add-activity">加事项</button>`;
+    const form = panel.querySelector(".quick-plan-form");
+    if (form) panel.insertBefore(bar, form); else panel.append(bar);
   }
 
   function removeNestedDayPlusButtons() {
@@ -78,16 +67,6 @@
     const button = event.target.closest?.("[data-lite-action]");
     if (!button) return;
     const action = button.dataset.liteAction;
-    if (action === "toggle-quick-plan") {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation?.();
-      const panel = button.closest("#quickPlanPanel");
-      const collapsed = !panel.classList.contains("is-collapsed");
-      panel.classList.toggle("is-collapsed", collapsed);
-      button.textContent = collapsed ? "展开" : "收起";
-      return;
-    }
     if (action === "new-list") {
       event.preventDefault();
       event.stopPropagation();
