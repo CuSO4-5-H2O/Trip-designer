@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T12:49:22.799Z",
+  "savedAt": "2026-07-13T12:50:44.108Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -51,7 +51,7 @@
       }
     },
     "1075424A": {
-      "revision": 3,
+      "revision": 5,
       "state": {
         "version": 2,
         "activeListId": "list-greece-italy",
@@ -66,7 +66,7 @@
               "startDate": "2026-08-05",
               "originCity": "上海",
               "selectedDayId": "c0805d2f-2c16-4eb8-88b5-6af212141819",
-              "updatedAt": 1783946878017,
+              "updatedAt": 1783947039166,
               "days": [
                 {
                   "id": "it-day-1",
@@ -818,7 +818,7 @@
                   "activities": []
                 }
               ],
-              "dayLimit": 30,
+              "dayLimit": 43,
               "budget": {
                 "currency": "CNY",
                 "items": {},
@@ -827,7 +827,7 @@
               "orderUpdatedAt": 1783946878017
             },
             "createdAt": 1783652400000,
-            "updatedAt": 1783946878017
+            "updatedAt": 1783947039166
           }
         ],
         "deleted": {
@@ -836,7 +836,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1783946962548
+        "updatedAt": 1783947043859
       }
     },
     "102FB440": {
