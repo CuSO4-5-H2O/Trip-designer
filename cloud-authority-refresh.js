@@ -70,7 +70,7 @@
         orderUpdatedAt: day.orderUpdatedAt || 0,
       })),
       updatedAt: list.updatedAt || 0,
-    }));
+    })));
   }
 
   function markCloudReady(state, revision) {
