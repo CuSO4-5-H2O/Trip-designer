@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T12:48:02.919Z",
+  "savedAt": "2026-07-13T12:49:22.799Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -51,7 +51,7 @@
       }
     },
     "1075424A": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "list-greece-italy",
@@ -813,9 +813,9 @@
                   "id": "c0805d2f-2c16-4eb8-88b5-6af212141819",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1783946878017,
-                  "orderUpdatedAt": 1783946878017
+                  "orderUpdatedAt": 1783946878017,
+                  "activities": []
                 }
               ],
               "dayLimit": 30,
@@ -836,7 +836,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1783946882668
+        "updatedAt": 1783946962548
       }
     },
     "102FB440": {
