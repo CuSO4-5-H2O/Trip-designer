@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T15:09:37.809Z",
+  "savedAt": "2026-07-13T15:09:41.403Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1026,7 +1026,7 @@
       }
     },
     "94A60693": {
-      "revision": 27,
+      "revision": 28,
       "state": {
         "version": 2,
         "activeListId": "6b37066f-eca3-4353-a402-324044b4eaa9",
@@ -1059,14 +1059,14 @@
                   "id": "651ee30b-fceb-4065-9122-a19c84f343a7",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1783955376665,
+                  "updatedAt": 1783955380257,
                   "orderUpdatedAt": 1783955282418,
                   "activities": [
                     {
                       "id": "879f0d05-1948-4a33-b261-5ec9d67680d3",
                       "time": "11:11",
                       "title": "11",
-                      "place": "",
+                      "place": "dd",
                       "note": "",
                       "tags": [],
                       "done": false,
@@ -1075,7 +1075,7 @@
                         "currency": "CNY"
                       },
                       "transport": null,
-                      "updatedAt": 1783955376665
+                      "updatedAt": 1783955380257
                     },
                     {
                       "id": "2374ea79-83c7-4439-a90e-067d3944e323",
@@ -1106,11 +1106,11 @@
                 "limit": 0,
                 "updatedAt": 1783952761433
               },
-              "updatedAt": 1783955376666,
+              "updatedAt": 1783955380257,
               "orderUpdatedAt": 1783955275615
             },
             "createdAt": 1783952761433,
-            "updatedAt": 1783955376666
+            "updatedAt": 1783955380257
           }
         ],
         "deleted": {
@@ -1142,7 +1142,7 @@
             "cff585ff-96f1-406f-a8ab-649cc85b9619": 1783955294360
           }
         },
-        "updatedAt": 1783955377559
+        "updatedAt": 1783955381152
       }
     }
   }
