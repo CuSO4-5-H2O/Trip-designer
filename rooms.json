@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T14:21:44.351Z",
+  "savedAt": "2026-07-13T14:21:46.240Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -937,7 +937,7 @@
       }
     },
     "3FC10CC5": {
-      "revision": 4,
+      "revision": 5,
       "state": {
         "version": 2,
         "activeListId": "ed35b97c-d65d-4293-b452-f9204e969cd2",
@@ -951,10 +951,10 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-13",
               "originCity": "",
-              "selectedDayId": "ac5ee1ac-6d52-4326-b0d4-4ae40b14b8a9",
+              "selectedDayId": "0cf85094-9e8f-4b5e-a0bb-8781be1444a7",
               "dayLimit": 30,
-              "updatedAt": 1783952503225,
-              "orderUpdatedAt": 1783952503225,
+              "updatedAt": 1783952505116,
+              "orderUpdatedAt": 1783952505116,
               "days": [
                 {
                   "id": "2333c857-d6e6-4435-9fa3-2313a4f67aa5",
@@ -992,9 +992,17 @@
                   "id": "ac5ee1ac-6d52-4326-b0d4-4ae40b14b8a9",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1783952503225,
-                  "orderUpdatedAt": 1783952503225
+                  "orderUpdatedAt": 1783952503225,
+                  "activities": []
+                },
+                {
+                  "id": "0cf85094-9e8f-4b5e-a0bb-8781be1444a7",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1783952505116,
+                  "orderUpdatedAt": 1783952505116
                 }
               ],
               "budget": {
@@ -1005,7 +1013,7 @@
               }
             },
             "createdAt": 1783951228413,
-            "updatedAt": 1783952503225
+            "updatedAt": 1783952505116
           }
         ],
         "deleted": {
@@ -1014,7 +1022,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1783952504100
+        "updatedAt": 1783952505990
       }
     }
   }
