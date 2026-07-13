@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T15:07:40.935Z",
+  "savedAt": "2026-07-13T15:07:49.104Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1026,7 +1026,7 @@
       }
     },
     "94A60693": {
-      "revision": 18,
+      "revision": 19,
       "state": {
         "version": 2,
         "activeListId": "6b37066f-eca3-4353-a402-324044b4eaa9",
@@ -1065,8 +1065,8 @@
                   "id": "651ee30b-fceb-4065-9122-a19c84f343a7",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1783955259793,
-                  "orderUpdatedAt": 1783955259793,
+                  "updatedAt": 1783955267960,
+                  "orderUpdatedAt": 1783955267960,
                   "activities": [
                     {
                       "id": "879f0d05-1948-4a33-b261-5ec9d67680d3",
@@ -1079,6 +1079,18 @@
                       "budget": null,
                       "transport": null,
                       "updatedAt": 1783955259793
+                    },
+                    {
+                      "id": "2374ea79-83c7-4439-a90e-067d3944e323",
+                      "time": "22:22",
+                      "title": "22",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1783955267960
                     }
                   ]
                 },
@@ -1097,11 +1109,11 @@
                 "limit": 0,
                 "updatedAt": 1783952761433
               },
-              "updatedAt": 1783955259793,
+              "updatedAt": 1783955267960,
               "orderUpdatedAt": 1783955248048
             },
             "createdAt": 1783952761433,
-            "updatedAt": 1783955259793
+            "updatedAt": 1783955267960
           }
         ],
         "deleted": {
@@ -1131,7 +1143,7 @@
           },
           "members": {}
         },
-        "updatedAt": 1783955260685
+        "updatedAt": 1783955268853
       }
     }
   }
