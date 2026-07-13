@@ -91,7 +91,8 @@ jobs:
           grep -q 'tripdesigner:last-room' room-bootstrap.js
           grep -q 'showRoomGate' room-bootstrap.js
           grep -q '进入同一个房间' room-bootstrap.js
-          grep -q './app-collab.js?v=render-20260713y' room-bootstrap.js
+          grep -q 'APP_BUILD_VERSION = "render-20260713y"' room-bootstrap.js
+          grep -q 'app-collab.js?v=${APP_BUILD_VERSION}' room-bootstrap.js
           ! grep -q 'DEFAULT_ROOM_ID = "1075424A"' room-bootstrap.js
           ! grep -q 'if (!roomId) return;' room-bootstrap.js
           ! grep -q './app-collab.js?v=' index.html
@@ -164,7 +165,8 @@ jobs:
           ! grep -q './entry-actions.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
 
           curl --fail --silent 'http://127.0.0.1:4177/room-bootstrap.js' >"$RUNNER_TEMP/room-bootstrap.js"
-          grep -q './app-collab.js?v=render-20260713y' "$RUNNER_TEMP/room-bootstrap.js"
+          grep -q 'APP_BUILD_VERSION = "render-20260713y"' "$RUNNER_TEMP/room-bootstrap.js"
+          grep -q 'app-collab.js?v=${APP_BUILD_VERSION}' "$RUNNER_TEMP/room-bootstrap.js"
           grep -q '进入同一个房间' "$RUNNER_TEMP/room-bootstrap.js"
 
           assets=(
