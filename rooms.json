@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T15:07:18.573Z",
+  "savedAt": "2026-07-13T15:07:32.002Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1026,7 +1026,7 @@
       }
     },
     "94A60693": {
-      "revision": 16,
+      "revision": 17,
       "state": {
         "version": 2,
         "activeListId": "6b37066f-eca3-4353-a402-324044b4eaa9",
@@ -1058,150 +1058,9 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-13",
               "originCity": "",
-              "selectedDayId": "ca8ec301-1504-490d-b0bf-be003e0d2acd",
+              "selectedDayId": "651ee30b-fceb-4065-9122-a19c84f343a7",
               "dayLimit": 30,
               "days": [
-                {
-                  "id": "ca8ec301-1504-490d-b0bf-be003e0d2acd",
-                  "location": "东京",
-                  "stay": "",
-                  "updatedAt": 1783955003416,
-                  "orderUpdatedAt": 1783955003416,
-                  "activities": []
-                },
-                {
-                  "id": "d84710a8-f0d1-427b-9949-d7a14be0aa92",
-                  "location": "东京",
-                  "stay": "",
-                  "updatedAt": 1783955003416,
-                  "orderUpdatedAt": 1783955003416,
-                  "activities": []
-                },
-                {
-                  "id": "5f6b293b-e826-460b-8b46-160c1a706f0c",
-                  "location": "东京",
-                  "stay": "",
-                  "updatedAt": 1783955003416,
-                  "orderUpdatedAt": 1783955003416,
-                  "activities": []
-                },
-                {
-                  "id": "7e253c40-a0d4-4823-ab7a-b92030cab92d",
-                  "location": "大阪",
-                  "stay": "",
-                  "updatedAt": 1783955003416,
-                  "orderUpdatedAt": 1783955003416,
-                  "activities": []
-                },
-                {
-                  "id": "4a041dcb-6e4e-4548-bfe0-a16b7a6ea9f5",
-                  "location": "大阪",
-                  "stay": "",
-                  "updatedAt": 1783955003416,
-                  "orderUpdatedAt": 1783955003416,
-                  "activities": []
-                },
-                {
-                  "id": "97c7ba33-45ab-466f-9a17-773c00c9b460",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783954368958,
-                  "orderUpdatedAt": 1783954368958,
-                  "activities": [
-                    {
-                      "id": "d7c4884f-c6f2-4a55-8326-e9e8f8715bc1",
-                      "time": "04:44",
-                      "title": "55544",
-                      "place": "",
-                      "note": "",
-                      "tags": [],
-                      "done": false,
-                      "budget": null,
-                      "transport": null,
-                      "updatedAt": 1783954368958
-                    }
-                  ]
-                },
-                {
-                  "id": "83603e7b-db42-44b3-b7a3-b8173b599195",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783952830772,
-                  "orderUpdatedAt": 1783952830772,
-                  "activities": []
-                },
-                {
-                  "id": "10beccd5-cd05-40d4-aa17-799f47ec5d44",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783952831893,
-                  "orderUpdatedAt": 1783952831893,
-                  "activities": []
-                },
-                {
-                  "id": "15b2be2b-f5e5-4e02-a28b-5c2f058713b0",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783952832677,
-                  "orderUpdatedAt": 1783952832677,
-                  "activities": []
-                },
-                {
-                  "id": "5d09d1b0-98ce-4c13-9095-928ac994696f",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783952833675,
-                  "orderUpdatedAt": 1783952833675,
-                  "activities": []
-                },
-                {
-                  "id": "1662fcad-5a10-4f3f-839b-736243049eb8",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783952835017,
-                  "orderUpdatedAt": 1783952835017,
-                  "activities": []
-                },
-                {
-                  "id": "590b50c9-6fe6-4102-8c85-3da97f175986",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783952835992,
-                  "orderUpdatedAt": 1783952835992,
-                  "activities": []
-                },
-                {
-                  "id": "9f9c50ae-bb63-43ab-bcf2-637a24523d45",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783954980347,
-                  "orderUpdatedAt": 1783954980347,
-                  "activities": []
-                },
-                {
-                  "id": "69895673-2510-4422-9c48-be1fcc6f4157",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783954987261,
-                  "orderUpdatedAt": 1783954987261,
-                  "activities": []
-                },
-                {
-                  "id": "238ba4d8-9d74-4f7b-93b7-1506e68cbda1",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783954982738,
-                  "orderUpdatedAt": 1783954982738,
-                  "activities": []
-                },
-                {
-                  "id": "a3cc63cc-075a-415a-aa12-bccc041e91dd",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1783954987716,
-                  "orderUpdatedAt": 1783954987716,
-                  "activities": []
-                },
                 {
                   "id": "651ee30b-fceb-4065-9122-a19c84f343a7",
                   "location": "",
@@ -1225,23 +1084,41 @@
                 "limit": 0,
                 "updatedAt": 1783952761433
               },
-              "updatedAt": 1783955021183,
-              "orderUpdatedAt": 1783955021183
+              "updatedAt": 1783955248048,
+              "orderUpdatedAt": 1783955248048
             },
             "createdAt": 1783952761433,
-            "updatedAt": 1783955021183
+            "updatedAt": 1783955248048
           }
         ],
         "deleted": {
           "lists": {},
           "days": {
             "e6266c08-346b-4b33-9e7a-aaaba926e59a": 1783954570805,
-            "9547f1cc-d736-446e-82cb-044f8b5f9370": 1783954572207
+            "9547f1cc-d736-446e-82cb-044f8b5f9370": 1783954572207,
+            "97c7ba33-45ab-466f-9a17-773c00c9b460": 1783955241850,
+            "83603e7b-db42-44b3-b7a3-b8173b599195": 1783955242378,
+            "10beccd5-cd05-40d4-aa17-799f47ec5d44": 1783955242805,
+            "15b2be2b-f5e5-4e02-a28b-5c2f058713b0": 1783955243121,
+            "5d09d1b0-98ce-4c13-9095-928ac994696f": 1783955243307,
+            "1662fcad-5a10-4f3f-839b-736243049eb8": 1783955243492,
+            "590b50c9-6fe6-4102-8c85-3da97f175986": 1783955243638,
+            "9f9c50ae-bb63-43ab-bcf2-637a24523d45": 1783955243758,
+            "69895673-2510-4422-9c48-be1fcc6f4157": 1783955244036,
+            "238ba4d8-9d74-4f7b-93b7-1506e68cbda1": 1783955244184,
+            "a3cc63cc-075a-415a-aa12-bccc041e91dd": 1783955244349,
+            "4a041dcb-6e4e-4548-bfe0-a16b7a6ea9f5": 1783955246330,
+            "7e253c40-a0d4-4823-ab7a-b92030cab92d": 1783955246510,
+            "5f6b293b-e826-460b-8b46-160c1a706f0c": 1783955247019,
+            "d84710a8-f0d1-427b-9949-d7a14be0aa92": 1783955247537,
+            "ca8ec301-1504-490d-b0bf-be003e0d2acd": 1783955248048
           },
-          "activities": {},
+          "activities": {
+            "d7c4884f-c6f2-4a55-8326-e9e8f8715bc1": 1783955241850
+          },
           "members": {}
         },
-        "updatedAt": 1783955022071
+        "updatedAt": 1783955251752
       }
     }
   }
