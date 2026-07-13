@@ -31,6 +31,7 @@
     backups,
     allowLocalStartupCache: false,
     originalGetItem,
+    cloudRoomAuthoritative: true,
   };
 
   Storage.prototype.getItem = function guardedGetItem(key) {
@@ -40,9 +41,13 @@
     return originalGetItem.call(this, key);
   };
 
-  window.setTimeout(() => {
+  // In shared cloud rooms the server must be the first visible source of truth.
+  // Local startup cache remains available through the recovery menu, but it is
+  // never used automatically for the initial render. This prevents stale trips
+  // from flashing before the server state arrives.
+  window.TripDesignerAllowLocalStartupCache = () => {
     if (window.__TripStartupCacheGuard) window.__TripStartupCacheGuard.allowLocalStartupCache = true;
-  }, 10000);
+  };
 
   function fingerprintText(text) {
     const value = String(text || "");
