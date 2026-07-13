@@ -13,6 +13,7 @@
   window.TripDesignerFlushSync = flushNow;
   window.fetch = throttledFetch;
   WebSocket.prototype.send = throttledSend;
+  window.addEventListener("pagehide", flushOnPageHide);
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initManualSync, { once: true });
   else initManualSync();
@@ -46,7 +47,7 @@
           reason: body.reason || "http-state",
           baseRevision: body.baseRevision || 0,
         });
-        markQueued();
+        window.setTimeout(markQueued, 30);
         return Promise.resolve(jsonResponse({ ok: true, queued: true, throttled: true }));
       }
     }
@@ -91,6 +92,29 @@
     }
   }
 
+  function flushOnPageHide() {
+    if (!queuedState) return;
+    const payload = queuedState;
+    const body = JSON.stringify({ ...payload, reason: `${payload.reason || queuedReason}:pagehide` });
+    const url = `/api/room-state?room=${encodeURIComponent(payload.roomId)}`;
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([body], { type: "application/json" });
+        if (navigator.sendBeacon(url, blob)) {
+          queuedState = null;
+          clearTimeout(queueTimer);
+          return;
+        }
+      }
+      originalFetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+        keepalive: true,
+      }).catch(() => {});
+    } catch {}
+  }
+
   function initManualSync() {
     const syncState = document.querySelector("#syncState");
     if (!syncState || syncState.dataset.throttleBound === "1") return;
@@ -107,6 +131,7 @@
   }
 
   function markQueued() {
+    if (!queuedState) return;
     const seconds = Math.max(1, Math.ceil((AUTO_SYNC_DELAY - (Date.now() - lastQueuedAt)) / 1000));
     setSyncText(`本地已保存，${seconds}秒后同步`, true);
   }
