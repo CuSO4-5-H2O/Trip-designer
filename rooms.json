@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T12:50:46.709Z",
+  "savedAt": "2026-07-13T12:50:50.113Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -51,7 +51,7 @@
       }
     },
     "1075424A": {
-      "revision": 5,
+      "revision": 6,
       "state": {
         "version": 2,
         "activeListId": "list-greece-italy",
@@ -836,7 +836,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1783947043859
+        "updatedAt": 1783947049863
       }
     },
     "102FB440": {
