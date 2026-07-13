@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T13:58:50.273Z",
+  "savedAt": "2026-07-13T14:00:36.194Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -934,6 +934,63 @@
           "members": {}
         },
         "updatedAt": 1783941393875
+      }
+    },
+    "3FC10CC5": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "ed35b97c-d65d-4293-b452-f9204e969cd2",
+        "members": [],
+        "lists": [
+          {
+            "id": "ed35b97c-d65d-4293-b452-f9204e969cd2",
+            "name": "新行程单",
+            "trip": {
+              "version": 1,
+              "tripTitle": "新行程单",
+              "startDate": "2026-07-13",
+              "originCity": "",
+              "selectedDayId": "3a517f32-c7e2-48f9-87a6-83f7b496edd9",
+              "dayLimit": 30,
+              "updatedAt": 1783951234689,
+              "orderUpdatedAt": 1783951234689,
+              "days": [
+                {
+                  "id": "2333c857-d6e6-4435-9fa3-2313a4f67aa5",
+                  "location": "",
+                  "stay": "",
+                  "updatedAt": 1783951228413,
+                  "orderUpdatedAt": 1783951228413,
+                  "activities": []
+                },
+                {
+                  "id": "3a517f32-c7e2-48f9-87a6-83f7b496edd9",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1783951234689,
+                  "orderUpdatedAt": 1783951234689
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1783951228413
+              }
+            },
+            "createdAt": 1783951228413,
+            "updatedAt": 1783951234689
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1783951234689
       }
     }
   }
