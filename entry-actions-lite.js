@@ -2,23 +2,42 @@
   "use strict";
 
   let enhanceTimer = 0;
+  let observer = null;
+  let enhancing = false;
 
   function init() {
     document.addEventListener("click", handleClick, true);
     scheduleEnhance();
     window.setTimeout(scheduleEnhance, 300);
-    window.setInterval(scheduleEnhance, 1800);
+    observeStableAreas();
+  }
+
+  function observeStableAreas() {
+    if (observer) return;
+    observer = new MutationObserver((mutations) => {
+      if (enhancing) return;
+      if (!mutations.some((mutation) => mutation.type === "childList")) return;
+      scheduleEnhance();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   function scheduleEnhance() {
     clearTimeout(enhanceTimer);
-    enhanceTimer = window.setTimeout(enhance, 60);
+    enhanceTimer = window.setTimeout(enhance, 80);
   }
 
   function enhance() {
-    enhanceListActions();
-    enhanceQuickPlan();
-    enhanceDayCards();
+    enhancing = true;
+    try {
+      enhanceListActions();
+      enhanceQuickPlan();
+      removeNestedDayPlusButtons();
+    } finally {
+      window.setTimeout(() => {
+        enhancing = false;
+      }, 0);
+    }
   }
 
   function enhanceListActions() {
@@ -51,19 +70,8 @@
     }
   }
 
-  function enhanceDayCards() {
-    document.querySelectorAll(".day-card[data-day-id]").forEach((card) => {
-      const actions = card.querySelector(".day-inline-actions");
-      if (!actions || actions.querySelector(".day-header-plus")) return;
-      const button = document.createElement("button");
-      button.className = "day-header-plus";
-      button.type = "button";
-      button.dataset.liteAction = "add-activity";
-      button.title = "添加事项";
-      button.setAttribute("aria-label", "添加事项");
-      button.textContent = "+";
-      actions.prepend(button);
-    });
+  function removeNestedDayPlusButtons() {
+    document.querySelectorAll(".day-header-plus").forEach((button) => button.remove());
   }
 
   function handleClick(event) {
@@ -72,6 +80,8 @@
     const action = button.dataset.liteAction;
     if (action === "toggle-quick-plan") {
       event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
       const panel = button.closest("#quickPlanPanel");
       const collapsed = !panel.classList.contains("is-collapsed");
       panel.classList.toggle("is-collapsed", collapsed);
@@ -80,17 +90,22 @@
     }
     if (action === "new-list") {
       event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
       clickOne("#addListBtn");
       return;
     }
     if (action === "add-day") {
       event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
       clickOne("#addDayTopBtn, #addDayBtn");
       return;
     }
     if (action === "add-activity") {
       event.preventDefault();
       event.stopPropagation();
+      event.stopImmediatePropagation?.();
       const dayId = button.closest(".day-card[data-day-id]")?.dataset.dayId || getSelectedDayId();
       if (dayId) window.TripPlanner?.selectDay?.(dayId);
       focusActivityForm();
@@ -98,6 +113,8 @@
     }
     if (action === "export-list") {
       event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
       exportCurrentList();
     }
   }
@@ -114,9 +131,8 @@
   }
 
   function focusActivityForm() {
-    const panel = document.querySelector(".detail-panel");
-    panel?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    window.setTimeout(() => document.querySelector("#activityTitle")?.focus(), 120);
+    document.body.classList.add("detail-drawer-open");
+    window.setTimeout(() => document.querySelector("#activityTitle")?.focus({ preventScroll: true }), 80);
   }
 
   function exportCurrentList() {
