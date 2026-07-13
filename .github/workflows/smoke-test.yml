@@ -55,6 +55,14 @@ jobs:
             config.js
             server-first.js
             seed-room-1075424A.js
+            imported-itinerary.js
+            inline-edit.js
+            inline-edit.css
+            layout-fix.css
+            transport-multiselect.js
+            transport-multiselect.css
+            entry-actions.js
+            map-providers.js
           )
           for file in "${legacy_files[@]}"; do
             test ! -e "$file"
