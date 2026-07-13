@@ -10,7 +10,7 @@
     document.addEventListener("click", handleClick, true);
     schedule();
     window.setTimeout(schedule, 250);
-    window.setInterval(schedule, 1400);
+    window.setInterval(schedule, 3000);
   }
 
   function schedule() {
@@ -20,6 +20,7 @@
 
   function stabilizeLayout() {
     stabilizeQuickPlan();
+    stabilizeSmartPanels();
     compressCollapsedDays();
   }
 
@@ -55,6 +56,14 @@
     toggles.forEach((button) => {
       if (button === keep) return;
       button.remove();
+    });
+  }
+
+  function stabilizeSmartPanels() {
+    document.querySelectorAll(".smart-map-panel,.ai-panel").forEach((panel) => {
+      const kind = panel.classList.contains("ai-panel") ? "ai" : "map";
+      const button = panel.querySelector(`[data-panel-collapse="${kind}"]`);
+      if (button) button.textContent = panel.classList.contains("is-collapsed") ? "展开" : "收起";
     });
   }
 
@@ -94,9 +103,23 @@
       #quickPlanPanel.is-collapsed .quick-segment-list{display:none!important}
       #quickPlanPanel .quick-plan-heading{margin-bottom:0}
       #quickPlanPanel .quick-plan-toggle{min-width:56px;min-height:34px;justify-content:center}
+      .smart-map-panel,.ai-panel{transition:none!important;overflow:hidden}
+      .smart-map-panel.is-collapsed,.ai-panel.is-collapsed{min-height:0!important;height:auto!important;padding-bottom:10px!important}
+      .smart-map-panel.is-collapsed .map-canvas,
+      .smart-map-panel.is-collapsed #mapStatus,
+      .smart-map-panel.is-collapsed #routeStatus,
+      .smart-map-panel.is-collapsed .route-status,
+      .smart-map-panel.is-collapsed .route-list,
+      .ai-panel.is-collapsed .ai-status,
+      .ai-panel.is-collapsed .ai-results,
+      .ai-panel.is-collapsed .ai-body,
+      .ai-panel.is-collapsed .ai-result,
+      .ai-panel.is-collapsed .ai-error,
+      .ai-panel.is-collapsed .ai-actions{display:none!important}
       .day-card.layout-compressed-day{min-height:0!important}
       .day-card.layout-compressed-day .day-content{display:none!important;padding:0!important}
       .day-card.layout-compressed-day .day-main{min-height:62px}
+      .day-card,.activity-row,.smart-panel,.smart-map-panel,.ai-panel{animation:none!important}
       .day-card,.day-list,.smart-panel{content-visibility:visible!important;contain-intrinsic-size:auto!important}
       @media(max-width:900px){.day-card:not(.active) .day-content{display:none!important}.day-card:not(.active){min-height:0!important}.day-card:not(.active) .day-main{min-height:58px}}
     `;
