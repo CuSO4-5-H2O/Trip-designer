@@ -7,6 +7,7 @@
   function init() {
     installStyles();
     document.addEventListener("click", handleClick, true);
+    document.addEventListener("keydown", handleKeyDown, true);
     document.addEventListener("dragstart", handleDragStartCapture, true);
     scheduleEnhance();
     window.setTimeout(scheduleEnhance, 250);
@@ -26,12 +27,18 @@
 
   function ensureBlankAddZone() {
     const dayList = document.querySelector("#dayList");
-    if (!dayList || dayList.querySelector(".timeline-blank-add-zone")) return;
-    const zone = document.createElement("div");
-    zone.className = "timeline-blank-add-zone";
-    zone.setAttribute("aria-label", "双击添加日期");
-    zone.innerHTML = `<span aria-hidden="true">+</span>`;
-    dayList.append(zone);
+    if (!dayList) return;
+    let zone = dayList.querySelector(".timeline-blank-add-zone");
+    if (!zone) {
+      zone = document.createElement("button");
+      zone.type = "button";
+      zone.className = "timeline-blank-add-zone";
+      zone.innerHTML = `<span aria-hidden="true">+</span>`;
+      dayList.append(zone);
+    }
+    zone.setAttribute("aria-label", "添加日期");
+    zone.title = "添加日期";
+    zone.dataset.hotfixAction = "add-day";
   }
 
   function stabilizeActivityDrag() {
@@ -65,6 +72,14 @@
   }
 
   function handleClick(event) {
+    const addDayZone = event.target.closest?.(".timeline-blank-add-zone,[data-hotfix-action='add-day']");
+    if (addDayZone) {
+      event.preventDefault();
+      event.stopPropagation();
+      addDay();
+      return;
+    }
+
     const addActivityButton = event.target.closest?.(".day-header-plus,.day-card-add-floating,[data-lite-action='add-activity']");
     if (addActivityButton) {
       event.preventDefault();
@@ -75,6 +90,14 @@
     }
   }
 
+  function handleKeyDown(event) {
+    const addDayZone = event.target.closest?.(".timeline-blank-add-zone");
+    if (!addDayZone || !["Enter", " "].includes(event.key)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    addDay();
+  }
+
   function handleDragStartCapture(event) {
     const dayCard = event.target.closest?.(".day-card[data-day-id]");
     if (!dayCard) return;
@@ -82,6 +105,16 @@
     if (event.target.closest(".day-drag-handle,.drag-handle")) return;
     event.preventDefault();
     event.stopPropagation();
+  }
+
+  function addDay() {
+    const topButton = document.querySelector("#addDayTopBtn");
+    if (topButton && !topButton.disabled) {
+      topButton.click();
+      window.setTimeout(scheduleEnhance, 120);
+      return;
+    }
+    toast("已达到天数上限");
   }
 
   function openAddActivity(dayId) {
@@ -118,7 +151,7 @@
     const style = document.createElement("style");
     style.id = "interactionHotfixStyles";
     style.textContent = `
-      #addListBtn.list-plus-button{width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;padding:0!important;border-radius:10px!important;border:1px solid rgba(15,143,131,.28)!important;background:#fff!important;color:var(--teal-dark)!important;box-shadow:none!important;font-size:22px!important;font-weight:860!important;line-height:1!important}#addListBtn.list-plus-button:hover,#addListBtn.list-plus-button:focus-visible{background:var(--teal-soft)!important;border-color:rgba(15,143,131,.48)!important;box-shadow:0 0 0 3px rgba(15,143,131,.1)!important;transform:translateY(-1px)}.list-panel .section-heading{align-items:center}.day-card{position:relative}.day-card-add-floating{position:absolute;right:52px;top:19px;z-index:4;display:grid;width:38px;height:38px;place-items:center;border:1px solid rgba(15,143,131,.24);border-radius:999px;background:var(--teal-soft);color:var(--teal-dark);box-shadow:0 10px 22px rgba(15,143,131,.08);font-size:25px;font-weight:880;line-height:1;transition:transform 160ms var(--ease),border-color 160ms var(--ease),background 160ms var(--ease),box-shadow 160ms var(--ease)}.day-card-add-floating:hover,.day-card-add-floating:focus-visible{outline:none;background:#e5f8f4;border-color:rgba(15,143,131,.48);box-shadow:0 0 0 4px rgba(15,143,131,.1),0 14px 30px rgba(15,143,131,.12);transform:translateY(-1px)}.timeline-blank-add-zone{display:grid;min-height:86px;place-items:center;border:1px dashed rgba(15,143,131,.24);border-radius:var(--radius);background:rgba(255,255,255,.42);color:var(--teal-dark);cursor:copy;transition:border-color 160ms var(--ease),background 160ms var(--ease),box-shadow 160ms var(--ease)}.timeline-blank-add-zone:hover{border-color:rgba(15,143,131,.46);background:rgba(225,244,240,.66);box-shadow:0 12px 28px rgba(15,143,131,.08)}.timeline-blank-add-zone span{display:grid;width:34px;height:34px;place-items:center;border-radius:999px;background:var(--teal-soft);font-size:24px;font-weight:900}@media(max-width:780px){#addListBtn.list-plus-button{width:40px!important;min-width:40px!important;height:40px!important}.day-card-add-floating{right:54px;top:18px;width:42px;height:42px}.timeline-blank-add-zone{min-height:74px}}
+      #addListBtn.list-plus-button{width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;padding:0!important;border-radius:10px!important;border:1px solid rgba(15,143,131,.28)!important;background:#fff!important;color:var(--teal-dark)!important;box-shadow:none!important;font-size:22px!important;font-weight:860!important;line-height:1!important}#addListBtn.list-plus-button:hover,#addListBtn.list-plus-button:focus-visible{background:var(--teal-soft)!important;border-color:rgba(15,143,131,.48)!important;box-shadow:0 0 0 3px rgba(15,143,131,.1)!important;transform:translateY(-1px)}.list-panel .section-heading{align-items:center}.day-card{position:relative}.day-card-add-floating{position:absolute;right:52px;top:19px;z-index:4;display:grid;width:38px;height:38px;place-items:center;border:1px solid rgba(15,143,131,.24);border-radius:999px;background:var(--teal-soft);color:var(--teal-dark);box-shadow:0 10px 22px rgba(15,143,131,.08);font-size:25px;font-weight:880;line-height:1;transition:transform 160ms var(--ease),border-color 160ms var(--ease),background 160ms var(--ease),box-shadow 160ms var(--ease)}.day-card-add-floating:hover,.day-card-add-floating:focus-visible{outline:none;background:#e5f8f4;border-color:rgba(15,143,131,.48);box-shadow:0 0 0 4px rgba(15,143,131,.1),0 14px 30px rgba(15,143,131,.12);transform:translateY(-1px)}.timeline-blank-add-zone{display:grid;width:100%;min-height:86px;place-items:center;border:1px dashed rgba(15,143,131,.24);border-radius:var(--radius);background:rgba(255,255,255,.42);color:var(--teal-dark);cursor:pointer;transition:border-color 160ms var(--ease),background 160ms var(--ease),box-shadow 160ms var(--ease),transform 160ms var(--ease)}.timeline-blank-add-zone:hover,.timeline-blank-add-zone:focus-visible{outline:none;border-color:rgba(15,143,131,.46);background:rgba(225,244,240,.66);box-shadow:0 12px 28px rgba(15,143,131,.08);transform:translateY(-1px)}.timeline-blank-add-zone span{display:grid;width:34px;height:34px;place-items:center;border-radius:999px;background:var(--teal-soft);font-size:24px;font-weight:900}@media(max-width:780px){#addListBtn.list-plus-button{width:40px!important;min-width:40px!important;height:40px!important}.day-card-add-floating{right:54px;top:18px;width:42px;height:42px}.timeline-blank-add-zone{min-height:74px}}
     `;
     document.head.append(style);
   }
