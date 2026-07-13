@@ -2,7 +2,6 @@
 
 const fs = require("fs");
 const path = require("path");
-const seed = require("./imported-itinerary");
 
 // Render environment-variable names are case-sensitive. Support the user's
 // existing `deepseek` key while keeping the server-side canonical name.
@@ -17,43 +16,11 @@ if (!process.env.DEEPSEEK_MODEL) {
 const root = __dirname;
 const renderDiskDir = "/var/data";
 const dataDir = process.env.DATA_DIR || (fs.existsSync(renderDiskDir) ? renderDiskDir : path.join(root, "data"));
-const dataFile = process.env.DATA_FILE || path.join(dataDir, "rooms.json");
 
 try {
   fs.mkdirSync(dataDir, { recursive: true });
-  let payload = { version: 1, savedAt: new Date().toISOString(), rooms: {} };
-
-  if (fs.existsSync(dataFile)) {
-    try {
-      payload = JSON.parse(fs.readFileSync(dataFile, "utf8"));
-      payload.rooms ||= {};
-    } catch (error) {
-      console.warn(`Could not parse existing room data before import: ${error.message}`);
-    }
-  }
-
-  const existing = payload.rooms[seed.roomId];
-  const existingState = existing?.state || existing;
-  const hasExistingRoom = Array.isArray(existingState?.lists) && existingState.lists.length > 0;
-
-  if (!hasExistingRoom) {
-    payload.rooms[seed.roomId] = {
-      revision: 1,
-      state: {
-        version: 2,
-        activeListId: seed.list.id,
-        lists: [seed.list],
-        updatedAt: seed.list.updatedAt,
-      },
-    };
-    payload.savedAt = new Date().toISOString();
-    fs.writeFileSync(dataFile, JSON.stringify(payload, null, 2));
-    console.log(`Initialized itinerary room ${seed.roomId}`);
-  } else {
-    console.log(`Preserved existing itinerary room ${seed.roomId}`);
-  }
 } catch (error) {
-  console.warn(`Could not initialize itinerary seed: ${error.message}`);
+  console.warn(`Could not prepare data directory: ${error.message}`);
 }
 
 require("./server");
