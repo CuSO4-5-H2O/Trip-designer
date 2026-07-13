@@ -1,6 +1,8 @@
 (() => {
   "use strict";
 
+  const editorSelector = ".inline-activity-input,.inline-budget-editor,.inline-transport-editor,.inline-day-input";
+
   function install() {
     if (document.querySelector("#inlinePolishStyles")) return;
     const style = document.createElement("style");
@@ -15,18 +17,29 @@
   function installRestoreGuard() {
     if (window.__TripInlineRestoreGuard) return;
     window.__TripInlineRestoreGuard = true;
-    const restoreSoon = () => window.setTimeout(restoreHiddenAnchors, 35);
+    const restoreSoon = () => window.setTimeout(restoreClosedAnchors, 50);
     document.addEventListener("focusout", restoreSoon, true);
-    document.addEventListener("pointerup", restoreSoon, true);
     document.addEventListener("keyup", restoreSoon, true);
+    document.addEventListener("pointerup", restoreSoon, true);
+    if (window.MutationObserver) {
+      const observer = new MutationObserver(restoreClosedAnchors);
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
   }
 
-  function restoreHiddenAnchors() {
+  function restoreClosedAnchors() {
     document.querySelectorAll("[data-inline-original-display]").forEach((node) => {
       if (!node.isConnected) return;
+      if (hasAdjacentEditor(node)) return;
       node.style.display = node.dataset.inlineOriginalDisplay || "";
       delete node.dataset.inlineOriginalDisplay;
     });
+  }
+
+  function hasAdjacentEditor(node) {
+    const next = node.nextElementSibling;
+    if (!next) return false;
+    return Boolean(next.matches?.(editorSelector) || next.querySelector?.(editorSelector));
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", install, { once: true });
