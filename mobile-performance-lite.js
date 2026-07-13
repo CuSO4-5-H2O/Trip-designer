@@ -46,6 +46,8 @@
     style.textContent = `
       @media(max-width:900px){
         .day-card:not(.active) .day-content{display:none!important}
+        .day-card:not(.active){min-height:0!important}
+        .day-card:not(.active) .day-main{min-height:58px}
         .smart-map-panel.is-collapsed .map-canvas,
         .smart-map-panel.is-collapsed #mapStatus,
         .smart-map-panel.is-collapsed #routeStatus,
@@ -54,8 +56,6 @@
         .ai-panel.is-collapsed .ai-status,
         .ai-panel.is-collapsed .ai-results{display:none!important}
         .smart-map-panel.is-collapsed,.ai-panel.is-collapsed{min-height:auto}
-        .day-list{content-visibility:auto;contain-intrinsic-size:1200px}
-        .smart-panel{content-visibility:auto;contain-intrinsic-size:420px}
         .day-card{contain:layout paint}
         .activity-row{contain:layout paint}
       }
