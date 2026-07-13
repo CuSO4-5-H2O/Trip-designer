@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T14:25:39.536Z",
+  "savedAt": "2026-07-13T14:26:07.600Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1023,6 +1023,62 @@
           "members": {}
         },
         "updatedAt": 1783952505990
+      }
+    },
+    "94A60693": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "6b37066f-eca3-4353-a402-324044b4eaa9",
+        "members": [],
+        "lists": [
+          {
+            "id": "6b37066f-eca3-4353-a402-324044b4eaa9",
+            "name": "新行程单",
+            "trip": {
+              "tripTitle": "新行程单",
+              "startDate": "2026-07-13",
+              "originCity": "",
+              "selectedDayId": "9547f1cc-d736-446e-82cb-044f8b5f9370",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "e6266c08-346b-4b33-9e7a-aaaba926e59a",
+                  "location": "",
+                  "stay": "",
+                  "updatedAt": 1783952761433,
+                  "orderUpdatedAt": 1783952761433,
+                  "activities": []
+                },
+                {
+                  "id": "9547f1cc-d736-446e-82cb-044f8b5f9370",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1783952766475,
+                  "orderUpdatedAt": 1783952766475
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1783952761433
+              },
+              "updatedAt": 1783952766475,
+              "orderUpdatedAt": 1783952766475
+            },
+            "createdAt": 1783952761433,
+            "updatedAt": 1783952766475
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1783952767350
       }
     }
   }
