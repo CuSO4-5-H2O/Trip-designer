@@ -5,6 +5,7 @@
   const roomId = params.get("room");
   if (!roomId || location.protocol === "file:") return;
 
+  const storageKey = `trip-planner-library:${roomId}`;
   let appliedSignature = "";
   let styleInstalled = false;
 
@@ -25,15 +26,31 @@
       if (cloudSignature === appliedSignature) return;
       const planner = await waitForPlanner();
       const localSignature = signature(planner.getLibrary?.());
+      appliedSignature = cloudSignature;
       if (localSignature !== cloudSignature) {
-        planner.saveExternalLibrary?.(state, `cloud-authority-${reason}`);
-        appliedSignature = cloudSignature;
+        applyCloudStateLocally(state, Number(payload.revision) || 0, reason);
         toast("已从云端载入最新行程");
       }
       markCloudReady(state, payload.revision);
     } catch (error) {
       console.warn("Cloud authority refresh failed", error);
     }
+  }
+
+  function applyCloudStateLocally(state, revision, reason) {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    } catch {}
+    if (!("BroadcastChannel" in window)) return;
+    const channel = new BroadcastChannel(storageKey);
+    channel.postMessage({
+      type: "library",
+      clientId: "cloud-authority-refresh",
+      library: state,
+      revision,
+      reason: `cloud-authority-${reason}`,
+    });
+    window.setTimeout(() => channel.close(), 500);
   }
 
   function waitForPlanner() {
@@ -61,6 +78,7 @@
     return JSON.stringify(lists.map((list) => ({
       id: list.id,
       name: list.name || list.trip?.tripTitle || "",
+      active: state?.activeListId || "",
       days: (list.trip?.days || []).map((day) => ({
         id: day.id,
         location: day.location || "",
@@ -93,7 +111,7 @@
     const style = document.createElement("style");
     style.id = "cloudAuthorityRefreshStyles";
     style.textContent = `
-      @media(max-width:780px){.day-card:not(.active) .day-content{display:none!important}.day-card:not(.active){box-shadow:none}.smart-panel{content-visibility:auto;contain-intrinsic-size:520px}.day-list{content-visibility:auto;contain-intrinsic-size:1200px}.activity-row{min-height:54px}.day-card-add-floating{position:absolute!important}}
+      @media(max-width:780px){.day-card:not(.active) .day-content{display:none!important}.day-card:not(.active){box-shadow:none}.activity-row{min-height:54px}.day-card-add-floating{position:absolute!important}}
     `;
     document.head.append(style);
   }
