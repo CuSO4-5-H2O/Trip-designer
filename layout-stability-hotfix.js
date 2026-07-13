@@ -4,24 +4,57 @@
   const QUICK_STATE_KEY = "tripdesigner:quick-plan-expanded";
   let styleInstalled = false;
   let timer = 0;
+  let observer = null;
+  let stabilizing = false;
 
   function init() {
     installStyles();
     document.addEventListener("click", handleClick, true);
     schedule();
     window.setTimeout(schedule, 250);
-    window.setInterval(schedule, 3000);
+    observeDomChanges();
+  }
+
+  function observeDomChanges() {
+    if (observer) return;
+    observer = new MutationObserver((mutations) => {
+      if (stabilizing) return;
+      if (!mutations.some(isRelevantMutation)) return;
+      schedule();
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class", "hidden", "aria-hidden"],
+    });
+  }
+
+  function isRelevantMutation(mutation) {
+    const node = mutation.target;
+    if (!(node instanceof Element)) return false;
+    return Boolean(
+      node.closest?.("#quickPlanPanel,.smart-map-panel,.ai-panel,.day-card") ||
+      node.matches?.("#quickPlanPanel,.smart-map-panel,.ai-panel,.day-card")
+    );
   }
 
   function schedule() {
     clearTimeout(timer);
-    timer = window.setTimeout(stabilizeLayout, 50);
+    timer = window.setTimeout(stabilizeLayout, 80);
   }
 
   function stabilizeLayout() {
-    stabilizeQuickPlan();
-    stabilizeSmartPanels();
-    compressCollapsedDays();
+    stabilizing = true;
+    try {
+      stabilizeQuickPlan();
+      stabilizeSmartPanels();
+      compressCollapsedDays();
+    } finally {
+      window.setTimeout(() => {
+        stabilizing = false;
+      }, 0);
+    }
   }
 
   function stabilizeQuickPlan() {
@@ -36,7 +69,7 @@
 
     const heading = panel.querySelector(".quick-plan-heading") || panel.querySelector(".section-heading") || panel;
     let toggles = [...panel.querySelectorAll(".quick-plan-toggle,[data-quick-collapse],[data-layout-quick-toggle]")];
-    let keep = toggles[0];
+    let keep = toggles.find((button) => button.dataset.layoutQuickToggle === "1") || toggles[0];
     if (!keep) {
       keep = document.createElement("button");
       keep.className = "mini-action quick-plan-toggle";
@@ -50,12 +83,12 @@
     keep.tabIndex = 0;
     keep.dataset.layoutQuickToggle = "1";
     delete keep.dataset.liteAction;
-    keep.textContent = panel.classList.contains("is-collapsed") ? "展开" : "收起";
+    const nextText = panel.classList.contains("is-collapsed") ? "展开" : "收起";
+    if (keep.textContent !== nextText) keep.textContent = nextText;
 
     toggles = [...panel.querySelectorAll(".quick-plan-toggle,[data-quick-collapse],[data-layout-quick-toggle]")];
     toggles.forEach((button) => {
-      if (button === keep) return;
-      button.remove();
+      if (button !== keep) button.remove();
     });
   }
 
@@ -63,16 +96,16 @@
     document.querySelectorAll(".smart-map-panel,.ai-panel").forEach((panel) => {
       const kind = panel.classList.contains("ai-panel") ? "ai" : "map";
       const button = panel.querySelector(`[data-panel-collapse="${kind}"]`);
-      if (button) button.textContent = panel.classList.contains("is-collapsed") ? "展开" : "收起";
+      if (!button) return;
+      const nextText = panel.classList.contains("is-collapsed") ? "展开" : "收起";
+      if (button.textContent !== nextText) button.textContent = nextText;
     });
   }
 
   function compressCollapsedDays() {
-    document.querySelectorAll(".day-card.is-collapsed").forEach((card) => {
-      card.classList.add("layout-compressed-day");
-    });
-    document.querySelectorAll(".day-card:not(.is-collapsed).layout-compressed-day").forEach((card) => {
-      card.classList.remove("layout-compressed-day");
+    document.querySelectorAll(".day-card").forEach((card) => {
+      const shouldCompress = card.classList.contains("is-collapsed");
+      card.classList.toggle("layout-compressed-day", shouldCompress);
     });
   }
 
@@ -121,7 +154,7 @@
       .day-card.layout-compressed-day .day-main{min-height:62px}
       .day-card,.activity-row,.smart-panel,.smart-map-panel,.ai-panel{animation:none!important}
       .day-card,.day-list,.smart-panel{content-visibility:visible!important;contain-intrinsic-size:auto!important}
-      @media(max-width:900px){.day-card:not(.active) .day-content{display:none!important}.day-card:not(.active){min-height:0!important}.day-card:not(.active) .day-main{min-height:58px}}
+      @media(max-width:900px){.day-card.is-collapsed .day-content{display:none!important}.day-card.is-collapsed{min-height:0!important}.day-card.is-collapsed .day-main{min-height:58px}}
     `;
     document.head.append(style);
   }
