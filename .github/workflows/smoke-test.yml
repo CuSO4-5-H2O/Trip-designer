@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: smoke-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -98,10 +102,11 @@ jobs:
           grep -q '"ok":true' "$RUNNER_TEMP/room-state.json"
 
           curl --fail --silent 'http://127.0.0.1:4177/?room=1075424A' >"$RUNNER_TEMP/index.html"
-          grep -q 'render-20260713g' "$RUNNER_TEMP/index.html"
+          grep -q 'render-20260713h' "$RUNNER_TEMP/index.html"
           grep -q './room-bootstrap.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './input-performance.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './startup-cache-guard.js?v=render-20260713g' "$RUNNER_TEMP/index.html"
+          grep -q './cloud-sync-guard.js?v=render-20260713h' "$RUNNER_TEMP/index.html"
           grep -q './app-collab.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './connection-guard.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './map-providers-lite.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
@@ -118,6 +123,7 @@ jobs:
             room-bootstrap.js
             input-performance.js
             startup-cache-guard.js
+            cloud-sync-guard.js
             app-collab.js
             connection-guard.js
             map-providers-lite.js
