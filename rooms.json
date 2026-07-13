@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T15:07:32.002Z",
+  "savedAt": "2026-07-13T15:07:40.935Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1026,7 +1026,7 @@
       }
     },
     "94A60693": {
-      "revision": 17,
+      "revision": 18,
       "state": {
         "version": 2,
         "activeListId": "6b37066f-eca3-4353-a402-324044b4eaa9",
@@ -1065,9 +1065,22 @@
                   "id": "651ee30b-fceb-4065-9122-a19c84f343a7",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1783954988011,
-                  "orderUpdatedAt": 1783954988011,
-                  "activities": []
+                  "updatedAt": 1783955259793,
+                  "orderUpdatedAt": 1783955259793,
+                  "activities": [
+                    {
+                      "id": "879f0d05-1948-4a33-b261-5ec9d67680d3",
+                      "time": "11:11",
+                      "title": "11",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1783955259793
+                    }
+                  ]
                 },
                 {
                   "id": "54d20307-cb79-4c2d-a99f-8601ffcbdea6",
@@ -1084,11 +1097,11 @@
                 "limit": 0,
                 "updatedAt": 1783952761433
               },
-              "updatedAt": 1783955248048,
+              "updatedAt": 1783955259793,
               "orderUpdatedAt": 1783955248048
             },
             "createdAt": 1783952761433,
-            "updatedAt": 1783955248048
+            "updatedAt": 1783955259793
           }
         ],
         "deleted": {
@@ -1118,7 +1131,7 @@
           },
           "members": {}
         },
-        "updatedAt": 1783955251752
+        "updatedAt": 1783955260685
       }
     }
   }
