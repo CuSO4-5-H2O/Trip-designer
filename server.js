@@ -10,6 +10,7 @@ const port = Number(process.env.PORT || 4177);
 const renderDiskDir = "/var/data";
 const dataDir = process.env.DATA_DIR || (fs.existsSync(renderDiskDir) ? renderDiskDir : path.join(root, "data"));
 const dataFile = process.env.DATA_FILE || path.join(dataDir, "rooms.json");
+const allowDiskStorage = process.env.ALLOW_DISK_STORAGE === "true";
 const githubStore = createGithubRoomStore();
 const rooms = new Map();
 const sockets = new Map();
@@ -17,14 +18,16 @@ const geocodeCache = new Map();
 let saveTimer = null;
 let githubSaveTimer = null;
 let storageStatus = {
-  backend: githubStore.enabled ? "github" : "disk",
+  backend: githubStore.enabled ? "github" : (allowDiskStorage ? "disk" : "unconfigured"),
   tokenConfigured: githubStore.enabled,
   repo: githubStore.status.repo,
   branch: githubStore.status.branch,
   path: githubStore.status.path,
-  dataFile,
+  dataFile: allowDiskStorage ? dataFile : "disabled",
+  allowDiskStorage,
+  cloudOnly: !allowDiskStorage,
   hydrated: false,
-  lastError: githubStore.status.lastError || "",
+  lastError: githubStore.status.lastError || (allowDiskStorage ? "" : "GITHUB_DATA_TOKEN not configured"),
 };
 
 const mimeTypes = {
@@ -37,7 +40,7 @@ const mimeTypes = {
 
 main().catch((error) => {
   console.warn(`Startup failed: ${error.message}`);
-  loadRoomsFromDisk();
+  if (allowDiskStorage) loadRoomsFromDisk();
   startServer();
 });
 
@@ -51,8 +54,8 @@ function startServer() {
   server.on("upgrade", handleUpgrade);
   server.listen(port, () => {
     console.log(`Trip planner is running at http://localhost:${port}`);
-    console.log(`Room data file: ${dataFile}`);
     console.log(`Room storage backend: ${storageStatus.backend}`);
+    if (allowDiskStorage) console.log(`Room data file: ${dataFile}`);
   });
 }
 
@@ -129,26 +132,29 @@ function handleUpgrade(req, socket) {
 }
 
 async function loadRooms() {
-  let loaded = false;
   if (githubStore.enabled) {
     try {
       const payload = await githubStore.load();
-      if (payload?.rooms && Object.keys(payload.rooms).length) {
-        applyRoomsPayload(payload);
-        writeRoomsPayloadToDisk(payload);
-        loaded = true;
-      }
+      if (payload?.rooms && Object.keys(payload.rooms).length) applyRoomsPayload(payload);
       storageStatus.hydrated = true;
       storageStatus.lastError = "";
+      return;
     } catch (error) {
+      storageStatus.hydrated = false;
       storageStatus.lastError = error.message;
       console.warn(`Could not load GitHub room data: ${error.message}`);
+      return;
     }
   }
 
-  if (!loaded) loaded = loadRoomsFromDisk();
+  if (allowDiskStorage) {
+    storageStatus.hydrated = loadRoomsFromDisk();
+    storageStatus.lastError = storageStatus.hydrated ? "" : "disk storage empty";
+    return;
+  }
 
-  if (githubStore.enabled && loaded) scheduleGithubSave(buildRoomsPayload(), "startup-backfill");
+  storageStatus.hydrated = false;
+  storageStatus.lastError = "GITHUB_DATA_TOKEN not configured; disk fallback disabled";
 }
 
 function loadRoomsFromDisk() {
@@ -203,6 +209,7 @@ function buildRoomsPayload() {
 }
 
 function writeRoomsPayloadToDisk(payload) {
+  if (!allowDiskStorage) return;
   fs.mkdirSync(dataDir, { recursive: true });
   const tempFile = `${dataFile}.tmp`;
   fs.writeFileSync(tempFile, JSON.stringify(payload, null, 2));
@@ -214,14 +221,26 @@ function scheduleSave(reason = "state") {
   saveTimer = setTimeout(() => saveRooms(reason), 250);
 }
 
+function canPersistWrites() {
+  if (allowDiskStorage) return true;
+  return Boolean(githubStore.enabled && storageStatus.hydrated);
+}
+
 function saveRooms(reason = "state") {
   const payload = buildRoomsPayload();
-  try {
-    writeRoomsPayloadToDisk(payload);
-  } catch (error) {
-    console.warn(`Could not save room data: ${error.message}`);
+  if (githubStore.enabled) {
+    scheduleGithubSave(payload, reason);
+    return;
   }
-  scheduleGithubSave(payload, reason);
+  if (allowDiskStorage) {
+    try {
+      writeRoomsPayloadToDisk(payload);
+    } catch (error) {
+      console.warn(`Could not save room data: ${error.message}`);
+    }
+    return;
+  }
+  storageStatus.lastError = "Write rejected: GitHub data storage is not configured";
 }
 
 function scheduleGithubSave(payload, reason) {
@@ -244,9 +263,11 @@ function getCloudStorageStatus() {
   return {
     ...storageStatus,
     ...githubStore.status,
-    backend: githubStore.enabled ? "github" : "disk",
+    backend: githubStore.enabled ? "github" : (allowDiskStorage ? "disk" : "unconfigured"),
     tokenConfigured: githubStore.enabled,
-    dataFile,
+    dataFile: allowDiskStorage ? dataFile : "disabled",
+    allowDiskStorage,
+    cloudOnly: !allowDiskStorage,
   };
 }
 
@@ -267,6 +288,10 @@ function handleMessage(socket, raw) {
   }
 
   if (message.type === "state" && message.state) {
+    if (!canPersistWrites()) {
+      send(socket, { type: "error", clientId: "server", error: storageStatus.lastError || "GitHub data storage is not ready" });
+      return;
+    }
     room.state = mergeLibraries(room.state, message.state);
     room.revision = (room.revision || 0) + 1;
     scheduleSave(message.reason || "state");
@@ -296,11 +321,15 @@ async function handleRoomState(req, requestUrl, res) {
   const roomId = requestUrl.searchParams.get("room") || "LOCAL";
   const room = ensureRoom(roomId);
   if (req.method === "GET") {
-    sendJson(res, 200, { ok: true, roomId, revision: room.revision || 0, state: room.state });
+    sendJson(res, 200, { ok: true, roomId, revision: room.revision || 0, state: room.state, storage: getCloudStorageStatus() });
     return;
   }
   if (req.method !== "POST") {
     sendJson(res, 405, { ok: false, error: "method not allowed" });
+    return;
+  }
+  if (!canPersistWrites()) {
+    sendJson(res, 503, { ok: false, error: "github data storage not ready", storage: getCloudStorageStatus() });
     return;
   }
   try {
@@ -313,7 +342,7 @@ async function handleRoomState(req, requestUrl, res) {
     room.revision = (room.revision || 0) + 1;
     scheduleSave(message.reason || "http-state");
     broadcast(roomId, { type: "state", clientId: message.clientId || "http", roomId, state: room.state, reason: message.reason || "http-state", revision: room.revision }, null);
-    sendJson(res, 200, { ok: true, revision: room.revision, state: room.state });
+    sendJson(res, 200, { ok: true, revision: room.revision, state: room.state, storage: getCloudStorageStatus() });
   } catch (error) {
     sendJson(res, 400, { ok: false, error: "invalid state request", detail: error.message });
   }
