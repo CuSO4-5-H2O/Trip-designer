@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T16:56:45.172Z",
+  "savedAt": "2026-07-13T16:57:27.795Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1026,7 +1026,7 @@
       }
     },
     "94A60693": {
-      "revision": 45,
+      "revision": 46,
       "state": {
         "version": 2,
         "activeListId": "6b37066f-eca3-4353-a402-324044b4eaa9",
@@ -1059,7 +1059,7 @@
                   "id": "651ee30b-fceb-4065-9122-a19c84f343a7",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1783955551177,
+                  "updatedAt": 1783961783983,
                   "orderUpdatedAt": 1783955282418,
                   "activities": [
                     {
@@ -1091,9 +1091,12 @@
                       "note": "",
                       "tags": [],
                       "done": false,
-                      "budget": null,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
                       "transport": null,
-                      "updatedAt": 1783955551177
+                      "updatedAt": 1783961783983
                     }
                   ]
                 },
@@ -1128,11 +1131,11 @@
                 "limit": 0,
                 "updatedAt": 1783952761433
               },
-              "updatedAt": 1783961545234,
+              "updatedAt": 1783961783983,
               "orderUpdatedAt": 1783955275615
             },
             "createdAt": 1783952761433,
-            "updatedAt": 1783961545234
+            "updatedAt": 1783961783983
           }
         ],
         "deleted": {
@@ -1164,7 +1167,7 @@
             "cff585ff-96f1-406f-a8ab-649cc85b9619": 1783955294360
           }
         },
-        "updatedAt": 1783961757611
+        "updatedAt": 1783961847545
       }
     }
   }
