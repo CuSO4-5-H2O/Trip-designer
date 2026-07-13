@@ -68,6 +68,16 @@ jobs:
             test ! -e "$file"
           done
 
+      - name: Guard add activity controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -q 'setInterval' entry-actions-lite.js
+          ! grep -q 'enhanceDayCards' entry-actions-lite.js
+          ! grep -q 'actions.prepend' entry-actions-lite.js
+          grep -q 'stopImmediatePropagation' interaction-hotfix.js
+          grep -q 'day-card-add-floating' interaction-hotfix.js
+
       - name: Start runtime and verify endpoints
         shell: bash
         run: |
