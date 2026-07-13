@@ -2,6 +2,7 @@
 
 const http = require("http");
 const { handleMapRuntime } = require("./map-runtime");
+const { hydrateDiskFromGithub, startGithubDiskSync, getGithubDiskSyncStatus } = require("./github-disk-sync");
 
 const deepSeekKey = process.env.DEEPSEEK_API_KEY || process.env.deepseek || process.env.DEEPSEEK;
 if (deepSeekKey && !process.env.DEEPSEEK_API_KEY) {
@@ -36,6 +37,10 @@ function wrapRequestListener(listener) {
       pathname = new URL(req.url, `http://${req.headers.host || "localhost"}`).pathname;
     } catch {
       pathname = req.url || "";
+    }
+
+    if (pathname === "/api/cloud-storage-status") {
+      return sendJson(res, 200, { ok: true, storage: getGithubDiskSyncStatus() });
     }
 
     try {
@@ -126,4 +131,10 @@ function clampInteger(value, min, max, fallback) {
   return Math.min(max, Math.max(min, number));
 }
 
-require("./prepare-seed");
+bootstrap();
+
+async function bootstrap() {
+  await hydrateDiskFromGithub();
+  startGithubDiskSync();
+  require("./prepare-seed");
+}
