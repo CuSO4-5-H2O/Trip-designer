@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T14:56:13.341Z",
+  "savedAt": "2026-07-13T14:56:17.444Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1026,7 +1026,7 @@
       }
     },
     "94A60693": {
-      "revision": 7,
+      "revision": 8,
       "state": {
         "version": 2,
         "activeListId": "6b37066f-eca3-4353-a402-324044b4eaa9",
@@ -1042,6 +1042,12 @@
             "name": "cmy",
             "createdAt": 1783954568914,
             "updatedAt": 1783954568914
+          },
+          {
+            "id": "31067d3a-ac65-46e6-ac2b-eda2d9fc1531",
+            "name": "wzy",
+            "createdAt": 1783954576310,
+            "updatedAt": 1783954576310
           }
         ],
         "lists": [
@@ -1131,11 +1137,11 @@
                 "limit": 0,
                 "updatedAt": 1783952761433
               },
-              "updatedAt": 1783954572207,
+              "updatedAt": 1783954576310,
               "orderUpdatedAt": 1783954572207
             },
             "createdAt": 1783952761433,
-            "updatedAt": 1783954572207
+            "updatedAt": 1783954576310
           }
         ],
         "deleted": {
@@ -1147,7 +1153,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1783954573091
+        "updatedAt": 1783954577194
       }
     }
   }
