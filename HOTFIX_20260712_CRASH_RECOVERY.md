@@ -21,15 +21,18 @@ This hotfix focuses on recovering the Render production page after the UI became
 - Production build marker moved to `render-20260713e`.
 - `index.html` now loads `map-providers-lite.js` instead of the heavier `map-providers.js` startup script.
 - `index.html` now loads `entry-actions-lite.js` instead of the heavier `entry-actions.js` startup script.
+- `index.html` now loads `startup-cache-guard.js?v=render-20260713f` immediately before `app-collab.js`.
+- `startup-cache-guard.js` ignores and removes old per-room local itinerary cache before the main app reads it. This prevents a stale or oversized local cache from blocking page startup.
 - The lite scripts avoid full-page `MutationObserver` startup loops and only add small controls on a timer.
 - The map panel no longer loads Google or AMap browser SDKs during page startup. It calls `/api/map/plan` only after the user clicks `计算路线`, then renders a lightweight location and route summary.
 - The item `+` shortcut focuses the existing built-in activity form instead of mounting a second floating editor during startup.
-- Smoke test now asserts `render-20260713e` and the lite script entry points.
+- Smoke test now asserts `render-20260713e`, the lite script entry points, and `startup-cache-guard.js`.
 
 ## Data Safety
 
 - No Render Persistent Disk data is changed.
 - No room data, itinerary list, day, activity, member, or budget data is deleted or migrated.
+- The startup cache guard only removes browser-local per-room cache on the device opening the page; the server room state remains authoritative.
 - This change only affects frontend script loading, quick-plan behavior, stale browser cache handling, seed syntax, CI assertions, and startup-only UI helpers.
 - Existing historical backup lists are not automatically deleted.
 
@@ -53,3 +56,6 @@ This hotfix focuses on recovering the Render production page after the UI became
 - `e8da303`: Add safe lite map panel script.
 - `0862129`: Switch production HTML to lite startup scripts.
 - `6c76bc0`: Update smoke test for lite startup scripts.
+- `b353ab0`: Add startup cache guard before app store.
+- `16cb7e2`: Load startup cache guard before app store.
+- `2d5b381`: Assert startup cache guard in smoke test.
