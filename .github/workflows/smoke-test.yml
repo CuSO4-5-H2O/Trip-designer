@@ -101,6 +101,7 @@ jobs:
           grep -q 'render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './room-bootstrap.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './input-performance.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
+          grep -q './startup-cache-guard.js?v=render-20260713f' "$RUNNER_TEMP/index.html"
           grep -q './app-collab.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './connection-guard.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './map-providers-lite.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
@@ -115,6 +116,7 @@ jobs:
           assets=(
             room-bootstrap.js
             input-performance.js
+            startup-cache-guard.js
             app-collab.js
             connection-guard.js
             map-providers-lite.js
