@@ -102,7 +102,7 @@ jobs:
           grep -q '"ok":true' "$RUNNER_TEMP/room-state.json"
 
           curl --fail --silent 'http://127.0.0.1:4177/?room=1075424A' >"$RUNNER_TEMP/index.html"
-          grep -q 'render-20260713m' "$RUNNER_TEMP/index.html"
+          grep -q 'render-20260713n' "$RUNNER_TEMP/index.html"
           grep -q './room-bootstrap.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './input-performance.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './startup-cache-guard.js?v=render-20260713k' "$RUNNER_TEMP/index.html"
@@ -114,6 +114,7 @@ jobs:
           grep -q './document-import.js?v=render-20260713i' "$RUNNER_TEMP/index.html"
           grep -q './list-plus-menu.js?v=render-20260713l' "$RUNNER_TEMP/index.html"
           grep -q './timeline-ui-cleanup.js?v=render-20260713m' "$RUNNER_TEMP/index.html"
+          grep -q './interaction-hotfix.js?v=render-20260713n' "$RUNNER_TEMP/index.html"
           grep -q './context-editor-performance.css?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './entry-actions-lite.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
           grep -q './local-recovery.js?v=render-20260713k' "$RUNNER_TEMP/index.html"
@@ -134,6 +135,7 @@ jobs:
             document-import.js
             list-plus-menu.js
             timeline-ui-cleanup.js
+            interaction-hotfix.js
             entry-actions-lite.js
             local-recovery.js
             styles.css
