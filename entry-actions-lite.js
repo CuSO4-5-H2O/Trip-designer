@@ -87,7 +87,7 @@
       event.stopImmediatePropagation?.();
       const dayId = button.closest(".day-card[data-day-id]")?.dataset.dayId || getSelectedDayId();
       if (dayId) window.TripPlanner?.selectDay?.(dayId);
-      focusActivityForm();
+      focusActivityForm(dayId);
       return;
     }
     if (action === "export-list") {
@@ -109,7 +109,11 @@
     return list?.trip?.selectedDayId || list?.trip?.days?.[0]?.id || "";
   }
 
-  function focusActivityForm() {
+  function focusActivityForm(dayId) {
+    if (typeof window.TripPlannerQuickAdd === "function") {
+      window.TripPlannerQuickAdd(dayId || getSelectedDayId());
+      return;
+    }
     document.body.classList.add("detail-drawer-open");
     window.setTimeout(() => document.querySelector("#activityTitle")?.focus({ preventScroll: true }), 80);
   }
