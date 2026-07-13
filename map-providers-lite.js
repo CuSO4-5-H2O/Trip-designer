@@ -56,6 +56,16 @@
       calculate();
       return;
     }
+    const routeEdit = event.target.closest?.("[data-route-edit]");
+    if (routeEdit) {
+      event.preventDefault();
+      const dayId = routeEdit.dataset.dayId || "";
+      const activityId = routeEdit.dataset.activityId || "";
+      if (!dayId || !activityId || !window.TripPlanner?.openActivityEditor) return;
+      window.TripPlanner.openActivityEditor(dayId, activityId, "transport");
+      document.querySelector("#activityForm")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     const collapse = event.target.closest?.("[data-panel-collapse]");
     if (collapse) {
       event.preventDefault();
@@ -116,8 +126,11 @@
   function renderRouteSummary(plan) {
     const summary = plan.summary || {};
     const segments = plan.segments || [];
-    const total = `<div class="route-total"><strong>${formatDistance(summary.distance)} · ${formatDuration(summary.duration)}</strong><span>${segments.length} 段路线${plan.cached ? " · 已缓存" : ""}</span><button class="mini-action" id="routeCollapseBtn" type="button">收起</button></div>`;
-    const rows = segments.slice(0, 24).map((segment) => `<div class="route-row"><span class="route-mode-chip">${modeLabels[segment.mode] || "车"}</span><strong>${escapeHtml(segment.from)} → ${escapeHtml(segment.to)}</strong><small>${formatDistance(segment.distance)} · ${formatDuration(segment.duration)}${segment.estimated ? " · 估算" : ""}</small></div>`).join("");
+    const total = `<div class="route-total"><strong>${formatDistance(summary.distance)} · ${formatDuration(summary.duration)}</strong><span>${segments.length} 段路线${plan.cached ? " · 已缓存" : ""}</span><span class="route-total-actions"><button class="mini-action" id="routeCollapseBtn" type="button">收起</button></span></div>`;
+    const rows = segments.slice(0, 24).map((segment) => {
+      const edit = segment.dayId && segment.activityId ? `<button class="route-edit-btn" type="button" data-route-edit="1" data-day-id="${escapeAttr(segment.dayId)}" data-activity-id="${escapeAttr(segment.activityId)}">修改</button>` : "";
+      return `<div class="route-row"><span class="route-mode-chip">${modeLabels[segment.mode] || "车"}</span><strong>${escapeHtml(segment.from)} → ${escapeHtml(segment.to)}</strong><small>${formatDistance(segment.distance)} · ${formatDuration(segment.duration)}${segment.estimated ? " · 估算" : ""}</small>${edit}</div>`;
+    }).join("");
     setRouteStatus(total + (rows ? `<div class="route-list">${rows}</div>` : ""));
   }
 
@@ -176,6 +189,7 @@
   function formatDistance(meters = 0) { meters = Number(meters) || 0; return meters >= 1000 ? `${(meters / 1000).toFixed(1)} km` : `${Math.round(meters)} m`; }
   function formatDuration(seconds = 0) { const minutes = Math.max(1, Math.round((Number(seconds) || 0) / 60)); if (minutes < 60) return `${minutes} 分钟`; const hours = Math.floor(minutes / 60); const rest = minutes % 60; return rest ? `${hours} 小时 ${rest} 分钟` : `${hours} 小时`; }
   function escapeHtml(value) { return String(value ?? "").replace(/[&<>\"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char])); }
+  function escapeAttr(value) { return escapeHtml(value).replace(/`/g, "&#096;"); }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();
