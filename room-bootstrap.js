@@ -7,7 +7,7 @@
   const params = new URLSearchParams(location.search);
   const requestedRoomId = normalizeRoom(params.get("room"));
   const rememberedRoomId = normalizeRoom(readLocal(LAST_ROOM_KEY));
-  const roomId = requestedRoomId || rememberedRoomId;
+  const roomId = requestedRoomId;
 
   if (!roomId) {
     showRoomGate();
@@ -92,17 +92,6 @@
     try { localStorage.setItem(key, value); } catch {}
   }
 
-  function makeRoomId() {
-    const bytes = crypto.getRandomValues(new Uint8Array(4));
-    return Array.from(bytes).map((v) => v.toString(16).padStart(2, "0")).join("").toUpperCase();
-  }
-
-  function roomUrl(id) {
-    const url = new URL(location.href);
-    url.searchParams.set("room", id);
-    return url.toString();
-  }
-
   function showRoomGate() {
     window.__TripRoomGateActive = true;
     const html = `<!doctype html>
@@ -120,18 +109,20 @@
 </head>
 <body>
   <main class="room-gate" aria-label="进入协作房间">
-    <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 12.5 10 4l3 7 6.5-2.5L14 20l-3-7-6.5 2.5Z"/></svg></span><div><p class="eyeline">行程编辑器</p><h1>进入同一个房间</h1></div></div>
-    <p>为了避免手机、电脑各自进入随机房间，现在必须使用同一个房间号或好友链接。进入一次后，本设备会自动记住这个房间。</p>
+    <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 12.5 10 4l3 7 6.5-2.5L14 20l-3-7-6.5 2.5Z"/></svg></span><div><p class="eyeline">行程编辑器</p><h1>登录行程房间</h1></div></div>
+    <p>同一个房间号就是同一份云端行程数据。手机、电脑和好友都必须输入同一个房间号，或打开同一个带 room 的完整链接。</p>
     <label class="field"><span>房间号</span><input id="roomInput" autocomplete="off" placeholder="例如 1075424A" /></label>
     <div class="error" id="roomError"></div>
     <div class="actions"><button class="primary" id="enterRoomBtn" type="button">进入房间</button><button class="secondary" id="newRoomBtn" type="button">新建房间</button></div>
-    <p class="hint">给朋友发链接时，请复制带 <span class="room-code">?room=房间号</span> 的完整地址。</p>
+    <p class="hint">本设备会记住上次房间并在这里预填，但不会再静默进入旧房间。</p>
   </main>
   <script>
     const normalizeRoom = (value) => String(value || "").trim().toUpperCase().replace(/[^0-9A-Z_-]/g, "").slice(0, 32);
     const key = ${JSON.stringify(LAST_ROOM_KEY)};
     const input = document.querySelector("#roomInput");
     const error = document.querySelector("#roomError");
+    const remembered = normalizeRoom(localStorage.getItem(key));
+    if (remembered) input.value = remembered;
     const go = (id) => {
       const room = normalizeRoom(id);
       if (!room) { error.textContent = "请输入房间号"; input.focus(); return; }
