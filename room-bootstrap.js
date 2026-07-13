@@ -2,6 +2,7 @@
   "use strict";
 
   const APP_BUILD_VERSION = "render-20260713y";
+  const INLINE_EDITOR_VERSION = "render-20260713z";
   const LAST_ROOM_KEY = "tripdesigner:last-room";
   const params = new URLSearchParams(location.search);
   const requestedRoomId = normalizeRoom(params.get("room"));
@@ -39,6 +40,7 @@
   };
 
   document.write(`<script src="./app-collab.js?v=${APP_BUILD_VERSION}" type="module"><\/script>`);
+  document.write(`<script src="./inline-activity-template.js?v=${INLINE_EDITOR_VERSION}" defer><\/script>`);
 
   const root = document.documentElement;
   const storageKey = `trip-planner-library:${roomId}`;
