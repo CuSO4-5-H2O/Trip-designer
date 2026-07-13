@@ -6,10 +6,12 @@
   let enhanceTimer = 0;
   let observer = null;
   let activeEditor = null;
+  let pointerHandled = false;
 
   function init() {
     installStyles();
     window.TripPlannerQuickAdd = addTemplateActivity;
+    document.addEventListener("pointerdown", handlePointerDown, true);
     document.addEventListener("click", handleClick, true);
     document.addEventListener("keydown", handleKeyDown, true);
     observeRows();
@@ -18,6 +20,9 @@
       window.TripPlannerQuickAdd = addTemplateActivity;
       scheduleEnhance();
     }, 450);
+    window.setInterval(() => {
+      if (window.TripPlannerQuickAdd !== addTemplateActivity) window.TripPlannerQuickAdd = addTemplateActivity;
+    }, 1200);
   }
 
   function observeRows() {
@@ -28,7 +33,27 @@
 
   function scheduleEnhance() {
     clearTimeout(enhanceTimer);
-    enhanceTimer = window.setTimeout(enhanceRows, 80);
+    enhanceTimer = window.setTimeout(enhanceAll, 70);
+  }
+
+  function enhanceAll() {
+    enhanceDayCards();
+    enhanceRows();
+  }
+
+  function enhanceDayCards() {
+    document.querySelectorAll(".day-card[data-day-id]").forEach((card) => {
+      card.querySelector(".day-compact-location")?.setAttribute("data-day-field", "location");
+      card.querySelector(".day-compact-stay")?.setAttribute("data-day-field", "stay");
+      card.querySelector(".day-compact-budget")?.setAttribute("data-day-field", "budget");
+      card.querySelector(".empty-state")?.classList.add("inline-empty-add");
+      const pills = [...card.querySelectorAll(".day-meta .meta-pill")];
+      const fields = ["location", "stay", "budget"];
+      pills.forEach((pill, index) => {
+        pill.dataset.dayField = fields[index] || "";
+        pill.classList.add("inline-day-chip");
+      });
+    });
   }
 
   function enhanceRows() {
@@ -62,38 +87,80 @@
     return button;
   }
 
+  function handlePointerDown(event) {
+    if (!isEditableClick(event)) return;
+    if (routeEditableTarget(event)) {
+      pointerHandled = true;
+      window.setTimeout(() => { pointerHandled = false; }, 350);
+    }
+  }
+
   function handleClick(event) {
-    const addButton = event.target.closest?.(".day-card-add-floating,[data-hotfix-action='add-activity'],[data-lite-action='add-activity']");
-    if (addButton) {
+    if (pointerHandled) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation?.();
+      return;
+    }
+    routeEditableTarget(event);
+  }
+
+  function isEditableClick(event) {
+    return event.button === undefined || event.button === 0;
+  }
+
+  function routeEditableTarget(event) {
+    const addButton = event.target.closest?.(".day-card-add-floating,[data-hotfix-action='add-activity'],[data-lite-action='add-activity']");
+    if (addButton) {
+      stop(event);
       const dayId = addButton.closest(".day-card[data-day-id]")?.dataset.dayId || getSelectedDayId();
       addTemplateActivity(dayId);
-      return;
+      return true;
+    }
+
+    const empty = event.target.closest?.(".inline-empty-add");
+    if (empty) {
+      stop(event);
+      const dayId = empty.closest(".day-card[data-day-id]")?.dataset.dayId || getSelectedDayId();
+      addTemplateActivity(dayId);
+      return true;
+    }
+
+    const dayField = event.target.closest?.("[data-day-field]");
+    if (dayField) {
+      stop(event);
+      const card = dayField.closest(".day-card[data-day-id]");
+      const field = dayField.dataset.dayField;
+      if (!card || !field) return true;
+      if (field === "budget") openDayBudgetEditor(card.dataset.dayId, dayField);
+      else openDayFieldEditor(card, field, dayField);
+      return true;
     }
 
     const editButton = event.target.closest?.(".edit-activity");
     if (editButton) {
       const row = editButton.closest(".activity-row[data-activity-id]");
-      if (!row) return;
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation?.();
+      if (!row) return false;
+      stop(event);
       openFieldEditor(row, "title", row.querySelector("strong[data-select-field='title']") || row);
-      return;
+      return true;
     }
 
     const target = event.target.closest?.(".activity-row [data-select-field]");
-    if (!target) return;
+    if (!target) return false;
     const row = target.closest(".activity-row[data-activity-id]");
-    if (!row) return;
+    if (!row) return false;
     const field = target.dataset.selectField;
-    if (!["time", "title", "place", "note", "budget", "transport"].includes(field)) return;
+    if (!["time", "title", "place", "note", "budget", "transport"].includes(field)) return false;
+    stop(event);
+    openFieldEditor(row, field, target);
+    return true;
+  }
+
+  function stop(event) {
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation?.();
-    openFieldEditor(row, field, target);
   }
 
   function handleKeyDown(event) {
@@ -103,17 +170,20 @@
     }
   }
 
-  function addTemplateActivity(dayId) {
+  function addTemplateActivity(dayId, options = {}) {
     const library = window.TripPlanner?.getLibrary?.();
     const list = activeList(library);
     const trip = list?.trip;
     const day = trip?.days?.find((item) => item.id === dayId) || trip?.days?.find((item) => item.id === trip.selectedDayId) || trip?.days?.[0];
-    if (!library || !list || !trip || !day) return toast("行程还没加载完成");
+    if (!library || !list || !trip || !day) {
+      toast("行程还没加载完成");
+      return "";
+    }
     const stamp = Date.now();
     const activity = {
       id: crypto.randomUUID(),
       time: "",
-      title: "新事项",
+      title: options.title || "新事项",
       place: "",
       note: "",
       tags: [],
@@ -132,10 +202,61 @@
     library.updatedAt = stamp;
     window.TripPlanner?.saveExternalLibrary?.(library, "inline-template-add-activity");
     toast("已在当天末尾添加事项");
-    window.setTimeout(() => {
-      const row = document.querySelector(`.activity-row[data-activity-id="${cssEscape(activity.id)}"]`);
-      if (row) openFieldEditor(row, "title", row.querySelector("strong[data-select-field='title']") || row);
-    }, 120);
+    if (options.open !== false) {
+      window.setTimeout(() => {
+        const row = document.querySelector(`.activity-row[data-activity-id="${cssEscape(activity.id)}"]`);
+        if (row) openFieldEditor(row, options.field || "title", row.querySelector(`[data-select-field='${options.field || "title"}']`) || row.querySelector("strong[data-select-field='title']") || row);
+      }, 120);
+    }
+    return activity.id;
+  }
+
+  function openDayFieldEditor(card, field, anchor) {
+    closeEditor();
+    const ref = getDayRefs(card.dataset.dayId);
+    if (!ref.day) return;
+    card.classList.add("inline-editing-row");
+    const input = document.createElement("input");
+    input.className = "inline-activity-input inline-day-input";
+    input.dataset.inlineDayEditor = field;
+    input.placeholder = field === "location" ? "当天地点" : "住宿";
+    input.value = field === "location" ? (ref.day.location || "") : (ref.day.stay || "");
+    replaceAnchor(anchor, input);
+    activeEditor = { node: input, row: card };
+    input.focus({ preventScroll: true });
+    input.select?.();
+    const saveAndClose = () => {
+      const value = input.value.trim();
+      updateDay(card.dataset.dayId, (day) => {
+        if (field === "location") day.location = value;
+        if (field === "stay") day.stay = value;
+      }, `inline-edit-day-${field}`);
+      closeEditor(false);
+    };
+    input.addEventListener("blur", saveAndClose, { once: true });
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        input.blur();
+      }
+    });
+  }
+
+  function openDayBudgetEditor(dayId, anchor) {
+    const ref = getDayRefs(dayId);
+    if (!ref.day) return;
+    let activity = ref.day.activities?.[ref.day.activities.length - 1];
+    if (!activity) {
+      const id = addTemplateActivity(dayId, { title: "预算事项", open: false });
+      window.setTimeout(() => {
+        const row = document.querySelector(`.activity-row[data-activity-id="${cssEscape(id)}"]`);
+        if (row) openFieldEditor(row, "budget", row.querySelector("[data-select-field='budget']") || row);
+      }, 140);
+      return;
+    }
+    const row = document.querySelector(`.activity-row[data-activity-id="${cssEscape(activity.id)}"]`);
+    if (row) openFieldEditor(row, "budget", row.querySelector("[data-select-field='budget']") || row);
+    else toast("请先展开当天事项再编辑预算");
   }
 
   function openFieldEditor(row, field, anchor) {
@@ -246,6 +367,19 @@
     activeEditor = null;
   }
 
+  function updateDay(dayId, mutate, reason) {
+    const library = window.TripPlanner?.getLibrary?.();
+    const ref = getDayRefs(dayId, library);
+    if (!ref.day || !ref.trip || !ref.list) return;
+    const stamp = Date.now();
+    mutate(ref.day);
+    ref.day.updatedAt = stamp;
+    ref.trip.updatedAt = stamp;
+    ref.list.updatedAt = stamp;
+    library.updatedAt = stamp;
+    window.TripPlanner?.saveExternalLibrary?.(library, reason);
+  }
+
   function updateActivity(row, mutate, reason) {
     const library = window.TripPlanner?.getLibrary?.();
     const ref = getRefs(row, library);
@@ -267,6 +401,13 @@
     const day = trip?.days?.find((item) => item.id === dayId);
     const activity = day?.activities?.find((item) => item.id === row.dataset.activityId);
     return { library, list, trip, day, activity };
+  }
+
+  function getDayRefs(dayId, library = window.TripPlanner?.getLibrary?.()) {
+    const list = activeList(library);
+    const trip = list?.trip;
+    const day = trip?.days?.find((item) => item.id === dayId);
+    return { library, list, trip, day };
   }
 
   function activeList(library) {
@@ -300,7 +441,7 @@
     const style = document.createElement("style");
     style.id = "inlineActivityTemplateStyles";
     style.textContent = `
-      .activity-row .inline-clickable,.activity-row [data-select-field]{cursor:text}.activity-row .inline-field-chip{width:max-content;min-height:30px;border:1px dashed rgba(18,38,34,.18);border-radius:999px;background:#fff;color:var(--muted);padding:4px 12px;font:inherit;font-weight:800;cursor:text}.activity-row .inline-field-chip:hover,.activity-row [data-select-field]:hover{border-color:rgba(15,143,131,.34);background:#eef9f6;color:var(--teal-dark)}.activity-row .inline-budget-chip{border-style:solid;color:#b63a28;background:#fff5f1}.inline-editing-row{outline:2px solid rgba(15,143,131,.55);outline-offset:2px}.inline-activity-input{min-height:34px;border:1px solid rgba(15,143,131,.42);border-radius:10px;background:#fff;padding:6px 10px;font:inherit;font-weight:800;color:var(--ink);box-shadow:0 0 0 3px rgba(15,143,131,.08)}textarea.inline-activity-input{width:min(520px,100%);min-height:72px;resize:vertical}.inline-budget-editor,.inline-transport-editor{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.inline-budget-editor .budget-amount{width:120px}.inline-budget-editor .budget-currency{width:92px}.inline-transport-editor .transport-type{width:104px}.inline-transport-editor .transport-from,.inline-transport-editor .transport-to{width:150px}@media(max-width:780px){.inline-budget-editor,.inline-transport-editor{width:100%;align-items:stretch}.inline-budget-editor .inline-activity-input,.inline-transport-editor .inline-activity-input{width:100%;flex:1 1 130px}.activity-row .inline-field-chip{min-height:34px;padding-inline:13px}}
+      .activity-row .inline-clickable,.activity-row [data-select-field],.inline-day-chip,[data-day-field],.inline-empty-add{cursor:text}.inline-empty-add{transition:border-color 140ms var(--ease),background 140ms var(--ease),color 140ms var(--ease)}.inline-empty-add:hover{border-color:rgba(15,143,131,.46)!important;background:#eef9f6!important;color:var(--teal-dark)!important}.activity-row .inline-field-chip{width:max-content;min-height:30px;border:1px dashed rgba(18,38,34,.18);border-radius:999px;background:#fff;color:var(--muted);padding:4px 12px;font:inherit;font-weight:800;cursor:text}.activity-row .inline-field-chip:hover,.activity-row [data-select-field]:hover,.inline-day-chip:hover,[data-day-field]:hover{border-color:rgba(15,143,131,.34);background:#eef9f6;color:var(--teal-dark)}.activity-row .inline-budget-chip{border-style:solid;color:#b63a28;background:#fff5f1}.inline-editing-row{outline:2px solid rgba(15,143,131,.55);outline-offset:2px}.inline-activity-input{min-height:34px;border:1px solid rgba(15,143,131,.42);border-radius:10px;background:#fff;padding:6px 10px;font:inherit;font-weight:800;color:var(--ink);box-shadow:0 0 0 3px rgba(15,143,131,.08)}.inline-day-input{min-width:190px}textarea.inline-activity-input{width:min(520px,100%);min-height:72px;resize:vertical}.inline-budget-editor,.inline-transport-editor{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.inline-budget-editor .budget-amount{width:120px}.inline-budget-editor .budget-currency{width:92px}.inline-transport-editor .transport-type{width:104px}.inline-transport-editor .transport-from,.inline-transport-editor .transport-to{width:150px}@media(max-width:780px){.inline-budget-editor,.inline-transport-editor{width:100%;align-items:stretch}.inline-budget-editor .inline-activity-input,.inline-transport-editor .inline-activity-input{width:100%;flex:1 1 130px}.activity-row .inline-field-chip{min-height:34px;padding-inline:13px}.inline-day-input{width:min(70vw,260px)}}
     `;
     document.head.append(style);
   }
