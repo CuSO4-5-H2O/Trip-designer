@@ -3,6 +3,8 @@
 
   let styleInstalled = false;
   let enhanceTimer = 0;
+  let observer = null;
+  let enhancing = false;
 
   function init() {
     installStyles();
@@ -11,24 +13,42 @@
     document.addEventListener("dragstart", handleDragStartCapture, true);
     scheduleEnhance();
     window.setTimeout(scheduleEnhance, 250);
-    window.setInterval(scheduleEnhance, 900);
+    observeTimelineChanges();
+  }
+
+  function observeTimelineChanges() {
+    if (observer) return;
+    const root = document.querySelector("#dayList") || document.body;
+    observer = new MutationObserver((mutations) => {
+      if (enhancing) return;
+      if (!mutations.some((mutation) => mutation.type === "childList")) return;
+      scheduleEnhance();
+    });
+    observer.observe(root, { childList: true, subtree: true });
   }
 
   function scheduleEnhance() {
     clearTimeout(enhanceTimer);
-    enhanceTimer = window.setTimeout(enhance, 40);
+    enhanceTimer = window.setTimeout(enhance, 60);
   }
 
   function enhance() {
-    ensureBlankAddZone();
-    stabilizeActivityDrag();
-    normalizeDayAddButtons();
+    enhancing = true;
+    try {
+      ensureBlankAddZone();
+      stabilizeActivityDrag();
+      normalizeDayAddButtons();
+    } finally {
+      window.setTimeout(() => {
+        enhancing = false;
+      }, 0);
+    }
   }
 
   function ensureBlankAddZone() {
     const dayList = document.querySelector("#dayList");
     if (!dayList) return;
-    let zone = dayList.querySelector(".timeline-blank-add-zone");
+    let zone = dayList.querySelector(":scope > .timeline-blank-add-zone");
     if (!zone) {
       zone = document.createElement("button");
       zone.type = "button";
@@ -55,10 +75,7 @@
 
   function normalizeDayAddButtons() {
     document.querySelectorAll(".day-card[data-day-id]").forEach((card) => {
-      const nested = card.querySelector(".day-main .day-header-plus");
-      if (nested) {
-        nested.remove();
-      }
+      card.querySelector(".day-main .day-header-plus")?.remove();
       if (card.querySelector(":scope > .day-card-add-floating")) return;
       const button = document.createElement("button");
       button.className = "day-card-add-floating";
@@ -111,7 +128,7 @@
     const topButton = document.querySelector("#addDayTopBtn");
     if (topButton && !topButton.disabled) {
       topButton.click();
-      window.setTimeout(scheduleEnhance, 120);
+      scheduleEnhance();
       return;
     }
     toast("已达到天数上限");
@@ -122,13 +139,10 @@
     window.setTimeout(() => {
       document.querySelector("#cancelEditActivityBtn")?.click?.();
       document.body.classList.add("detail-drawer-open");
-      const panel = document.querySelector(".detail-panel");
-      panel?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       const title = document.querySelector("#activityTitle");
       title?.focus({ preventScroll: true });
-      title?.scrollIntoView({ behavior: "smooth", block: "center" });
       toast("正在添加事项");
-    }, 120);
+    }, 80);
   }
 
   function getSelectedDayId() {
