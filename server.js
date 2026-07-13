@@ -3,16 +3,29 @@ const fs = require("fs");
 const http = require("http");
 const path = require("path");
 const { handleMapRuntime } = require("./map-runtime");
+const { createGithubRoomStore } = require("./github-room-store");
 
 const root = __dirname;
 const port = Number(process.env.PORT || 4177);
 const renderDiskDir = "/var/data";
 const dataDir = process.env.DATA_DIR || (fs.existsSync(renderDiskDir) ? renderDiskDir : path.join(root, "data"));
 const dataFile = process.env.DATA_FILE || path.join(dataDir, "rooms.json");
+const githubStore = createGithubRoomStore();
 const rooms = new Map();
 const sockets = new Map();
 const geocodeCache = new Map();
 let saveTimer = null;
+let githubSaveTimer = null;
+let storageStatus = {
+  backend: githubStore.enabled ? "github" : "disk",
+  tokenConfigured: githubStore.enabled,
+  repo: githubStore.status.repo,
+  branch: githubStore.status.branch,
+  path: githubStore.status.path,
+  dataFile,
+  hydrated: false,
+  lastError: githubStore.status.lastError || "",
+};
 
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
@@ -22,15 +35,41 @@ const mimeTypes = {
   ".svg": "image/svg+xml",
 };
 
-loadRooms();
+main().catch((error) => {
+  console.warn(`Startup failed: ${error.message}`);
+  loadRoomsFromDisk();
+  seedDefaultRoomIfEmpty();
+  startServer();
+});
 
-const server = http.createServer(async (req, res) => {
+async function main() {
+  await loadRooms();
+  seedDefaultRoomIfEmpty();
+  startServer();
+}
+
+function startServer() {
+  const server = http.createServer(handleRequest);
+  server.on("upgrade", handleUpgrade);
+  server.listen(port, () => {
+    console.log(`Trip planner is running at http://localhost:${port}`);
+    console.log(`Room data file: ${dataFile}`);
+    console.log(`Room storage backend: ${storageStatus.backend}`);
+  });
+}
+
+async function handleRequest(req, res) {
   const requestUrl = new URL(req.url, `http://${req.headers.host}`);
+
+  if (requestUrl.pathname === "/api/cloud-storage-status") {
+    sendJson(res, 200, { ok: true, storage: getCloudStorageStatus() });
+    return;
+  }
 
   if (await handleMapRuntime(req, res, requestUrl.pathname)) return;
 
   if (requestUrl.pathname === "/healthz") {
-    sendJson(res, 200, { ok: true, aiConfigured: Boolean(process.env.deepseek || process.env.DEEPSEEK_API_KEY) });
+    sendJson(res, 200, { ok: true, aiConfigured: Boolean(process.env.deepseek || process.env.DEEPSEEK_API_KEY), storage: getCloudStorageStatus() });
     return;
   }
   if (requestUrl.pathname === "/api/geocode") return handleGeocode(requestUrl, res);
@@ -62,9 +101,9 @@ const server = http.createServer(async (req, res) => {
     });
     res.end(data);
   });
-});
+}
 
-server.on("upgrade", (req, socket) => {
+function handleUpgrade(req, socket) {
   const requestUrl = new URL(req.url, `http://${req.headers.host}`);
   if (requestUrl.pathname !== "/sync") return socket.destroy();
 
@@ -89,12 +128,127 @@ server.on("upgrade", (req, socket) => {
   });
   socket.on("close", () => removePeer(socket));
   socket.on("error", () => removePeer(socket));
-});
+}
 
-server.listen(port, () => {
-  console.log(`Trip planner is running at http://localhost:${port}`);
-  console.log(`Room data file: ${dataFile}`);
-});
+async function loadRooms() {
+  let loaded = false;
+  if (githubStore.enabled) {
+    try {
+      const payload = await githubStore.load();
+      if (payload?.rooms && Object.keys(payload.rooms).length) {
+        applyRoomsPayload(payload);
+        writeRoomsPayloadToDisk(payload);
+        loaded = true;
+      }
+      storageStatus.hydrated = true;
+      storageStatus.lastError = "";
+    } catch (error) {
+      storageStatus.lastError = error.message;
+      console.warn(`Could not load GitHub room data: ${error.message}`);
+    }
+  }
+
+  if (!loaded) loaded = loadRoomsFromDisk();
+
+  if (githubStore.enabled && loaded) scheduleGithubSave(buildRoomsPayload(), "startup-backfill");
+}
+
+function loadRoomsFromDisk() {
+  try {
+    if (!fs.existsSync(dataFile)) return false;
+    const saved = JSON.parse(fs.readFileSync(dataFile, "utf8"));
+    applyRoomsPayload(saved);
+    console.log(`Loaded ${rooms.size} room(s) from disk`);
+    return true;
+  } catch (error) {
+    console.warn(`Could not load room data: ${error.message}`);
+    return false;
+  }
+}
+
+function seedDefaultRoomIfEmpty() {
+  if (rooms.size) return;
+  try {
+    const seed = require("./imported-itinerary");
+    rooms.set(seed.roomId, {
+      state: normalizeLibrary({ version: 2, activeListId: seed.list.id, lists: [seed.list], updatedAt: seed.list.updatedAt }),
+      revision: 1,
+      peers: new Set(),
+    });
+    scheduleSave("seed-default-room");
+    console.log(`Initialized itinerary room ${seed.roomId}`);
+  } catch (error) {
+    console.warn(`Could not initialize itinerary seed: ${error.message}`);
+  }
+}
+
+function applyRoomsPayload(saved = {}) {
+  rooms.clear();
+  for (const [roomId, value] of Object.entries(saved.rooms || {})) {
+    const isEnvelope = value && typeof value === "object" && "state" in value;
+    rooms.set(roomId, {
+      state: normalizeLibrary(isEnvelope ? value.state : value),
+      revision: isEnvelope && Number.isFinite(value.revision) ? value.revision : 1,
+      peers: new Set(),
+    });
+  }
+}
+
+function buildRoomsPayload() {
+  const persistedRooms = {};
+  for (const [roomId, room] of rooms.entries()) {
+    if (room.state) persistedRooms[roomId] = { revision: room.revision || 0, state: room.state };
+  }
+  return { version: 2, savedAt: new Date().toISOString(), rooms: persistedRooms };
+}
+
+function writeRoomsPayloadToDisk(payload) {
+  fs.mkdirSync(dataDir, { recursive: true });
+  const tempFile = `${dataFile}.tmp`;
+  fs.writeFileSync(tempFile, JSON.stringify(payload, null, 2));
+  fs.renameSync(tempFile, dataFile);
+}
+
+function scheduleSave(reason = "state") {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => saveRooms(reason), 250);
+}
+
+function saveRooms(reason = "state") {
+  const payload = buildRoomsPayload();
+  try {
+    writeRoomsPayloadToDisk(payload);
+  } catch (error) {
+    console.warn(`Could not save room data: ${error.message}`);
+  }
+  scheduleGithubSave(payload, reason);
+}
+
+function scheduleGithubSave(payload, reason) {
+  if (!githubStore.enabled) return;
+  clearTimeout(githubSaveTimer);
+  githubSaveTimer = setTimeout(async () => {
+    try {
+      await githubStore.save(payload);
+      storageStatus.lastError = "";
+      storageStatus.lastGithubSaveAt = new Date().toISOString();
+      console.log(`Saved room data to GitHub (${reason})`);
+    } catch (error) {
+      storageStatus.lastError = error.message;
+      console.warn(`Could not save room data to GitHub: ${error.message}`);
+    }
+  }, 700);
+}
+
+function getCloudStorageStatus() {
+  return {
+    ...storageStatus,
+    ...githubStore.status,
+    backend: githubStore.enabled ? "github" : "disk",
+    tokenConfigured: githubStore.enabled,
+    dataFile,
+  };
+}
 
 function handleMessage(socket, raw) {
   let message;
@@ -107,21 +261,15 @@ function handleMessage(socket, raw) {
 
   if (message.type === "join") {
     removeDuplicateClientPeers(peer.roomId, peer.clientId, socket);
-    if (!room.state && message.state) {
-      room.state = normalizeLibrary(message.state);
-      room.revision = Math.max(1, room.revision || 0);
-      scheduleSave();
-    }
     send(socket, { type: "state", clientId: "server", state: room.state, revision: room.revision || 0 });
     broadcastMembers(peer.roomId);
     return;
   }
 
   if (message.type === "state" && message.state) {
-    const merged = mergeLibraries(room.state, message.state);
-    room.state = merged;
+    room.state = mergeLibraries(room.state, message.state);
     room.revision = (room.revision || 0) + 1;
-    scheduleSave();
+    scheduleSave(message.reason || "state");
     send(socket, { type: "ack", clientId: "server", state: room.state, revision: room.revision, reason: message.reason || "state" });
     broadcast(peer.roomId, { type: "state", clientId: message.clientId || "remote", roomId: peer.roomId, state: room.state, reason: message.reason || "state", revision: room.revision }, socket);
     return;
@@ -138,45 +286,6 @@ function handleMessage(socket, raw) {
 function ensureRoom(roomId) {
   if (!rooms.has(roomId)) rooms.set(roomId, { state: null, revision: 0, peers: new Set() });
   return rooms.get(roomId);
-}
-
-function loadRooms() {
-  try {
-    if (!fs.existsSync(dataFile)) return;
-    const saved = JSON.parse(fs.readFileSync(dataFile, "utf8"));
-    for (const [roomId, value] of Object.entries(saved.rooms || {})) {
-      const isEnvelope = value && typeof value === "object" && "state" in value;
-      rooms.set(roomId, {
-        state: normalizeLibrary(isEnvelope ? value.state : value),
-        revision: isEnvelope && Number.isFinite(value.revision) ? value.revision : 1,
-        peers: new Set(),
-      });
-    }
-    console.log(`Loaded ${rooms.size} room(s) from disk`);
-  } catch (error) {
-    console.warn(`Could not load room data: ${error.message}`);
-  }
-}
-
-function scheduleSave() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveRooms, 250);
-}
-
-function saveRooms() {
-  const persistedRooms = {};
-  for (const [roomId, room] of rooms.entries()) {
-    if (room.state) persistedRooms[roomId] = { revision: room.revision || 0, state: room.state };
-  }
-  const payload = { version: 2, savedAt: new Date().toISOString(), rooms: persistedRooms };
-  try {
-    fs.mkdirSync(dataDir, { recursive: true });
-    const tempFile = `${dataFile}.tmp`;
-    fs.writeFileSync(tempFile, JSON.stringify(payload, null, 2));
-    fs.renameSync(tempFile, dataFile);
-  } catch (error) {
-    console.warn(`Could not save room data: ${error.message}`);
-  }
 }
 
 async function handleRoomState(req, requestUrl, res) {
@@ -198,7 +307,7 @@ async function handleRoomState(req, requestUrl, res) {
     }
     room.state = mergeLibraries(room.state, message.state);
     room.revision = (room.revision || 0) + 1;
-    scheduleSave();
+    scheduleSave(message.reason || "http-state");
     broadcast(roomId, { type: "state", clientId: message.clientId || "http", roomId, state: room.state, reason: message.reason || "http-state", revision: room.revision }, null);
     sendJson(res, 200, { ok: true, revision: room.revision, state: room.state });
   } catch (error) {
@@ -301,13 +410,12 @@ function chooseNewer(left = {}, right = {}) {
 function normalizeLibrary(input = {}) {
   const now = Date.now();
   const lists = (Array.isArray(input.lists) ? input.lists : []).filter((list) => list?.trip?.days?.length).map((list, index) => normalizeList(list, index, now));
-  const fallback = lists.length ? lists : [normalizeList({ name: "新行程单", trip: { days: [{ id: crypto.randomUUID(), location: "", stay: "", activities: [] }] } }, 0, now)];
-  const activeListId = fallback.some((list) => list.id === input.activeListId) ? input.activeListId : fallback[0].id;
+  const activeListId = lists.some((list) => list.id === input.activeListId) ? input.activeListId : lists[0]?.id || "";
   return {
     version: 2,
     activeListId,
     members: normalizeMembers(input.members, now),
-    lists: fallback,
+    lists,
     deleted: normalizeDeleted(input.deleted),
     updatedAt: toTime(input.updatedAt) || now,
   };
