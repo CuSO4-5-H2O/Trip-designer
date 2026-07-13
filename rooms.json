@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-13T15:03:09.459Z",
+  "savedAt": "2026-07-13T15:03:24.556Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1026,7 +1026,7 @@
       }
     },
     "94A60693": {
-      "revision": 14,
+      "revision": 15,
       "state": {
         "version": 2,
         "activeListId": "6b37066f-eca3-4353-a402-324044b4eaa9",
@@ -1058,7 +1058,7 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-13",
               "originCity": "",
-              "selectedDayId": "54d20307-cb79-4c2d-a99f-8601ffcbdea6",
+              "selectedDayId": "ca8ec301-1504-490d-b0bf-be003e0d2acd",
               "dayLimit": 30,
               "days": [
                 {
@@ -1158,25 +1158,65 @@
                   "id": "a3cc63cc-075a-415a-aa12-bccc041e91dd",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1783954987716,
-                  "orderUpdatedAt": 1783954987716
+                  "orderUpdatedAt": 1783954987716,
+                  "activities": []
                 },
                 {
                   "id": "651ee30b-fceb-4065-9122-a19c84f343a7",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1783954988011,
-                  "orderUpdatedAt": 1783954988011
+                  "orderUpdatedAt": 1783954988011,
+                  "activities": []
                 },
                 {
                   "id": "54d20307-cb79-4c2d-a99f-8601ffcbdea6",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1783954988317,
-                  "orderUpdatedAt": 1783954988317
+                  "orderUpdatedAt": 1783954988317,
+                  "activities": []
+                },
+                {
+                  "id": "ca8ec301-1504-490d-b0bf-be003e0d2acd",
+                  "location": "东京",
+                  "stay": "",
+                  "updatedAt": 1783955003416,
+                  "orderUpdatedAt": 1783955003416,
+                  "activities": []
+                },
+                {
+                  "id": "d84710a8-f0d1-427b-9949-d7a14be0aa92",
+                  "location": "东京",
+                  "stay": "",
+                  "updatedAt": 1783955003416,
+                  "orderUpdatedAt": 1783955003416,
+                  "activities": []
+                },
+                {
+                  "id": "5f6b293b-e826-460b-8b46-160c1a706f0c",
+                  "location": "东京",
+                  "stay": "",
+                  "updatedAt": 1783955003416,
+                  "orderUpdatedAt": 1783955003416,
+                  "activities": []
+                },
+                {
+                  "id": "7e253c40-a0d4-4823-ab7a-b92030cab92d",
+                  "location": "大阪",
+                  "stay": "",
+                  "updatedAt": 1783955003416,
+                  "orderUpdatedAt": 1783955003416,
+                  "activities": []
+                },
+                {
+                  "id": "4a041dcb-6e4e-4548-bfe0-a16b7a6ea9f5",
+                  "location": "大阪",
+                  "stay": "",
+                  "updatedAt": 1783955003416,
+                  "orderUpdatedAt": 1783955003416,
+                  "activities": []
                 }
               ],
               "budget": {
@@ -1185,11 +1225,11 @@
                 "limit": 0,
                 "updatedAt": 1783952761433
               },
-              "updatedAt": 1783954988317,
+              "updatedAt": 1783955003417,
               "orderUpdatedAt": 1783954988317
             },
             "createdAt": 1783952761433,
-            "updatedAt": 1783954988317
+            "updatedAt": 1783955003417
           }
         ],
         "deleted": {
@@ -1201,7 +1241,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1783954989209
+        "updatedAt": 1783955004305
       }
     }
   }
