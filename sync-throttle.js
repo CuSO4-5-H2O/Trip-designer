@@ -40,10 +40,32 @@
     if (/\/api\/room-state\?/.test(url) && method === "GET") {
       return protectRoomStateFetch(input, init, url);
     }
-    // Do not throttle HTTP writes. app-collab already debounces its HTTP fallback;
-    // returning a fake queued success here made the UI say saved before the cloud
-    // actually persisted the latest trip, which could swallow edits on refresh.
+    if (/\/api\/room-state\?/.test(url) && method === "POST") {
+      return compactRoomStatePost(input, init, url);
+    }
     return originalFetch(input, init);
+  }
+
+  async function compactRoomStatePost(input, init, url) {
+    const requestBody = parseJson(init?.body);
+    const response = await originalFetch(input, init);
+    let payload;
+    try {
+      payload = await response.clone().json();
+    } catch {
+      return response;
+    }
+    if (!payload?.ok) return response;
+
+    const roomId = new URL(url, location.href).searchParams.get("room") || requestBody?.roomId || payload?.roomId || "";
+    if (requestBody?.state) clearMatchingQueue(roomId, requestBody.state);
+
+    if (requestBody?.state && payload.state && sameVisibleState(requestBody.state, payload.state)) {
+      const compact = { ...payload, stateOmitted: true };
+      delete compact.state;
+      return jsonResponse(compact);
+    }
+    return response;
   }
 
   async function protectRoomStateFetch(input, init, url) {
@@ -80,6 +102,14 @@
     markQueued();
     clearTimeout(queueTimer);
     queueTimer = window.setTimeout(() => flushNow("auto-60s"), AUTO_SYNC_DELAY);
+  }
+
+  function clearMatchingQueue(roomId, state) {
+    if (!queuedState || queuedState.roomId !== roomId) return;
+    if (!sameVisibleState(queuedState.state, state)) return;
+    queuedState = null;
+    clearTimeout(queueTimer);
+    queueTimer = 0;
   }
 
   async function flushNow(reason = "manual-sync") {
@@ -185,6 +215,25 @@
     };
     visit(value);
     return max;
+  }
+
+  function sameVisibleState(left, right) {
+    return stableStringify(stripVolatile(left)) === stableStringify(stripVolatile(right));
+  }
+
+  function stripVolatile(value) {
+    if (Array.isArray(value)) return value.map(stripVolatile);
+    if (!value || typeof value !== "object") return value;
+    const result = {};
+    for (const key of Object.keys(value).sort()) {
+      if (key === "updatedAt" || key === "createdAt" || key === "orderUpdatedAt" || key === "deleted") continue;
+      result[key] = stripVolatile(value[key]);
+    }
+    return result;
+  }
+
+  function stableStringify(value) {
+    return JSON.stringify(value);
   }
 
   function parseJson(value) {
