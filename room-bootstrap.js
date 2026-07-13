@@ -2,7 +2,7 @@
   "use strict";
 
   const APP_BUILD_VERSION = "render-20260713y";
-  const INLINE_EDITOR_VERSION = "render-20260713z";
+  const INLINE_EDITOR_VERSION = "render-20260713aa";
   const LAST_ROOM_KEY = "tripdesigner:last-room";
   const params = new URLSearchParams(location.search);
   const requestedRoomId = normalizeRoom(params.get("room"));
