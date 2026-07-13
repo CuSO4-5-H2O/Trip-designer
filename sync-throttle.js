@@ -2,6 +2,7 @@
   "use strict";
 
   const AUTO_SYNC_DELAY = 60000;
+  const LOCAL_NEWER_SKEW = 500;
   const originalFetch = window.fetch.bind(window);
   const originalSend = WebSocket.prototype.send;
   let queuedState = null;
@@ -36,22 +37,40 @@
   function throttledFetch(input, init = {}) {
     const method = String(init?.method || "GET").toUpperCase();
     const url = typeof input === "string" ? input : input?.url || "";
-    if (method === "POST" && /\/api\/room-state\?/.test(url)) {
-      const body = parseJson(init.body);
-      const roomFromUrl = new URL(url, location.href).searchParams.get("room") || body?.roomId || "";
-      if (body?.state && roomFromUrl) {
-        queueState({
-          clientId: body.clientId,
-          roomId: roomFromUrl,
-          state: body.state,
-          reason: body.reason || "http-state",
-          baseRevision: body.baseRevision || 0,
-        });
-        window.setTimeout(markQueued, 30);
-        return Promise.resolve(jsonResponse({ ok: true, queued: true, throttled: true }));
-      }
+    if (/\/api\/room-state\?/.test(url) && method === "GET") {
+      return protectRoomStateFetch(input, init, url);
     }
+    // Do not throttle HTTP writes. app-collab already debounces its HTTP fallback;
+    // returning a fake queued success here made the UI say saved before the cloud
+    // actually persisted the latest trip, which could swallow edits on refresh.
     return originalFetch(input, init);
+  }
+
+  async function protectRoomStateFetch(input, init, url) {
+    const response = await originalFetch(input, init);
+    let payload;
+    try {
+      payload = await response.clone().json();
+    } catch {
+      return response;
+    }
+    const roomId = new URL(url, location.href).searchParams.get("room") || payload?.roomId || "";
+    const local = readLocalLibrary(roomId);
+    if (!roomId || !payload?.ok || !payload.state || !local?.lists?.length) return response;
+
+    const localStamp = stateStamp(local);
+    const serverStamp = stateStamp(payload.state);
+    if (localStamp <= serverStamp + LOCAL_NEWER_SKEW) return response;
+
+    queueState({
+      clientId: readLocal("trip-planner:client-id") || "local-recovery",
+      roomId,
+      state: local,
+      reason: "protect-local-newer",
+      baseRevision: Number(payload.revision) || 0,
+    });
+    flushNow("protect-local-newer");
+    return jsonResponse({ ...payload, state: local, localPreferred: true, pendingSave: true });
   }
 
   function queueState(next) {
@@ -144,6 +163,30 @@
     syncState?.classList.toggle("offline", !connected);
   }
 
+  function readLocalLibrary(roomId) {
+    return parseJson(readLocal(`trip-planner-library:${roomId}`));
+  }
+
+  function readLocal(key) {
+    try { return localStorage.getItem(key) || ""; } catch { return ""; }
+  }
+
+  function stateStamp(value) {
+    let max = 0;
+    const visit = (item) => {
+      if (!item || typeof item !== "object") return;
+      for (const [key, child] of Object.entries(item)) {
+        if (/At$/.test(key)) {
+          const number = Number(child);
+          if (Number.isFinite(number)) max = Math.max(max, number);
+        }
+        if (child && typeof child === "object") visit(child);
+      }
+    };
+    visit(value);
+    return max;
+  }
+
   function parseJson(value) {
     if (!value) return null;
     if (typeof value === "object") return value;
@@ -152,7 +195,7 @@
 
   function jsonResponse(payload) {
     return new Response(JSON.stringify(payload), {
-      status: 202,
+      status: 200,
       headers: { "Content-Type": "application/json" },
     });
   }
