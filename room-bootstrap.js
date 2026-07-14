@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const APP_BUILD_VERSION = "render-20260714j";
+  const APP_BUILD_VERSION = "render-20260714k";
   const INLINE_EDITOR_VERSION = "render-20260714h";
   const LAST_ROOM_KEY = "tripdesigner:last-room";
   const params = new URLSearchParams(location.search);
