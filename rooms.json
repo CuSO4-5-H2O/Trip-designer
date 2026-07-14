@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-14T01:50:37.885Z",
+  "savedAt": "2026-07-14T01:50:59.042Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1026,7 +1026,7 @@
       }
     },
     "94A60693": {
-      "revision": 55,
+      "revision": 57,
       "state": {
         "version": 2,
         "activeListId": "6b37066f-eca3-4353-a402-324044b4eaa9",
@@ -1059,8 +1059,8 @@
                   "id": "651ee30b-fceb-4065-9122-a19c84f343a7",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1783993836504,
-                  "orderUpdatedAt": 1783993836098,
+                  "updatedAt": 1783993857662,
+                  "orderUpdatedAt": 1783993857255,
                   "activities": [
                     {
                       "id": "879f0d05-1948-4a33-b261-5ec9d67680d3",
@@ -1127,6 +1127,21 @@
                       },
                       "transport": null,
                       "updatedAt": 1783993836504
+                    },
+                    {
+                      "id": "07937461-3f8d-42be-8da8-9c9f0845d7d2",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1783993857662
                     }
                   ]
                 },
@@ -1161,11 +1176,11 @@
                 "limit": 0,
                 "updatedAt": 1783952761433
               },
-              "updatedAt": 1783993836504,
+              "updatedAt": 1783993857662,
               "orderUpdatedAt": 1783955275615
             },
             "createdAt": 1783952761433,
-            "updatedAt": 1783993836504
+            "updatedAt": 1783993857662
           }
         ],
         "deleted": {
@@ -1197,7 +1212,7 @@
             "cff585ff-96f1-406f-a8ab-649cc85b9619": 1783955294360
           }
         },
-        "updatedAt": 1783993837635
+        "updatedAt": 1783993858792
       }
     }
   }
