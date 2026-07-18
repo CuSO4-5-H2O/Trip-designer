@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T10:45:51.966Z",
+  "savedAt": "2026-07-18T10:46:10.195Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -2633,6 +2633,127 @@
           "members": {}
         },
         "updatedAt": 1784371551715
+      }
+    },
+    "16FBAC97": {
+      "revision": 0,
+      "state": {
+        "version": 2,
+        "activeListId": "c21b5a23-134b-4d71-8bc5-30de5598566c",
+        "members": [],
+        "lists": [
+          {
+            "id": "c21b5a23-134b-4d71-8bc5-30de5598566c",
+            "name": "新行程单",
+            "trip": {
+              "tripTitle": "新行程单",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "51b2815a-d3fb-4468-b83b-8041edf38387",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "51b2815a-d3fb-4468-b83b-8041edf38387",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1784371560126,
+                  "orderUpdatedAt": 1784371560126
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784371560126
+              },
+              "updatedAt": 1784371560126,
+              "orderUpdatedAt": 1784371560126
+            },
+            "createdAt": 1784371560126,
+            "updatedAt": 1784371560126
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784371560126
+      }
+    },
+    "B766EBB2": {
+      "revision": 2,
+      "state": {
+        "version": 2,
+        "activeListId": "0062309a-2a73-4f23-ad6a-611183b2ba2e",
+        "members": [],
+        "lists": [
+          {
+            "id": "0062309a-2a73-4f23-ad6a-611183b2ba2e",
+            "name": "共享room验证",
+            "createdAt": 1784371569115,
+            "updatedAt": 1784371569478,
+            "trip": {
+              "tripTitle": "共享room验证",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "7be8b233-f2a6-44a0-9743-c2298b25d185",
+              "dayLimit": 30,
+              "updatedAt": 1784371569478,
+              "orderUpdatedAt": 1784371569478,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784371569115
+              },
+              "days": [
+                {
+                  "id": "7be8b233-f2a6-44a0-9743-c2298b25d185",
+                  "location": "共享验证",
+                  "stay": "",
+                  "updatedAt": 1784371569478,
+                  "orderUpdatedAt": 1784371569478,
+                  "activities": [
+                    {
+                      "id": "5b343126-8c8f-4fb4-afbc-57bd12a8b4d1",
+                      "time": "",
+                      "title": "房主事项",
+                      "place": "owner",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784371569115
+                    },
+                    {
+                      "id": "e196bc14-cb0a-42fb-b855-8e0b71c23f26",
+                      "time": "",
+                      "title": "好友事项",
+                      "place": "friend",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784371569478
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784371569944
       }
     }
   }
