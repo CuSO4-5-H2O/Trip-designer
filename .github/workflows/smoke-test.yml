@@ -1,9 +1,10 @@
 name: Smoke test
 
+# Manual only. During active repair sessions this workflow was sending a large
+# number of GitHub failure emails on every push. Run it from the Actions tab
+# when a deliberate smoke check is needed.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: smoke-${{ github.ref }}
