@@ -17,6 +17,9 @@ const sockets = new Map();
 const geocodeCache = new Map();
 let saveTimer = null;
 let githubSaveTimer = null;
+let authRuntime = null;
+let authLoadPromise = null;
+let quickPlanHandler = null;
 let storageStatus = {
   backend: githubStore.enabled ? "github" : (allowDiskStorage ? "disk" : "unconfigured"),
   tokenConfigured: githubStore.enabled,
@@ -67,6 +70,11 @@ async function handleRequest(req, res) {
     return;
   }
 
+  if (requestUrl.pathname.startsWith("/api/auth/")) {
+    await handleAuthRequest(req, res, requestUrl);
+    return;
+  }
+
   if (await handleMapRuntime(req, res, requestUrl.pathname)) return;
 
   if (requestUrl.pathname === "/healthz") {
@@ -75,6 +83,7 @@ async function handleRequest(req, res) {
   }
   if (requestUrl.pathname === "/api/geocode") return handleGeocode(requestUrl, res);
   if (requestUrl.pathname === "/api/ai/recommend") return handleAiRecommend(req, res);
+  if (requestUrl.pathname === "/api/ai/quick-plan") return handleAiQuickPlan(req, res, requestUrl);
   if (requestUrl.pathname === "/api/room-state") return handleRoomState(req, requestUrl, res);
   if (requestUrl.pathname === "/sync") {
     res.writeHead(426, { "Content-Type": "text/plain; charset=utf-8" });
@@ -269,6 +278,39 @@ function getCloudStorageStatus() {
     allowDiskStorage,
     cloudOnly: !allowDiskStorage,
   };
+}
+
+async function handleAuthRequest(req, res, requestUrl) {
+  try {
+    const runtime = await getAuthRuntime();
+    await runtime.handle(req, res, requestUrl);
+  } catch (error) {
+    sendJson(res, 503, { ok: false, error: "账号服务暂时不可用", detail: error.message });
+  }
+}
+
+async function getAuthRuntime() {
+  if (!authRuntime) {
+    const { createAuthRuntime } = require("./auth-runtime");
+    authRuntime = createAuthRuntime();
+  }
+  if (!authLoadPromise) {
+    authLoadPromise = authRuntime.load().catch((error) => {
+      authLoadPromise = null;
+      throw error;
+    });
+  }
+  await authLoadPromise;
+  return authRuntime;
+}
+
+async function handleAiQuickPlan(req, res, requestUrl) {
+  try {
+    if (!quickPlanHandler) quickPlanHandler = require("./ai-plan-runtime").handleAiPlan;
+    await quickPlanHandler(req, res, requestUrl);
+  } catch (error) {
+    sendJson(res, 500, { ok: false, error: "AI 快速行程服务暂时不可用", detail: error.message });
+  }
 }
 
 function handleMessage(socket, raw) {
