@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T09:20:15.125Z",
+  "savedAt": "2026-07-18T09:23:17.050Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1321,6 +1321,68 @@
           "members": {}
         },
         "updatedAt": 1784366414874
+      }
+    },
+    "ADOPTMRQ5SSYV": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "listmrq5ssyv",
+        "members": [],
+        "lists": [
+          {
+            "id": "listmrq5ssyv",
+            "name": "Adopt Test mrq5ssyv",
+            "createdAt": 1784366595751,
+            "updatedAt": 1784366595751,
+            "trip": {
+              "version": 1,
+              "tripTitle": "Adopt Test mrq5ssyv",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "daymrq5ssyv",
+              "dayLimit": 30,
+              "updatedAt": 1784366595751,
+              "orderUpdatedAt": 1784366595751,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784366595751
+              },
+              "days": [
+                {
+                  "id": "daymrq5ssyv",
+                  "location": "首次保存城市",
+                  "stay": "首次保存酒店",
+                  "activities": [
+                    {
+                      "id": "actmrq5ssyv",
+                      "time": "10:00",
+                      "title": "首次保存事项",
+                      "place": "首次保存地点",
+                      "note": "adopt test",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784366595751
+                    }
+                  ],
+                  "updatedAt": 1784366595751,
+                  "orderUpdatedAt": 1784366595751
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784366595751
       }
     }
   }
