@@ -8,12 +8,15 @@ It is aimed at the recurring visible shake/flicker issue when clicking the day `
 ## Changes
 
 - Added `viewport-stability.js`.
+- Added `mobile-sync-status-guard.js` and loaded it from the stability layer.
 - The guard preserves `window.scrollX` / `window.scrollY` around inline day/activity editing clicks inside `#dayList`.
 - Patched protected `focus()` calls to force `preventScroll: true` for itinerary-list editors.
 - Patched protected `input.select()` / `textarea.select()` calls so selecting inline text does not move the viewport.
 - Wrapped `TripPlanner.saveExternalLibrary()` so inline edits mark `window.__TripPendingLocalSave` before saving.
 - Pending inline edits now resist stale cloud refreshes during the 1-minute autosave window.
 - Added viewport preservation for Enter/Escape/focusout while closing inline editors.
+- On mobile, the sync status is fixed at the bottom and remains clickable while scrolled deep in the itinerary.
+- On mobile, pending local edits force the text `本地待同步 · 点击立即保存` instead of allowing old acknowledgements to display a false saved state.
 - Updated `index.html` to `render-20260719b` and loaded the guard after the existing stability scripts.
 
 ## Data Safety
@@ -35,10 +38,14 @@ Verified on Render production room `0F9A81A6` after deployment:
 7. Opened a second browser tab to the same room and confirmed it displayed `测试地点`, `生产验证事项-保留`, 3 days, and 10 activities from cloud data.
 8. Edited the transport chip to `车 · 测试地点 → 酒店`, clicked sync, and confirmed `/api/room-state` revision `14` stored `transport.type=car`, `from=测试地点`, `to=酒店`.
 9. Edited the budget chip to `预算 CNY 123`, clicked sync, and confirmed `/api/room-state` revision `17` stored `budget.amount=123`, `currency=CNY`.
+10. At 390px mobile viewport, confirmed the same room loaded without horizontal overflow and showed the same cloud data.
+11. At 390px mobile viewport, waited for all defer scripts, confirmed daily `+` buttons were present, visible, and clickable.
+12. At 390px mobile viewport, clicked a visible daily `+`; the day activity count increased by 1, `scrollY` stayed unchanged, and no console warnings/errors appeared.
+13. At 390px mobile viewport, edited the new title to `手机即时同步事项`; after the 1-minute autosave window, `/api/room-state` revision `20` contained the title.
+14. At 390px mobile viewport, confirmed the bottom sync bar loaded from `mobile-sync-status-guard.js`, stayed visible at the bottom, and showed `本地待同步 · 点击立即保存` while pending.
+15. At 390px mobile viewport, edited the new title to `手机底部同步验证2`, clicked the bottom sync bar, and confirmed `/api/room-state` revision `27` contained the title without waiting for the 1-minute autosave.
+16. Confirmed the final deployed `mobile-sync-status-guard.js` treats non-false manual flush results as saved so the bottom bar can return to `已保存到云端` after successful manual sync.
 
 ## Remaining Verification Target
 
-Continue verifying:
-
-1. Mobile viewport interaction after the stability guard.
-2. Longer multi-device concurrent editing beyond the tested second-tab cloud reload path.
+Continue verifying longer multi-device concurrent editing beyond the tested second-tab cloud reload path.
