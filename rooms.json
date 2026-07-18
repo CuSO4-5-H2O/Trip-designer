@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T11:17:04.566Z",
+  "savedAt": "2026-07-18T11:18:05.553Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3386,7 +3386,7 @@
       }
     },
     "QPF57151": {
-      "revision": 1,
+      "revision": 2,
       "state": {
         "version": 2,
         "activeListId": "caa8e25f-37b1-4149-a20d-c2cc37317993",
@@ -3527,7 +3527,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784373422196
+        "updatedAt": 1784373485303
       }
     }
   }
