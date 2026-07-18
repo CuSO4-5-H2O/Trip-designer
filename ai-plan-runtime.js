@@ -6,11 +6,6 @@ async function handleAiPlan(req, res, requestUrl) {
     sendJson(res, 405, { ok: false, error: "method not allowed" });
     return true;
   }
-  const apiKey = process.env.deepseek || process.env.DEEPSEEK_API_KEY;
-  if (!apiKey) {
-    sendJson(res, 503, { ok: false, error: "missing deepseek api key" });
-    return true;
-  }
   try {
     const body = JSON.parse(await readBody(req));
     const text = String(body.text || "").trim();
@@ -20,40 +15,53 @@ async function handleAiPlan(req, res, requestUrl) {
     }
     const trip = body.trip || {};
     const hints = inferPlanHints(text);
-    const prompt = buildPrompt(text, trip, hints);
-    const response = await fetch("https://api.deepseek.com/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
-        temperature: 0.2,
-        response_format: { type: "json_object" },
-        messages: [
-          { role: "system", content: "你是严谨的旅行行程结构化助手。你只输出可解析 JSON，不输出 markdown。" },
-          { role: "user", content: prompt },
-        ],
-      }),
-    });
-    if (!response.ok) throw new Error(`deepseek ${response.status}`);
-    const data = await response.json();
-    const parsed = JSON.parse(data.choices?.[0]?.message?.content || "{}");
-    const plan = normalizePlan(parsed.plan || parsed, hints);
-    if (!plan.days.length) throw new Error("no days parsed");
-    sendJson(res, 200, { ok: true, plan, hints: { expectedDays: hints.expectedDays || plan.days.length } });
-    return true;
+    const fallback = buildDeterministicPlan(text, hints);
+    const apiKey = process.env.deepseek || process.env.DEEPSEEK_API_KEY;
+    if (!apiKey) {
+      sendJson(res, 200, { ok: true, plan: fallback, source: "deterministic", warning: "missing deepseek api key", hints: { expectedDays: hints.expectedDays || fallback.days.length } });
+      return true;
+    }
+
+    try {
+      const prompt = buildPrompt(text, trip, hints, fallback);
+      const response = await fetch("https://api.deepseek.com/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
+          temperature: 0.2,
+          response_format: { type: "json_object" },
+          messages: [
+            { role: "system", content: "你是严谨的旅行行程结构化助手。你只输出可解析 JSON，不输出 markdown。" },
+            { role: "user", content: prompt },
+          ],
+        }),
+      });
+      if (!response.ok) throw new Error(`deepseek ${response.status}`);
+      const data = await response.json();
+      const parsed = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+      const plan = normalizePlan(parsed.plan || parsed, hints, fallback);
+      if (!plan.days.length) throw new Error("no days parsed");
+      sendJson(res, 200, { ok: true, plan, source: "deepseek", hints: { expectedDays: hints.expectedDays || plan.days.length } });
+      return true;
+    } catch (error) {
+      sendJson(res, 200, { ok: true, plan: fallback, source: "deterministic-fallback", warning: error.message, hints: { expectedDays: hints.expectedDays || fallback.days.length } });
+      return true;
+    }
   } catch (error) {
     sendJson(res, 502, { ok: false, error: "ai quick plan failed", detail: error.message });
     return true;
   }
 }
 
-function buildPrompt(text, trip, hints = {}) {
+function buildPrompt(text, trip, hints = {}, fallback = null) {
   return [
     "请把用户输入的自然语言行程严格转成结构化 JSON。",
     "不要自动覆盖已有行程，只生成计划对象。",
     "必须根据文本中的天数创建准确数量的 days。例如“内罗毕玩3天”必须生成 3 个 day。",
     hints.expectedDays ? `后端已解析到目标天数：${hints.expectedDays} 天；你必须返回正好 ${hints.expectedDays} 个 day。` : "如果文本没有总天数，请根据第几天和城市段推断最小天数。",
     hints.locationSequence.length ? `城市天数序列：${hints.locationSequence.map((item) => `${item.location || "未指定"} ${item.days}天`).join("，")}。` : "",
+    fallback?.days?.length ? `后端规则解析草案如下；请保持天数和“第几天”的归属，不要把第二天/第三天事项挪到别的天：${JSON.stringify(fallback)}` : "",
     "如果文本写了第几天/第二天/第三天，事项必须放到对应 day；如果只写城市+天数但没有细节，则每天至少给一个空 activities 数组并保留 location。",
     "不要编造用户没有暗示的必去景点；可以把不确定内容放进 note。",
     "时间不确定时 time 为空字符串。地点尽量写具体 place；当天城市写 location。住宿不确定时 stay 为空。",
@@ -66,7 +74,7 @@ function buildPrompt(text, trip, hints = {}) {
   ].filter(Boolean).join("\n");
 }
 
-function normalizePlan(input = {}, hints = {}) {
+function normalizePlan(input = {}, hints = {}, fallback = null) {
   const rawDays = Array.isArray(input.days) ? input.days : [];
   let days = rawDays.map(normalizeDay).filter(Boolean).slice(0, 60);
   const expected = Number.isFinite(hints.expectedDays) ? Math.max(1, Math.min(60, hints.expectedDays)) : 0;
@@ -75,11 +83,27 @@ function normalizePlan(input = {}, hints = {}) {
     while (days.length < expected) days.push(makePlaceholderDay(days.length, hints));
     days = applyLocationHints(days, hints.locationSequence);
   }
+  if (fallback?.days?.length) days = mergeFallbackDays(days, fallback.days);
   return {
     title: clean(input.title),
     originCity: clean(input.originCity),
     days,
   };
+}
+
+function mergeFallbackDays(days, fallbackDays) {
+  const length = Math.max(days.length, fallbackDays.length);
+  const merged = [];
+  for (let index = 0; index < length; index += 1) {
+    const day = days[index] || { location: "", stay: "", activities: [] };
+    const fallback = fallbackDays[index] || { location: "", stay: "", activities: [] };
+    merged.push({
+      location: day.location || fallback.location || "",
+      stay: day.stay || fallback.stay || "",
+      activities: (day.activities && day.activities.length ? day.activities : fallback.activities || []).map(normalizeActivity).filter(Boolean),
+    });
+  }
+  return merged;
 }
 
 function normalizeDay(day = {}) {
@@ -105,6 +129,99 @@ function normalizeActivity(activity = {}) {
     transport: normalizeTransport(activity.transport),
     budget: normalizeBudget(activity.budget),
   };
+}
+
+function buildDeterministicPlan(text, hints = {}) {
+  const expected = Number.isFinite(hints.expectedDays) ? Math.max(1, Math.min(60, hints.expectedDays)) : Math.max(1, inferMentionedOrdinalDays(text) || hints.locationSequence.reduce((sum, item) => sum + item.days, 0) || 1);
+  const days = Array.from({ length: expected }, (_, index) => makePlaceholderDay(index, hints));
+  const segments = splitByOrdinalDays(text);
+  const preamble = segments.preamble ? extractActivities(segments.preamble, hints) : [];
+  if (preamble.length) days[0].activities.push(...preamble);
+  for (const segment of segments.days) {
+    const index = Math.max(0, Math.min(days.length - 1, segment.dayNumber - 1));
+    const activities = extractActivities(segment.text, hints);
+    days[index].activities.push(...activities);
+  }
+  if (!segments.days.length && !preamble.length) {
+    const activities = extractActivities(stripPlanningClauses(text), hints);
+    if (activities.length) days[0].activities.push(...activities);
+  }
+  return {
+    title: hints.defaultLocation && expected ? `${hints.defaultLocation}${expected}天行程` : "",
+    originCity: "",
+    days: days.map((day) => ({ ...day, activities: dedupeActivities(day.activities) })),
+  };
+}
+
+function splitByOrdinalDays(text) {
+  const source = String(text || "");
+  const pattern = /第\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*天/g;
+  const matches = Array.from(source.matchAll(pattern));
+  if (!matches.length) return { preamble: source, days: [] };
+  const days = [];
+  for (let index = 0; index < matches.length; index += 1) {
+    const match = matches[index];
+    const start = match.index + match[0].length;
+    const end = matches[index + 1]?.index ?? source.length;
+    const dayNumber = parseChineseNumber(match[1]);
+    if (dayNumber > 0) days.push({ dayNumber, text: source.slice(start, end) });
+  }
+  return { preamble: source.slice(0, matches[0].index), days };
+}
+
+function extractActivities(text, hints = {}) {
+  const normalized = stripPlanningClauses(text)
+    .replace(/(然后|之后|随后|接着|再去|再到|再前往|并且|并|以及|和|、)/g, "，")
+    .replace(/(上午|中午|下午|晚上|早上|傍晚)(?=[^，,。；;]{1,20})/g, "，$1");
+  const parts = normalized.split(/[，,。；;\n]+/).map(cleanActivityText).filter(Boolean);
+  return parts.map((part) => phraseToActivity(part, hints)).filter(Boolean).slice(0, 30);
+}
+
+function stripPlanningClauses(text) {
+  return String(text || "")
+    .replace(/第\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*天/g, "")
+    .replace(/(?:在|去|到|前往)?\s*[^，,。；;\s]{1,24}(?:玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*[天日]/g, "")
+    .trim();
+}
+
+function cleanActivityText(value) {
+  return clean(value)
+    .replace(/^(?:先|可|可以|安排|计划|准备|去|到|前往|参观|游览|打卡|逛|看|体验)\s*/g, "")
+    .replace(/^(?:上午|中午|下午|晚上|早上|傍晚)\s*/g, "")
+    .replace(/^(?:，|,|。|；|;)+/, "")
+    .replace(/(?:，|,|。|；|;)+$/, "")
+    .trim();
+}
+
+function phraseToActivity(phrase, hints = {}) {
+  const title = cleanActivityText(phrase);
+  if (!title) return null;
+  if (/^(玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*[天日]$/.test(title)) return null;
+  if (title === hints.defaultLocation) return null;
+  const place = inferActivityPlace(title, hints);
+  return { time: "", title, place, note: "", transport: null, budget: null };
+}
+
+function inferActivityPlace(title, hints = {}) {
+  const text = clean(title);
+  const hotel = text.match(/入住(.{0,20}?)(酒店|旅店|民宿|住宿|营地)/);
+  if (hotel) return clean(hotel[0].replace(/^入住/, ""));
+  const arrive = text.match(/^抵达(.{1,24})$/);
+  if (arrive) return clean(arrive[1]);
+  if (/出发|离开|返程|准备出发/.test(text)) return hints.defaultLocation || "";
+  return text;
+}
+
+function dedupeActivities(activities) {
+  const seen = new Set();
+  const result = [];
+  for (const activity of activities || []) {
+    const key = `${activity.title}|${activity.place}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(activity);
+  }
+  return result;
 }
 
 function makePlaceholderDay(index, hints) {
