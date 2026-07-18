@@ -77,6 +77,7 @@ function createAuthRuntime() {
     if (requestUrl.pathname === "/api/auth/login") return handleLogin(req, res);
     if (requestUrl.pathname === "/api/auth/me") return handleMe(req, res);
     if (requestUrl.pathname === "/api/auth/join-room") return handleJoinRoom(req, res);
+    if (requestUrl.pathname === "/api/auth/create-room") return handleCreateRoom(req, res);
     sendJson(res, 404, { ok: false, error: "auth endpoint not found" });
     return true;
   }
@@ -99,7 +100,7 @@ function createAuthRuntime() {
       passwordHash: hashPassword(password, salt),
       salt,
       defaultRoomId: roomId,
-      rooms: [{ roomId, role: "owner", addedAt: now }],
+      rooms: [{ roomId, role: "owner", addedAt: now, updatedAt: now }],
       createdAt: now,
       updatedAt: now,
     };
@@ -134,9 +135,27 @@ function createAuthRuntime() {
     const roomId = normalizeRoomId(body.roomId);
     if (!roomId) return sendJson(res, 400, { ok: false, error: "missing roomId" });
     if (!account.rooms.some((room) => room.roomId === roomId)) {
-      account.rooms.push({ roomId, role: "editor", addedAt: new Date().toISOString() });
-      account.updatedAt = new Date().toISOString();
+      const now = new Date().toISOString();
+      account.rooms.push({ roomId, role: "editor", addedAt: now, updatedAt: now });
+      account.updatedAt = now;
       await save("join-room");
+    }
+    sendJson(res, 200, { ok: true, account: publicAccount(account), roomId });
+  }
+
+  async function handleCreateRoom(req, res) {
+    if (req.method !== "POST") return sendJson(res, 405, { ok: false, error: "method not allowed" });
+    const account = accountFromRequest(req);
+    if (!account) return sendJson(res, 401, { ok: false, error: "not signed in" });
+    const body = JSON.parse(await readBody(req));
+    const requested = normalizeRoomId(body.roomId);
+    const roomId = requested || randomRoomId();
+    const now = new Date().toISOString();
+    const existing = account.rooms.find((room) => room.roomId === roomId);
+    if (!existing) {
+      account.rooms.push({ roomId, role: "owner", addedAt: now, updatedAt: now });
+      account.updatedAt = now;
+      await save("create-room");
     }
     sendJson(res, 200, { ok: true, account: publicAccount(account), roomId });
   }
@@ -150,7 +169,7 @@ function createAuthRuntime() {
       username: account.username,
       displayName: account.displayName,
       defaultRoomId: account.defaultRoomId,
-      rooms: account.rooms.map((room) => ({ roomId: room.roomId, role: room.role, addedAt: room.addedAt })),
+      rooms: normalizeRooms(account.rooms).map((room) => ({ roomId: room.roomId, role: room.role, addedAt: room.addedAt, updatedAt: room.updatedAt })),
     };
   }
 
@@ -159,7 +178,9 @@ function createAuthRuntime() {
     const tokenValue = String(header).replace(/^Bearer\s+/i, "").trim();
     const payload = verifyToken(tokenValue);
     if (!payload?.username) return null;
-    return data.accounts[payload.username] || null;
+    const account = data.accounts[payload.username] || null;
+    if (account) account.rooms = normalizeRooms(account.rooms);
+    return account;
   }
 
   function signToken(account) {
@@ -260,6 +281,22 @@ function emptyData() { return { version: 1, accounts: {} }; }
 function normalizeData(input = {}) { return { version: 1, accounts: input.accounts && typeof input.accounts === "object" ? input.accounts : {} }; }
 function normalizeUsername(value) { const v = String(value || "").trim().toLowerCase(); return /^[a-z0-9_-]{3,32}$/.test(v) ? v : ""; }
 function normalizeRoomId(value) { return String(value || "").trim().toUpperCase().replace(/[^0-9A-Z_-]/g, "").slice(0, 32); }
+function normalizeRooms(rooms = []) {
+  const seen = new Set();
+  const normalized = [];
+  for (const item of Array.isArray(rooms) ? rooms : []) {
+    const roomId = normalizeRoomId(item?.roomId || item);
+    if (!roomId || seen.has(roomId)) continue;
+    seen.add(roomId);
+    normalized.push({
+      roomId,
+      role: item?.role === "owner" ? "owner" : "editor",
+      addedAt: item?.addedAt || item?.updatedAt || new Date(0).toISOString(),
+      updatedAt: item?.updatedAt || item?.addedAt || new Date(0).toISOString(),
+    });
+  }
+  return normalized;
+}
 function randomRoomId() { return crypto.randomBytes(4).toString("hex").toUpperCase(); }
 function hashPassword(password, salt) { return crypto.pbkdf2Sync(String(password), String(salt), 120000, 32, "sha256").toString("hex"); }
 function base64Url(value) { return Buffer.from(value, "utf8").toString("base64url"); }
