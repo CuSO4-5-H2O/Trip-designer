@@ -10,9 +10,49 @@
   ].join(",");
 
   let restoring = false;
+  let plannerWrapped = false;
 
   function shouldProtect(node) {
     return Boolean(node?.closest?.("#dayList"));
+  }
+
+  function currentRoomId() {
+    return new URLSearchParams(location.search).get("room") || window.TripRoom?.id || "";
+  }
+
+  function markPendingLocalSave() {
+    const roomId = currentRoomId();
+    if (!roomId) return;
+    window.__TripPendingLocalSave = { roomId, at: Date.now(), pending: true };
+    const syncText = document.querySelector("#syncText");
+    const syncState = document.querySelector("#syncState");
+    if (syncText && !/正在保存|已保存|本地待同步/.test(syncText.textContent || "")) {
+      syncText.textContent = "本地待同步 · 1 分钟内自动保存";
+    }
+    syncState?.classList.toggle("connected", false);
+    syncState?.classList.toggle("offline", true);
+  }
+
+  function wrapPlannerSave() {
+    if (plannerWrapped) return true;
+    const planner = window.TripPlanner;
+    if (!planner?.saveExternalLibrary) return false;
+    const original = planner.saveExternalLibrary.bind(planner);
+    planner.saveExternalLibrary = function guardedSaveExternalLibrary(next, reason) {
+      markPendingLocalSave();
+      return original(next, reason);
+    };
+    plannerWrapped = true;
+    return true;
+  }
+
+  function waitForPlanner() {
+    if (wrapPlannerSave()) return;
+    let tries = 0;
+    const timer = window.setInterval(() => {
+      tries += 1;
+      if (wrapPlannerSave() || tries > 120) window.clearInterval(timer);
+    }, 100);
   }
 
   function captureViewport() {
@@ -47,6 +87,9 @@
     const target = event.target.closest?.(STABLE_CLICK_SELECTOR);
     if (!target || !shouldProtect(target)) return;
     const restore = captureViewport();
+    if (target.matches(".day-card-add-floating,.inline-empty-add,.edit-activity,[data-day-field]") || target.closest(".activity-row [data-select-field]")) {
+      markPendingLocalSave();
+    }
     window.requestAnimationFrame(restore);
     window.setTimeout(restore, 0);
     window.setTimeout(restore, 120);
@@ -85,4 +128,7 @@
       restore();
     }
   };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", waitForPlanner, { once: true });
+  else waitForPlanner();
 })();
