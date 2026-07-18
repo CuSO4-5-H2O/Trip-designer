@@ -34,6 +34,16 @@
     syncState.classList.remove("connected");
   }
 
+  function markSaved() {
+    const roomId = currentRoomId();
+    if (roomId) window.__TripPendingLocalSave = { roomId, at: Date.now(), pending: false };
+    const syncText = document.querySelector("#syncText");
+    const syncState = document.querySelector("#syncState");
+    if (syncText) syncText.textContent = "已保存到云端";
+    syncState?.classList.remove("offline", "mobile-sync-pending");
+    syncState?.classList.add("connected");
+  }
+
   function bindSyncButton() {
     const syncState = document.querySelector("#syncState");
     if (!syncState || syncState.dataset.mobileSyncGuard === "1") return;
@@ -54,7 +64,8 @@
     if (syncText && hasPendingLocalSave()) syncText.textContent = "正在保存到云端";
     try {
       if (typeof window.TripDesignerFlushSync === "function") {
-        await window.TripDesignerFlushSync("mobile-sync-click");
+        const ok = await window.TripDesignerFlushSync("mobile-sync-click");
+        if (ok) markSaved();
       }
     } finally {
       window.setTimeout(guardPendingStatus, 250);
