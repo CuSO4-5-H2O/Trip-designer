@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T16:25:04.420Z",
+  "savedAt": "2026-07-18T16:27:09.723Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3826,7 +3826,7 @@
       }
     },
     "0F9A81A6": {
-      "revision": 6,
+      "revision": 7,
       "state": {
         "version": 2,
         "activeListId": "442adb5c-bcf1-4ff3-a0a6-38e5b1a7563e",
@@ -3839,7 +3839,7 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-18",
               "originCity": "",
-              "selectedDayId": "42e9dad7-c880-4410-af5e-1407e735db59",
+              "selectedDayId": "b7ca974c-b180-4eba-8ae6-1bf4c1fbf118",
               "dayLimit": 30,
               "days": [
                 {
@@ -3927,8 +3927,8 @@
                   "id": "b7ca974c-b180-4eba-8ae6-1bf4c1fbf118",
                   "location": "内罗毕",
                   "stay": "",
-                  "updatedAt": 1784391055409,
-                  "orderUpdatedAt": 1784391055409,
+                  "updatedAt": 1784391968831,
+                  "orderUpdatedAt": 1784391968831,
                   "activities": [
                     {
                       "id": "6e5aaac6-2587-4946-a462-5fb3f11cdf85",
@@ -3965,6 +3965,21 @@
                       "budget": null,
                       "transport": null,
                       "updatedAt": 1784391055409
+                    },
+                    {
+                      "id": "efdd84c9-f278-4379-89b5-0101d6dee7d4",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784391968831
                     }
                   ]
                 }
@@ -3975,11 +3990,11 @@
                 "limit": 0,
                 "updatedAt": 1784390957640
               },
-              "updatedAt": 1784391581137,
+              "updatedAt": 1784391968831,
               "orderUpdatedAt": 1784391055409
             },
             "createdAt": 1784390957640,
-            "updatedAt": 1784391581137
+            "updatedAt": 1784391968831
           }
         ],
         "deleted": {
@@ -3988,7 +4003,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784391904169
+        "updatedAt": 1784392029472
       }
     },
     "294A2A23": {
