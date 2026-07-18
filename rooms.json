@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T10:28:49.902Z",
+  "savedAt": "2026-07-18T10:28:51.848Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -2344,6 +2344,67 @@
           "members": {}
         },
         "updatedAt": 1784370529652
+      }
+    },
+    "TOMB1B814E": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "7a0279b8-ba31-4233-8e66-e34f2cb2995c",
+        "members": [],
+        "lists": [
+          {
+            "id": "7a0279b8-ba31-4233-8e66-e34f2cb2995c",
+            "name": "待删除事项",
+            "createdAt": 1784370531139,
+            "updatedAt": 1784370531139,
+            "trip": {
+              "tripTitle": "待删除事项",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "52678a24-b5d9-4f11-a258-b171b15ac26a",
+              "dayLimit": 30,
+              "updatedAt": 1784370531139,
+              "orderUpdatedAt": 1784370531139,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784370531139
+              },
+              "days": [
+                {
+                  "id": "52678a24-b5d9-4f11-a258-b171b15ac26a",
+                  "location": "墓碑",
+                  "stay": "",
+                  "updatedAt": 1784370531139,
+                  "orderUpdatedAt": 1784370531139,
+                  "activities": [
+                    {
+                      "id": "990e9457-33cf-4aa2-869a-7987e2688926",
+                      "time": "",
+                      "title": "待删除事项",
+                      "place": "墓碑",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784370531139
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784370531139
       }
     }
   }
