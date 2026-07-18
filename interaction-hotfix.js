@@ -142,7 +142,8 @@
   function addInlineActivity(dayId) {
     const quickAdd = window.TripPlannerQuickAdd;
     if (typeof quickAdd === "function") {
-      quickAdd(dayId || getSelectedDayId());
+      const id = quickAdd(dayId || getSelectedDayId());
+      if (id) openInlineTitle(id, 0);
       return;
     }
     addTemplateActivityFallback(dayId || getSelectedDayId());
@@ -180,14 +181,18 @@
     library.updatedAt = stamp;
     window.TripPlanner?.saveExternalLibrary?.(library, "inline-template-fallback-add");
     toast("已在当天末尾添加事项");
-    window.setTimeout(() => openInlineTitle(activity.id), 140);
+    openInlineTitle(activity.id, 0);
   }
 
-  function openInlineTitle(activityId) {
+  function openInlineTitle(activityId, attempt) {
     const row = document.querySelector(`.activity-row[data-activity-id="${cssEscape(activityId)}"]`);
     const title = row?.querySelector("strong[data-select-field='title']");
-    if (!row || !title) return;
-    title.click();
+    if (row?.querySelector(".inline-title-input")) return;
+    if (row && title) {
+      title.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+      if (row.querySelector(".inline-title-input")) return;
+    }
+    if (attempt < 12) window.setTimeout(() => openInlineTitle(activityId, attempt + 1), 120);
   }
 
   function getSelectedDayId() {
