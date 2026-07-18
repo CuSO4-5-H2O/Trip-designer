@@ -19,7 +19,8 @@ async function handleAiPlan(req, res, requestUrl) {
       return true;
     }
     const trip = body.trip || {};
-    const prompt = buildPrompt(text, trip);
+    const hints = inferPlanHints(text);
+    const prompt = buildPrompt(text, trip, hints);
     const response = await fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -36,9 +37,9 @@ async function handleAiPlan(req, res, requestUrl) {
     if (!response.ok) throw new Error(`deepseek ${response.status}`);
     const data = await response.json();
     const parsed = JSON.parse(data.choices?.[0]?.message?.content || "{}");
-    const plan = normalizePlan(parsed.plan || parsed);
+    const plan = normalizePlan(parsed.plan || parsed, hints);
     if (!plan.days.length) throw new Error("no days parsed");
-    sendJson(res, 200, { ok: true, plan });
+    sendJson(res, 200, { ok: true, plan, hints: { expectedDays: hints.expectedDays || plan.days.length } });
     return true;
   } catch (error) {
     sendJson(res, 502, { ok: false, error: "ai quick plan failed", detail: error.message });
@@ -46,11 +47,13 @@ async function handleAiPlan(req, res, requestUrl) {
   }
 }
 
-function buildPrompt(text, trip) {
+function buildPrompt(text, trip, hints = {}) {
   return [
     "请把用户输入的自然语言行程严格转成结构化 JSON。",
     "不要自动覆盖已有行程，只生成计划对象。",
     "必须根据文本中的天数创建准确数量的 days。例如“内罗毕玩3天”必须生成 3 个 day。",
+    hints.expectedDays ? `后端已解析到目标天数：${hints.expectedDays} 天；你必须返回正好 ${hints.expectedDays} 个 day。` : "如果文本没有总天数，请根据第几天和城市段推断最小天数。",
+    hints.locationSequence.length ? `城市天数序列：${hints.locationSequence.map((item) => `${item.location || "未指定"} ${item.days}天`).join("，")}。` : "",
     "如果文本写了第几天/第二天/第三天，事项必须放到对应 day；如果只写城市+天数但没有细节，则每天至少给一个空 activities 数组并保留 location。",
     "不要编造用户没有暗示的必去景点；可以把不确定内容放进 note。",
     "时间不确定时 time 为空字符串。地点尽量写具体 place；当天城市写 location。住宿不确定时 stay 为空。",
@@ -60,15 +63,22 @@ function buildPrompt(text, trip) {
     `当前出发城市：${trip.originCity || ""}`,
     "用户输入：",
     text,
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 }
 
-function normalizePlan(input = {}) {
-  const days = Array.isArray(input.days) ? input.days : [];
+function normalizePlan(input = {}, hints = {}) {
+  const rawDays = Array.isArray(input.days) ? input.days : [];
+  let days = rawDays.map(normalizeDay).filter(Boolean).slice(0, 60);
+  const expected = Number.isFinite(hints.expectedDays) ? Math.max(1, Math.min(60, hints.expectedDays)) : 0;
+  if (expected) {
+    days = days.slice(0, expected);
+    while (days.length < expected) days.push(makePlaceholderDay(days.length, hints));
+    days = applyLocationHints(days, hints.locationSequence);
+  }
   return {
     title: clean(input.title),
     originCity: clean(input.originCity),
-    days: days.map(normalizeDay).filter(Boolean).slice(0, 60),
+    days,
   };
 }
 
@@ -97,6 +107,95 @@ function normalizeActivity(activity = {}) {
   };
 }
 
+function makePlaceholderDay(index, hints) {
+  const location = locationForDay(index, hints.locationSequence) || hints.defaultLocation || "";
+  return { location, stay: "", activities: [] };
+}
+
+function applyLocationHints(days, sequence = []) {
+  if (!Array.isArray(sequence) || !sequence.length) return days;
+  return days.map((day, index) => {
+    if (day.location) return day;
+    return { ...day, location: locationForDay(index, sequence) || day.location };
+  });
+}
+
+function locationForDay(index, sequence = []) {
+  let cursor = 0;
+  for (const item of sequence) {
+    const length = Math.max(0, Number(item.days) || 0);
+    if (index >= cursor && index < cursor + length) return item.location || "";
+    cursor += length;
+  }
+  return sequence[sequence.length - 1]?.location || "";
+}
+
+function inferPlanHints(text) {
+  const source = String(text || "");
+  const locationSequence = inferLocationSequence(source);
+  const summedDays = locationSequence.reduce((sum, item) => sum + item.days, 0);
+  const explicitTotals = [];
+  const totalPattern = /(?:共|总共|一共|合计|安排|玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*[天日]/g;
+  let match;
+  while ((match = totalPattern.exec(source))) {
+    const count = parseChineseNumber(match[1]);
+    if (count > 0 && count <= 60) explicitTotals.push(count);
+  }
+  const ordinalDays = inferMentionedOrdinalDays(source);
+  const expectedDays = Math.max(summedDays, ...explicitTotals, ordinalDays, 0) || 0;
+  return {
+    expectedDays: expectedDays || null,
+    locationSequence,
+    defaultLocation: locationSequence[0]?.location || inferDefaultLocation(source),
+  };
+}
+
+function inferLocationSequence(text) {
+  const sequence = [];
+  const pieces = String(text || "").split(/[，,。；;\n]+/);
+  for (const piece of pieces) {
+    const cleaned = piece.trim();
+    if (!cleaned) continue;
+    const pattern = /(?:在|去|到|前往)?\s*([^\s，,。；;0-9一二两三四五六七八九十天日]{1,24}?)(?:玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*天/g;
+    let match;
+    while ((match = pattern.exec(cleaned))) {
+      const days = parseChineseNumber(match[2]);
+      const location = cleanLocation(match[1]);
+      if (days > 0 && days <= 60) sequence.push({ location, days });
+    }
+  }
+  return sequence.slice(0, 30);
+}
+
+function inferMentionedOrdinalDays(text) {
+  let max = 0;
+  const pattern = /第\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*天/g;
+  let match;
+  while ((match = pattern.exec(String(text || "")))) {
+    max = Math.max(max, parseChineseNumber(match[1]));
+  }
+  return max;
+}
+
+function inferDefaultLocation(text) {
+  const match = String(text || "").match(/(?:在|去|到|前往)\s*([^，,。；;\s]{1,24}?)(?:玩|游玩|停留|待|住|第|，|,|。|；|;|$)/);
+  return match ? cleanLocation(match[1]) : "";
+}
+
+function parseChineseNumber(value) {
+  const text = String(value || "").trim();
+  if (/^\d+$/.test(text)) return Number(text);
+  const digits = { 零: 0, 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+  if (text === "十") return 10;
+  if (text.includes("十")) {
+    const [left, right] = text.split("十");
+    const tens = left ? digits[left] || 0 : 1;
+    const ones = right ? digits[right] || 0 : 0;
+    return tens * 10 + ones;
+  }
+  return digits[text] || 0;
+}
+
 function normalizeTransport(value) {
   if (!value || typeof value !== "object") return null;
   const type = ["plane", "train", "bus", "boat", "car"].includes(value.type) ? value.type : "";
@@ -119,6 +218,10 @@ function normalizeTime(value) {
   const hour = Math.max(0, Math.min(23, Number(match[1])));
   const minute = Math.max(0, Math.min(59, Number(match[2])));
   return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
+
+function cleanLocation(value) {
+  return clean(value).replace(/^(?:在|去|到|前往)/, "").replace(/(?:玩|游玩|停留|待|住)$/g, "").trim();
 }
 
 function clean(value) { return String(value || "").trim().slice(0, 300); }
