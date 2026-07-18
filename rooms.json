@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T11:18:48.436Z",
+  "savedAt": "2026-07-18T11:20:55.734Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3528,6 +3528,93 @@
           "members": {}
         },
         "updatedAt": 1784373528185
+      }
+    },
+    "DGA8D655": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "25ce88c8-7d91-45e3-a7c7-c59de6470aef",
+        "members": [],
+        "lists": [
+          {
+            "id": "25ce88c8-7d91-45e3-a7c7-c59de6470aef",
+            "name": "新行程单",
+            "trip": {
+              "tripTitle": "新行程单",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "6bcd13ad-54c3-471a-8c75-41280ae59b34",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "6bcd13ad-54c3-471a-8c75-41280ae59b34",
+                  "location": "未定",
+                  "stay": "",
+                  "updatedAt": 1784373595000,
+                  "orderUpdatedAt": 1784373594165,
+                  "activities": [
+                    {
+                      "id": "4a60d31b-c425-46cf-9fc5-b4baa565e6e2",
+                      "time": "",
+                      "title": "拖动事项B",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784373570269
+                    },
+                    {
+                      "id": "7b0113e8-8e75-4e32-978b-4f0ea307af5c",
+                      "time": "",
+                      "title": "拖动事项A",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784373595000
+                    }
+                  ]
+                },
+                {
+                  "id": "0fa16cdc-c563-4ec4-9e73-d05f566f3a0e",
+                  "location": "",
+                  "stay": "",
+                  "updatedAt": 1784373567692,
+                  "orderUpdatedAt": 1784373567692,
+                  "activities": []
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784373534294
+              },
+              "updatedAt": 1784373595000,
+              "orderUpdatedAt": 1784373567692
+            },
+            "createdAt": 1784373534294,
+            "updatedAt": 1784373595000
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784373595000
       }
     }
   }
