@@ -1,0 +1,35 @@
+name: Production API smoke test
+
+# Manual only. This verifies the deployed Render service, GitHub-backed data,
+# account rooms, shared-room editing, AI quick-plan day counts, merge behavior,
+# and deletion tombstones without sending mail on every push.
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Production base URL"
+        required: false
+        default: "https://tripdesigner.onrender.com"
+
+permissions:
+  contents: read
+
+jobs:
+  production-api-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Verify production API contracts
+        env:
+          TRIP_DESIGNER_BASE_URL: ${{ inputs.base_url }}
+          TRIP_DESIGNER_SMOKE_TIMEOUT_MS: "210000"
+        run: npm run test:production
