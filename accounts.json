@@ -57,11 +57,16 @@
           "roomId": "2B558395",
           "role": "owner",
           "addedAt": "2026-07-18T10:00:20.672Z"
+        },
+        {
+          "roomId": "SHARECRMXX5",
+          "role": "editor",
+          "addedAt": "2026-07-18T10:00:22.072Z"
         }
       ],
       "createdAt": "2026-07-18T10:00:20.672Z",
-      "updatedAt": "2026-07-18T10:00:20.672Z"
+      "updatedAt": "2026-07-18T10:00:22.072Z"
     }
   },
-  "savedAt": "2026-07-18T10:00:20.721Z"
+  "savedAt": "2026-07-18T10:00:22.072Z"
 }
