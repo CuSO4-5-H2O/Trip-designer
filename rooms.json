@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T09:29:21.585Z",
+  "savedAt": "2026-07-18T09:29:32.835Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1386,7 +1386,7 @@
       }
     },
     "UITESTQ5YCUH": {
-      "revision": 1,
+      "revision": 2,
       "state": {
         "version": 2,
         "activeListId": "9dcbe1dc-ed8d-421c-94ae-6756fdd29e98",
@@ -1406,13 +1406,13 @@
                   "id": "52ae7b74-652f-4c7e-9cae-a07d491152cb",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784366960915,
+                  "updatedAt": 1784366972164,
                   "orderUpdatedAt": 1784366960915,
                   "activities": [
                     {
                       "id": "60ae4a53-0ce5-48a4-8f7b-fddc7262c109",
                       "time": "",
-                      "title": "新事项",
+                      "title": "浏览器验证事项",
                       "place": "",
                       "note": "",
                       "tags": [],
@@ -1422,7 +1422,7 @@
                         "currency": "CNY"
                       },
                       "transport": null,
-                      "updatedAt": 1784366960915
+                      "updatedAt": 1784366972164
                     }
                   ]
                 }
@@ -1433,11 +1433,11 @@
                 "limit": 0,
                 "updatedAt": 1784366892360
               },
-              "updatedAt": 1784366960915,
+              "updatedAt": 1784366972164,
               "orderUpdatedAt": 1784366892360
             },
             "createdAt": 1784366892360,
-            "updatedAt": 1784366960915
+            "updatedAt": 1784366972164
           }
         ],
         "deleted": {
@@ -1446,7 +1446,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784366960915
+        "updatedAt": 1784366972585
       }
     }
   }
