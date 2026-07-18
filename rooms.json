@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T11:10:06.502Z",
+  "savedAt": "2026-07-18T11:12:29.339Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3285,7 +3285,7 @@
       }
     },
     "KD33054B": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "4be3a88d-aeca-41bc-b28b-36f7030e0191",
@@ -3305,25 +3305,47 @@
                   "id": "8e8feda3-3ec7-4359-86c3-7b73d7d1f6b3",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784372977409,
+                  "updatedAt": 1784373135371,
                   "orderUpdatedAt": 1784372976557,
                   "activities": [
                     {
                       "id": "b0184b1a-55cf-41aa-bdc5-651202eda8b0",
                       "time": "",
                       "title": "不会被吞的事项",
-                      "place": "",
+                      "place": "内罗毕国家博物馆",
                       "note": "",
                       "tags": [],
                       "done": false,
                       "budget": {
-                        "amount": 0,
+                        "amount": 42,
                         "currency": "CNY"
                       },
-                      "transport": null,
-                      "updatedAt": 1784372977409
+                      "transport": {
+                        "type": "car",
+                        "from": "酒店",
+                        "to": "博物馆",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1784373135371
                     }
                   ]
+                },
+                {
+                  "id": "3e92348e-8394-41ee-a304-1a3755e4186e",
+                  "location": "",
+                  "stay": "",
+                  "updatedAt": 1784373052935,
+                  "orderUpdatedAt": 1784373052935,
+                  "activities": []
+                },
+                {
+                  "id": "1d4773d3-c386-437f-91d8-bb3af60d403a",
+                  "location": "",
+                  "stay": "",
+                  "updatedAt": 1784373085946,
+                  "orderUpdatedAt": 1784373085946,
+                  "activities": []
                 }
               ],
               "budget": {
@@ -3332,11 +3354,11 @@
                 "limit": 0,
                 "updatedAt": 1784372956743
               },
-              "updatedAt": 1784372977409,
-              "orderUpdatedAt": 1784372956743
+              "updatedAt": 1784373135371,
+              "orderUpdatedAt": 1784373085946
             },
             "createdAt": 1784372956743,
-            "updatedAt": 1784372977409
+            "updatedAt": 1784373135371
           }
         ],
         "deleted": {
@@ -3345,7 +3367,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784373006251
+        "updatedAt": 1784373149090
       }
     }
   }
