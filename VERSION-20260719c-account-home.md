@@ -25,6 +25,21 @@ The homepage is designed to keep users from accidentally entering different rand
 - The change only affects the account homepage UI and entry routing.
 - Existing `accounts.json` and `rooms.json` data remain on the GitHub data branch.
 
+## Production Verification
+
+Verified on Render production after deployment:
+
+1. Fetched `https://tripdesigner.onrender.com/` and confirmed `trip-build=render-20260719c` plus `auth-bootstrap.js?v=render-20260719c`.
+2. Opened `/` without a `room` query and confirmed the page renders the login/account entry instead of silently entering a random room.
+3. Created a production QA account through `/api/auth/register`.
+4. Called `/api/auth/create-room` and confirmed the new room is returned as an owned room.
+5. Called `/api/auth/join-room` for shared room `34910250` and confirmed it is returned as an editor/invited room.
+6. Called `/api/auth/me` and confirmed the account room list contains both owned rooms and the invited room.
+
+QA account used for API verification: `qa_home_api_8jeobd`.
+Owned rooms observed: `BB25E3D0`, `59E3B49A`.
+Invited room observed: `34910250`.
+
 ## Manual Test Targets
 
 - Open `/` while logged out: login/register screen appears.
