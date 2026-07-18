@@ -88,14 +88,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -Fq 'tripdesigner:last-room' room-bootstrap.js
-          grep -Fq 'showRoomGate' room-bootstrap.js
-          grep -Fq '进入同一个房间' room-bootstrap.js
-          grep -Eq 'APP_BUILD_VERSION = "render-[0-9a-z]+"' room-bootstrap.js
-          grep -Fq 'app-collab.js?v=${APP_BUILD_VERSION}' room-bootstrap.js
-          ! grep -Fq 'DEFAULT_ROOM_ID = "1075424A"' room-bootstrap.js
-          ! grep -Fq 'if (!roomId) return;' room-bootstrap.js
-          ! grep -Fq './app-collab.js?v=' index.html
+          node <<'NODE'
+          const fs = require('fs');
+          const room = fs.readFileSync('room-bootstrap.js', 'utf8');
+          const index = fs.readFileSync('index.html', 'utf8');
+          const assert = (condition, message) => {
+            if (!condition) {
+              console.error(message);
+              process.exit(1);
+            }
+          };
+          for (const token of ['tripdesigner:last-room', 'showRoomGate', '进入同一个房间', 'app-collab.js?v=${APP_BUILD_VERSION}']) {
+            assert(room.includes(token), `room-bootstrap.js missing ${token}`);
+          }
+          assert(/APP_BUILD_VERSION = "render-[0-9a-z]+"/.test(room), 'room-bootstrap.js missing dynamic render build version');
+          assert(!room.includes('DEFAULT_ROOM_ID = "1075424A"'), 'room-bootstrap.js must not force the old shared room');
+          assert(!room.includes('if (!roomId) return;'), 'room-bootstrap.js must show the room entry gate when room is missing');
+          assert(!index.includes('./app-collab.js?v='), 'index.html must let room-bootstrap load app-collab with the active room');
+          NODE
 
       - name: Start runtime and verify endpoints
         shell: bash
@@ -120,61 +130,74 @@ jobs:
             sleep 0.25
           done
 
-          cat "$RUNNER_TEMP/health.json"
-          grep -Fq '"ok":true' "$RUNNER_TEMP/health.json"
-          grep -Fq '"aiConfigured":true' "$RUNNER_TEMP/health.json"
-
           curl --fail --silent http://127.0.0.1:4177/api/cloud-storage-status >"$RUNNER_TEMP/cloud-status.json"
-          cat "$RUNNER_TEMP/cloud-status.json"
-          grep -Fq '"ok":true' "$RUNNER_TEMP/cloud-status.json"
-
           ai_status_code=$(curl --silent --output "$RUNNER_TEMP/ai-recommend-method.json" --write-out "%{http_code}" http://127.0.0.1:4177/api/ai/recommend)
-          cat "$RUNNER_TEMP/ai-recommend-method.json"
           test "$ai_status_code" = "405"
-          grep -Fq '"method not allowed"' "$RUNNER_TEMP/ai-recommend-method.json"
-
           curl --fail --silent http://127.0.0.1:4177/api/map-config >"$RUNNER_TEMP/map-config.json"
-          cat "$RUNNER_TEMP/map-config.json"
-          grep -Fq '"ok":true' "$RUNNER_TEMP/map-config.json"
-          grep -Fq '"defaultProvider":"amap"' "$RUNNER_TEMP/map-config.json"
-          grep -Fq '"google"' "$RUNNER_TEMP/map-config.json"
-
           curl --fail --silent 'http://127.0.0.1:4177/api/room-state?room=1075424A' >"$RUNNER_TEMP/room-state.json"
-          grep -Fq '"ok":true' "$RUNNER_TEMP/room-state.json"
-
           curl --fail --silent 'http://127.0.0.1:4177/?room=1075424A' >"$RUNNER_TEMP/index.html"
-          grep -Fq 'name="trip-build"' "$RUNNER_TEMP/index.html"
-          grep -Eq './room-bootstrap.js\?v=render-[0-9a-z]+' "$RUNNER_TEMP/index.html"
-          grep -Fq './input-performance.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './cloud-only-storage-guard.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './sync-throttle.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './cloud-sync-guard.js' "$RUNNER_TEMP/index.html"
-          ! grep -Fq './app-collab.js?v=' "$RUNNER_TEMP/index.html"
-          grep -Fq './connection-guard.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './map-providers-lite.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './quick-plan.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './document-import.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './list-plus-menu.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './timeline-ui-cleanup.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './interaction-hotfix.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './cloud-authority-refresh.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './mobile-performance-lite.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './layout-stability-hotfix.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './room-status-warning.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './context-editor-performance.css' "$RUNNER_TEMP/index.html"
-          grep -Fq './entry-actions-lite.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './room-login.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './inline-polish.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './inline-anchor-preview.js' "$RUNNER_TEMP/index.html"
-          grep -Fq './collapse-performance.js' "$RUNNER_TEMP/index.html"
-          ! grep -Eq 'config\.js|server-first\.js|trip-insights|travel-tools|activity-tags|context-popover-fixes|leaflet' "$RUNNER_TEMP/index.html"
-          ! grep -Fq './map-providers.js?v=' "$RUNNER_TEMP/index.html"
-          ! grep -Fq './entry-actions.js?v=' "$RUNNER_TEMP/index.html"
-
           curl --fail --silent 'http://127.0.0.1:4177/room-bootstrap.js' >"$RUNNER_TEMP/room-bootstrap.js"
-          grep -Eq 'APP_BUILD_VERSION = "render-[0-9a-z]+"' "$RUNNER_TEMP/room-bootstrap.js"
-          grep -Fq 'app-collab.js?v=${APP_BUILD_VERSION}' "$RUNNER_TEMP/room-bootstrap.js"
-          grep -Fq '进入同一个房间' "$RUNNER_TEMP/room-bootstrap.js"
+
+          node <<'NODE'
+          const fs = require('fs');
+          const readJson = (file) => JSON.parse(fs.readFileSync(`${process.env.RUNNER_TEMP}/${file}`, 'utf8'));
+          const readText = (file) => fs.readFileSync(`${process.env.RUNNER_TEMP}/${file}`, 'utf8');
+          const assert = (condition, message) => {
+            if (!condition) {
+              console.error(message);
+              process.exit(1);
+            }
+          };
+          const health = readJson('health.json');
+          const cloud = readJson('cloud-status.json');
+          const aiMethod = readJson('ai-recommend-method.json');
+          const mapConfig = readJson('map-config.json');
+          const roomState = readJson('room-state.json');
+          const index = readText('index.html');
+          const roomBootstrap = readText('room-bootstrap.js');
+
+          assert(health.ok === true, 'healthz did not return ok:true');
+          assert(health.aiConfigured === true, 'healthz did not report aiConfigured:true');
+          assert(cloud.ok === true, 'cloud storage status did not return ok:true');
+          assert(aiMethod.error === 'method not allowed', 'GET /api/ai/recommend should be rejected with method not allowed');
+          assert(mapConfig.ok === true, 'map config did not return ok:true');
+          assert(mapConfig.defaultProvider === 'amap', 'map config default provider should be amap');
+          assert(Array.isArray(mapConfig.providers) && mapConfig.providers.includes('google'), 'map config should include google provider');
+          assert(roomState.ok === true, 'room-state did not return ok:true');
+
+          const requiredIndexTokens = [
+            'name="trip-build"',
+            './room-bootstrap.js?v=render-',
+            './input-performance.js',
+            './cloud-only-storage-guard.js',
+            './sync-throttle.js',
+            './cloud-sync-guard.js',
+            './connection-guard.js',
+            './map-providers-lite.js',
+            './quick-plan.js',
+            './document-import.js',
+            './list-plus-menu.js',
+            './timeline-ui-cleanup.js',
+            './interaction-hotfix.js',
+            './cloud-authority-refresh.js',
+            './mobile-performance-lite.js',
+            './layout-stability-hotfix.js',
+            './room-status-warning.js',
+            './context-editor-performance.css',
+            './entry-actions-lite.js',
+            './room-login.js',
+            './inline-polish.js',
+            './inline-anchor-preview.js',
+            './collapse-performance.js',
+          ];
+          for (const token of requiredIndexTokens) assert(index.includes(token), `index.html missing ${token}`);
+          for (const token of ['config.js', 'server-first.js', 'trip-insights', 'travel-tools', 'activity-tags', 'context-popover-fixes', 'leaflet', './map-providers.js?v=', './entry-actions.js?v=', './app-collab.js?v=']) {
+            assert(!index.includes(token), `index.html still references legacy token ${token}`);
+          }
+          assert(/APP_BUILD_VERSION = "render-[0-9a-z]+"/.test(roomBootstrap), 'served room-bootstrap missing render build version');
+          assert(roomBootstrap.includes('app-collab.js?v=${APP_BUILD_VERSION}'), 'served room-bootstrap missing dynamic app-collab load');
+          assert(roomBootstrap.includes('进入同一个房间'), 'served room-bootstrap missing room entry text');
+          NODE
 
           assets=(
             room-bootstrap.js
@@ -232,6 +255,9 @@ jobs:
             sleep 0.25
           done
 
-          cat "$RUNNER_TEMP/server-map-config.json"
-          grep -Fq '"ok":true' "$RUNNER_TEMP/server-map-config.json"
-          grep -Fq '"defaultProvider":"amap"' "$RUNNER_TEMP/server-map-config.json"
+          node <<'NODE'
+          const fs = require('fs');
+          const payload = JSON.parse(fs.readFileSync(`${process.env.RUNNER_TEMP}/server-map-config.json`, 'utf8'));
+          if (payload.ok !== true) throw new Error('server.js map config did not return ok:true');
+          if (payload.defaultProvider !== 'amap') throw new Error('server.js map config default provider should be amap');
+          NODE
