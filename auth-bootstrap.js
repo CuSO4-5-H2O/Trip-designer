@@ -9,13 +9,13 @@
 
   function showGate() {
     const html = `<!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="auth-gate-document">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>行程编辑器</title>
   <style>
-    :root{font-family:Inter,"Microsoft YaHei",system-ui,sans-serif;color:#17211f;background:#eef6f2}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at top left,#dff4ee,transparent 34%),#f7faf8}.gate{width:min(680px,100%);background:#fff;border:1px solid #cfe3de;border-radius:18px;box-shadow:0 24px 80px rgba(23,33,31,.13);padding:28px}.brand{display:flex;gap:14px;align-items:center;margin-bottom:22px}.brand-mark{width:52px;height:52px;border-radius:14px;background:#17211f;color:#fff;display:grid;place-items:center}.brand-mark svg{width:30px;height:30px;fill:currentColor}.eyeline{margin:0;color:#007d72;font-weight:900}.gate h1{margin:4px 0 0;font-size:32px;line-height:1.1}.gate p{color:#5e706c;line-height:1.7}.tabs{display:flex;gap:8px;margin:20px 0}.tabs button{height:42px;border-radius:12px;border:1px solid #cfe3de;background:#f8fbfa;padding:0 16px;font-weight:900;cursor:pointer}.tabs button.active{background:#17211f;color:#fff;border-color:#17211f}.grid{display:grid;gap:14px}.field{display:grid;gap:7px}.field span{font-weight:900;color:#5e706c}.field input{height:52px;border:1px solid #cfe3de;border-radius:12px;padding:0 14px;font-size:18px;font-weight:800}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.primary,.secondary{height:48px;border-radius:12px;border:1px solid #a9ded8;padding:0 18px;font-weight:900;font-size:16px;cursor:pointer}.primary{background:#17211f;color:#fff;border-color:#17211f}.secondary{background:#e3f7f4;color:#007d72}.split{display:grid;grid-template-columns:1fr;gap:18px;margin-top:20px;padding-top:18px;border-top:1px dashed #cfe3de}.error{color:#b63a28;font-weight:900;min-height:22px}.room-row{display:grid;grid-template-columns:1fr auto;gap:10px}.muted{color:#6a7774;font-size:14px}@media(min-width:760px){.split{grid-template-columns:1.3fr 1fr}}
+    :root{font-family:Inter,"Microsoft YaHei",system-ui,sans-serif;color:#17211f;background:#eef6f2}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at top left,#dff4ee,transparent 34%),#f7faf8}.auth-gate-document .app-shell,.auth-gate-document .toast,.auth-gate-document .room-loading-overlay{display:none!important}.gate{width:min(680px,100%);background:#fff;border:1px solid #cfe3de;border-radius:18px;box-shadow:0 24px 80px rgba(23,33,31,.13);padding:28px}.brand{display:flex;gap:14px;align-items:center;margin-bottom:22px}.brand-mark{width:52px;height:52px;border-radius:14px;background:#17211f;color:#fff;display:grid;place-items:center}.brand-mark svg{width:30px;height:30px;fill:currentColor}.eyeline{margin:0;color:#007d72;font-weight:900}.gate h1{margin:4px 0 0;font-size:32px;line-height:1.1}.gate p{color:#5e706c;line-height:1.7}.tabs{display:flex;gap:8px;margin:20px 0}.tabs button{height:42px;border-radius:12px;border:1px solid #cfe3de;background:#f8fbfa;padding:0 16px;font-weight:900;cursor:pointer}.tabs button.active{background:#17211f;color:#fff;border-color:#17211f}.grid{display:grid;gap:14px}.field{display:grid;gap:7px}.field span{font-weight:900;color:#5e706c}.field input{height:52px;border:1px solid #cfe3de;border-radius:12px;padding:0 14px;font-size:18px;font-weight:800}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.primary,.secondary{height:48px;border-radius:12px;border:1px solid #a9ded8;padding:0 18px;font-weight:900;font-size:16px;cursor:pointer}.primary{background:#17211f;color:#fff;border-color:#17211f}.secondary{background:#e3f7f4;color:#007d72}.split{display:grid;grid-template-columns:1fr;gap:18px;margin-top:20px;padding-top:18px;border-top:1px dashed #cfe3de}.error{color:#b63a28;font-weight:900;min-height:22px}.room-row{display:grid;grid-template-columns:1fr auto;gap:10px}.room-row input{height:48px;border:1px solid #cfe3de;border-radius:12px;padding:0 14px;font-size:16px;font-weight:800;text-transform:uppercase}.muted{color:#6a7774;font-size:14px}@media(min-width:760px){.split{grid-template-columns:1.3fr 1fr}}
   </style>
 </head>
 <body>
@@ -42,6 +42,7 @@
     document.open();
     document.write(html);
     document.close();
+    window.stop?.();
   }
 
   function clientGate() {
