@@ -3,7 +3,10 @@
 const http = require("http");
 const { handleMapRuntime } = require("./map-runtime");
 const { hydrateDiskFromGithub, startGithubDiskSync, getGithubDiskSyncStatus } = require("./github-disk-sync");
+const { createAuthRuntime } = require("./auth-runtime");
+const { handleAiPlan } = require("./ai-plan-runtime");
 
+const authRuntime = createAuthRuntime();
 const deepSeekKey = process.env.DEEPSEEK_API_KEY || process.env.deepseek || process.env.DEEPSEEK;
 if (deepSeekKey && !process.env.DEEPSEEK_API_KEY) {
   process.env.DEEPSEEK_API_KEY = deepSeekKey;
@@ -32,15 +35,26 @@ http.createServer = function createGuardedServer(optionsOrListener, maybeListene
 
 function wrapRequestListener(listener) {
   return async function guardedRequestListener(req, res) {
+    let requestUrl;
     let pathname = "";
     try {
-      pathname = new URL(req.url, `http://${req.headers.host || "localhost"}`).pathname;
+      requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+      pathname = requestUrl.pathname;
     } catch {
+      requestUrl = new URL("/", "http://localhost");
       pathname = req.url || "";
     }
 
+    try {
+      if (await authRuntime.handle(req, res, requestUrl)) return;
+    } catch (error) {
+      if (!res.headersSent) return sendJson(res, 500, { ok: false, error: "账号服务处理失败", detail: error.message });
+      res.destroy(error);
+      return;
+    }
+
     if (pathname === "/api/cloud-storage-status") {
-      return sendJson(res, 200, { ok: true, storage: getGithubDiskSyncStatus() });
+      return sendJson(res, 200, { ok: true, storage: { ...getGithubDiskSyncStatus(), auth: authRuntime.status } });
     }
 
     try {
@@ -53,7 +67,15 @@ function wrapRequestListener(listener) {
       return;
     }
 
-    if (pathname !== "/api/travel-recommendations" || req.method !== "POST") {
+    try {
+      if (await handleAiPlan(req, res, requestUrl)) return;
+    } catch (error) {
+      if (!res.headersSent) return sendJson(res, 500, { ok: false, error: "服务器处理 AI 快速行程时出现错误", detail: error.message });
+      res.destroy(error);
+      return;
+    }
+
+    if (!isRateLimitedAiPath(pathname, req.method)) {
       return listener(req, res);
     }
 
@@ -102,6 +124,10 @@ function wrapRequestListener(listener) {
   };
 }
 
+function isRateLimitedAiPath(pathname, method) {
+  return method === "POST" && (pathname === "/api/travel-recommendations" || pathname === "/api/ai/recommend" || pathname === "/api/ai/quick-plan");
+}
+
 function getClientKey(req) {
   const forwarded = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
   return forwarded || req.socket?.remoteAddress || "unknown";
@@ -135,6 +161,11 @@ bootstrap();
 
 async function bootstrap() {
   await hydrateDiskFromGithub();
+  try {
+    await authRuntime.load();
+  } catch (error) {
+    console.warn(`Could not load auth data from GitHub: ${error.message}`);
+  }
   startGithubDiskSync();
   require("./prepare-seed");
 }
