@@ -5,6 +5,7 @@
   let styleInstalled = false;
   let timer = 0;
   let observer = null;
+  let observeRetry = 0;
   let stabilizing = false;
 
   function init() {
@@ -16,27 +17,40 @@
   }
 
   function observeDomChanges() {
-    if (observer) return;
+    if (observer || !window.MutationObserver) return;
+    const roots = [
+      document.querySelector("#quickPlanPanel"),
+      document.querySelector(".smart-panel"),
+      document.querySelector("#dayList"),
+    ].filter(Boolean);
+    if (!roots.length) {
+      observeRetry = window.setTimeout(observeDomChanges, 250);
+      return;
+    }
+    clearTimeout(observeRetry);
     observer = new MutationObserver((mutations) => {
       if (stabilizing) return;
       if (!mutations.some(isRelevantMutation)) return;
       schedule();
     });
-    observer.observe(document.body, {
+    roots.forEach((root) => observer.observe(root, {
       childList: true,
-      subtree: true,
       attributes: true,
       attributeFilter: ["class", "hidden", "aria-hidden"],
-    });
+    }));
   }
 
   function isRelevantMutation(mutation) {
     const node = mutation.target;
     if (!(node instanceof Element)) return false;
-    return Boolean(
-      node.closest?.("#quickPlanPanel,.smart-map-panel,.ai-panel,.day-card") ||
-      node.matches?.("#quickPlanPanel,.smart-map-panel,.ai-panel,.day-card")
-    );
+    if (node.closest?.(".activity-row,.activity-list,.inline-activity-input,.inline-budget-editor,.inline-transport-editor")) return false;
+    if (mutation.type === "attributes") {
+      return node.matches?.("#quickPlanPanel,.smart-map-panel,.ai-panel,.day-card");
+    }
+    return [...mutation.addedNodes, ...mutation.removedNodes].some((item) => item.nodeType === 1 && (
+      item.matches?.(".smart-map-panel,.ai-panel,.day-card,.quick-plan-toggle,[data-quick-collapse]") ||
+      item.querySelector?.(".smart-map-panel,.ai-panel,.day-card,.quick-plan-toggle,[data-quick-collapse]")
+    ));
   }
 
   function schedule() {
@@ -103,7 +117,7 @@
   }
 
   function compressCollapsedDays() {
-    document.querySelectorAll(".day-card").forEach((card) => {
+    document.querySelectorAll("#dayList .day-card").forEach((card) => {
       const shouldCompress = card.classList.contains("is-collapsed");
       card.classList.toggle("layout-compressed-day", shouldCompress);
     });
