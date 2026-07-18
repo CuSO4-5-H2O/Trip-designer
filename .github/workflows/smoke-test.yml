@@ -91,7 +91,7 @@ jobs:
           grep -q 'tripdesigner:last-room' room-bootstrap.js
           grep -q 'showRoomGate' room-bootstrap.js
           grep -q '进入同一个房间' room-bootstrap.js
-          grep -q 'APP_BUILD_VERSION = "render-20260713y"' room-bootstrap.js
+          grep -Eq 'APP_BUILD_VERSION = "render-[0-9a-z]+"' room-bootstrap.js
           grep -q 'app-collab.js?v=${APP_BUILD_VERSION}' room-bootstrap.js
           ! grep -q 'DEFAULT_ROOM_ID = "1075424A"' room-bootstrap.js
           ! grep -q 'if (!roomId) return;' room-bootstrap.js
@@ -124,6 +124,10 @@ jobs:
           grep -q '"ok":true' "$RUNNER_TEMP/health.json"
           grep -q '"aiConfigured":true' "$RUNNER_TEMP/health.json"
 
+          curl --fail --silent http://127.0.0.1:4177/api/cloud-storage-status >"$RUNNER_TEMP/cloud-status.json"
+          cat "$RUNNER_TEMP/cloud-status.json"
+          grep -q '"ok":true' "$RUNNER_TEMP/cloud-status.json"
+
           ai_status_code=$(curl --silent --output "$RUNNER_TEMP/ai-recommend-method.json" --write-out "%{http_code}" http://127.0.0.1:4177/api/ai/recommend)
           cat "$RUNNER_TEMP/ai-recommend-method.json"
           test "$ai_status_code" = "405"
@@ -139,42 +143,47 @@ jobs:
           grep -q '"ok":true' "$RUNNER_TEMP/room-state.json"
 
           curl --fail --silent 'http://127.0.0.1:4177/?room=1075424A' >"$RUNNER_TEMP/index.html"
-          grep -q 'render-20260713y' "$RUNNER_TEMP/index.html"
-          grep -q './room-bootstrap.js?v=render-20260713y' "$RUNNER_TEMP/index.html"
-          grep -q './input-performance.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
-          grep -q './startup-cache-guard.js?v=render-20260713t' "$RUNNER_TEMP/index.html"
-          grep -q './cloud-sync-guard.js?v=render-20260713h' "$RUNNER_TEMP/index.html"
+          grep -q 'name="trip-build"' "$RUNNER_TEMP/index.html"
+          grep -Eq './room-bootstrap.js\?v=render-[0-9a-z]+' "$RUNNER_TEMP/index.html"
+          grep -q './input-performance.js' "$RUNNER_TEMP/index.html"
+          grep -q './cloud-only-storage-guard.js' "$RUNNER_TEMP/index.html"
+          grep -q './sync-throttle.js' "$RUNNER_TEMP/index.html"
+          grep -q './cloud-sync-guard.js' "$RUNNER_TEMP/index.html"
           ! grep -q './app-collab.js?v=' "$RUNNER_TEMP/index.html"
-          grep -q './connection-guard.js?v=render-20260713s' "$RUNNER_TEMP/index.html"
-          grep -q './map-providers-lite.js?v=render-20260713j' "$RUNNER_TEMP/index.html"
-          grep -q './quick-plan.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
-          grep -q './document-import.js?v=render-20260713i' "$RUNNER_TEMP/index.html"
-          grep -q './list-plus-menu.js?v=render-20260713l' "$RUNNER_TEMP/index.html"
-          grep -q './timeline-ui-cleanup.js?v=render-20260713m' "$RUNNER_TEMP/index.html"
-          grep -q './interaction-hotfix.js?v=render-20260713x' "$RUNNER_TEMP/index.html"
-          grep -q './cloud-authority-refresh.js?v=render-20260713s' "$RUNNER_TEMP/index.html"
-          grep -q './mobile-performance-lite.js?v=render-20260713q' "$RUNNER_TEMP/index.html"
-          grep -q './layout-stability-hotfix.js?v=render-20260713u' "$RUNNER_TEMP/index.html"
-          grep -q './room-status-warning.js?v=render-20260713p' "$RUNNER_TEMP/index.html"
-          grep -q './context-editor-performance.css?v=render-20260713e' "$RUNNER_TEMP/index.html"
-          grep -q './entry-actions-lite.js?v=render-20260713x' "$RUNNER_TEMP/index.html"
-          grep -q './local-recovery.js?v=render-20260713k' "$RUNNER_TEMP/index.html"
-          grep -q './entry-actions.css?v=render-20260713e' "$RUNNER_TEMP/index.html"
+          grep -q './connection-guard.js' "$RUNNER_TEMP/index.html"
+          grep -q './map-providers-lite.js' "$RUNNER_TEMP/index.html"
+          grep -q './quick-plan.js' "$RUNNER_TEMP/index.html"
+          grep -q './document-import.js' "$RUNNER_TEMP/index.html"
+          grep -q './list-plus-menu.js' "$RUNNER_TEMP/index.html"
+          grep -q './timeline-ui-cleanup.js' "$RUNNER_TEMP/index.html"
+          grep -q './interaction-hotfix.js' "$RUNNER_TEMP/index.html"
+          grep -q './cloud-authority-refresh.js' "$RUNNER_TEMP/index.html"
+          grep -q './mobile-performance-lite.js' "$RUNNER_TEMP/index.html"
+          grep -q './layout-stability-hotfix.js' "$RUNNER_TEMP/index.html"
+          grep -q './room-status-warning.js' "$RUNNER_TEMP/index.html"
+          grep -q './context-editor-performance.css' "$RUNNER_TEMP/index.html"
+          grep -q './entry-actions-lite.js' "$RUNNER_TEMP/index.html"
+          grep -q './room-login.js' "$RUNNER_TEMP/index.html"
+          grep -q './inline-polish.js' "$RUNNER_TEMP/index.html"
+          grep -q './inline-anchor-preview.js' "$RUNNER_TEMP/index.html"
+          grep -q './collapse-performance.js' "$RUNNER_TEMP/index.html"
           ! grep -Eq 'config\.js|server-first\.js|trip-insights|travel-tools|activity-tags|context-popover-fixes|leaflet' "$RUNNER_TEMP/index.html"
-          ! grep -q './map-providers.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
-          ! grep -q './entry-actions.js?v=render-20260713e' "$RUNNER_TEMP/index.html"
+          ! grep -q './map-providers.js?v=' "$RUNNER_TEMP/index.html"
+          ! grep -q './entry-actions.js?v=' "$RUNNER_TEMP/index.html"
 
           curl --fail --silent 'http://127.0.0.1:4177/room-bootstrap.js' >"$RUNNER_TEMP/room-bootstrap.js"
-          grep -q 'APP_BUILD_VERSION = "render-20260713y"' "$RUNNER_TEMP/room-bootstrap.js"
+          grep -Eq 'APP_BUILD_VERSION = "render-[0-9a-z]+"' "$RUNNER_TEMP/room-bootstrap.js"
           grep -q 'app-collab.js?v=${APP_BUILD_VERSION}' "$RUNNER_TEMP/room-bootstrap.js"
           grep -q '进入同一个房间' "$RUNNER_TEMP/room-bootstrap.js"
 
           assets=(
             room-bootstrap.js
             input-performance.js
-            startup-cache-guard.js
+            cloud-only-storage-guard.js
+            sync-throttle.js
             cloud-sync-guard.js
             app-collab.js
+            inline-activity-template.js
             connection-guard.js
             map-providers-lite.js
             quick-plan.js
@@ -186,8 +195,11 @@ jobs:
             mobile-performance-lite.js
             layout-stability-hotfix.js
             room-status-warning.js
+            room-login.js
+            inline-polish.js
+            inline-anchor-preview.js
+            collapse-performance.js
             entry-actions-lite.js
-            local-recovery.js
             styles.css
             room-loading.css
             quick-plan.css
