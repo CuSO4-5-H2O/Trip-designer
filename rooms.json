@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T09:57:04.090Z",
+  "savedAt": "2026-07-18T10:01:20.220Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1639,6 +1639,67 @@
           "members": {}
         },
         "updatedAt": 1784368623839
+      }
+    },
+    "CLOUDVTUIAW": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "30c86d1b-cd4c-4cba-a4cb-0fae30f90e5d",
+        "members": [],
+        "lists": [
+          {
+            "id": "30c86d1b-cd4c-4cba-a4cb-0fae30f90e5d",
+            "name": "云端唯一数据验证",
+            "createdAt": 1784368879249,
+            "updatedAt": 1784368879249,
+            "trip": {
+              "tripTitle": "云端唯一数据验证",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "d059ae51-aa07-4d4c-a3b9-21b88c186150",
+              "dayLimit": 30,
+              "updatedAt": 1784368879249,
+              "orderUpdatedAt": 1784368879249,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784368879249
+              },
+              "days": [
+                {
+                  "id": "d059ae51-aa07-4d4c-a3b9-21b88c186150",
+                  "location": "云端验证",
+                  "stay": "",
+                  "updatedAt": 1784368879249,
+                  "orderUpdatedAt": 1784368879249,
+                  "activities": [
+                    {
+                      "id": "f4b354b4-9e51-4292-bb39-e33c66f4ae49",
+                      "time": "09:00",
+                      "title": "云端唯一数据验证",
+                      "place": "同一个room",
+                      "note": "cloud verification",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784368879249
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784368879249
       }
     }
   }
