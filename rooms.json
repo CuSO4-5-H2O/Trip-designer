@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T10:01:20.220Z",
+  "savedAt": "2026-07-18T10:01:36.862Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1700,6 +1700,79 @@
           "members": {}
         },
         "updatedAt": 1784368879249
+      }
+    },
+    "MERGE4F2XV6": {
+      "revision": 3,
+      "state": {
+        "version": 2,
+        "activeListId": "f87077bc-1415-4afb-b9fc-2a3b1e457114",
+        "members": [],
+        "lists": [
+          {
+            "id": "f87077bc-1415-4afb-b9fc-2a3b1e457114",
+            "name": "合并基线",
+            "createdAt": 1784368895141,
+            "updatedAt": 1784368895799,
+            "trip": {
+              "tripTitle": "合并基线",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "20b372cf-bf6b-4702-992b-053cea3daef1",
+              "dayLimit": 30,
+              "updatedAt": 1784368895799,
+              "orderUpdatedAt": 1784368895141,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784368895141
+              },
+              "days": [
+                {
+                  "id": "20b372cf-bf6b-4702-992b-053cea3daef1",
+                  "location": "云端验证",
+                  "stay": "",
+                  "updatedAt": 1784368895799,
+                  "orderUpdatedAt": 1784368895799,
+                  "activities": [
+                    {
+                      "id": "39d7a98e-3d72-4391-ad31-73f227c1148e",
+                      "time": "",
+                      "title": "设备B事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784368895799
+                    },
+                    {
+                      "id": "4b476a6a-d62c-4380-87d3-9d4937db64a2",
+                      "time": "",
+                      "title": "设备A事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784368895794
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784368896611
       }
     }
   }
