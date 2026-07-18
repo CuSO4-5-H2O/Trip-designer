@@ -56,6 +56,15 @@
     }, 100);
   }
 
+  function loadMobileSyncGuard() {
+    if (document.querySelector("script[data-mobile-sync-status-guard]")) return;
+    const script = document.createElement("script");
+    script.src = "./mobile-sync-status-guard.js?v=render-20260719c";
+    script.defer = true;
+    script.dataset.mobileSyncStatusGuard = "1";
+    document.head.append(script);
+  }
+
   function captureViewport() {
     const x = window.scrollX || 0;
     const y = window.scrollY || 0;
@@ -150,6 +159,13 @@
     }
   };
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", waitForPlanner, { once: true });
-  else waitForPlanner();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      waitForPlanner();
+      loadMobileSyncGuard();
+    }, { once: true });
+  } else {
+    waitForPlanner();
+    loadMobileSyncGuard();
+  }
 })();
