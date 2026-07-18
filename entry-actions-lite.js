@@ -4,6 +4,7 @@
   let enhanceTimer = 0;
   let observer = null;
   let enhancing = false;
+  let observeRetry = 0;
 
   function init() {
     document.addEventListener("click", handleClick, true);
@@ -13,13 +14,22 @@
   }
 
   function observeStableAreas() {
-    if (observer) return;
+    if (observer || !window.MutationObserver) return;
+    const roots = [
+      document.querySelector(".list-panel"),
+      document.querySelector("#dayList"),
+    ].filter(Boolean);
+    if (!roots.length) {
+      observeRetry = window.setTimeout(observeStableAreas, 250);
+      return;
+    }
+    clearTimeout(observeRetry);
     observer = new MutationObserver((mutations) => {
       if (enhancing) return;
       if (!mutations.some((mutation) => mutation.type === "childList")) return;
       scheduleEnhance();
     });
-    observer.observe(document.body, { childList: true, subtree: true });
+    roots.forEach((root) => observer.observe(root, { childList: true }));
   }
 
   function scheduleEnhance() {
@@ -31,7 +41,6 @@
     enhancing = true;
     try {
       enhanceListActions();
-      enhanceQuickPlanActions();
       removeNestedDayPlusButtons();
     } finally {
       window.setTimeout(() => {
@@ -47,16 +56,6 @@
     box.className = "list-lite-actions";
     box.innerHTML = `<button class="mini-action" type="button" data-lite-action="export-list">导出</button>`;
     heading.append(box);
-  }
-
-  function enhanceQuickPlanActions() {
-    const panel = document.querySelector("#quickPlanPanel");
-    if (!panel || panel.querySelector(".quick-entry-actions")) return;
-    const bar = document.createElement("div");
-    bar.className = "quick-entry-actions";
-    bar.innerHTML = `<button class="ghost-action" type="button" data-lite-action="new-list">新建行程单</button><button class="primary-action" type="button" data-lite-action="add-day">加一天</button><button class="ghost-action" type="button" data-lite-action="add-activity">加事项</button>`;
-    const form = panel.querySelector(".quick-plan-form");
-    if (form) panel.insertBefore(bar, form); else panel.append(bar);
   }
 
   function removeNestedDayPlusButtons() {
