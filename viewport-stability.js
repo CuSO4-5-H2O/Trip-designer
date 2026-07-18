@@ -8,6 +8,7 @@
     "[data-day-field]",
     ".edit-activity",
   ].join(",");
+  const INLINE_EDITOR_SELECTOR = "#dayList .inline-activity-input,#dayList .inline-compound-editor,#dayList .inline-compound-editor *";
 
   let restoring = false;
   let plannerWrapped = false;
@@ -61,6 +62,14 @@
     return () => restoreViewport(x, y);
   }
 
+  function restoreSoon(restore) {
+    window.requestAnimationFrame(restore);
+    window.setTimeout(restore, 0);
+    window.setTimeout(restore, 90);
+    window.setTimeout(restore, 220);
+    window.setTimeout(restore, 420);
+  }
+
   function restoreViewport(x, y) {
     if (restoring) return;
     restoring = true;
@@ -90,10 +99,22 @@
     if (target.matches(".day-card-add-floating,.inline-empty-add,.edit-activity,[data-day-field]") || target.closest(".activity-row [data-select-field]")) {
       markPendingLocalSave();
     }
-    window.requestAnimationFrame(restore);
-    window.setTimeout(restore, 0);
-    window.setTimeout(restore, 120);
-    window.setTimeout(restore, 260);
+    restoreSoon(restore);
+  }, true);
+
+  document.addEventListener("keydown", (event) => {
+    if (!["Enter", "Escape"].includes(event.key)) return;
+    const target = event.target.closest?.(INLINE_EDITOR_SELECTOR);
+    if (!target || !shouldProtect(target)) return;
+    const restore = captureViewport();
+    restoreSoon(restore);
+  }, true);
+
+  document.addEventListener("focusout", (event) => {
+    const target = event.target.closest?.(INLINE_EDITOR_SELECTOR);
+    if (!target || !shouldProtect(target)) return;
+    const restore = captureViewport();
+    restoreSoon(restore);
   }, true);
 
   const nativeFocus = HTMLElement.prototype.focus;
