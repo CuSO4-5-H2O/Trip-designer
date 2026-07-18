@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "accounts": {
+    "codex_mrq5osyq": {
+      "id": "efad102f-7d6e-40ae-8321-4847db250ec2",
+      "username": "codex_mrq5osyq",
+      "displayName": "codex_mrq5osyq",
+      "passwordHash": "22eab61acddf7f0e6add4d6ac516955a23cd933f0e95b8d40eaded9f00e42f42",
+      "salt": "9c50245462ceed2cafed4fdbde91c17b",
+      "defaultRoomId": "E4CA7383",
+      "rooms": [
+        {
+          "roomId": "E4CA7383",
+          "role": "owner",
+          "addedAt": "2026-07-18T09:20:10.478Z"
+        }
+      ],
+      "createdAt": "2026-07-18T09:20:10.478Z",
+      "updatedAt": "2026-07-18T09:20:10.478Z"
+    }
+  },
+  "savedAt": "2026-07-18T09:20:10.581Z"
+}
