@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T16:48:38.155Z",
+  "savedAt": "2026-07-18T16:49:27.241Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3826,7 +3826,7 @@
       }
     },
     "0F9A81A6": {
-      "revision": 21,
+      "revision": 23,
       "state": {
         "version": 2,
         "activeListId": "442adb5c-bcf1-4ff3-a0a6-38e5b1a7563e",
@@ -3846,8 +3846,8 @@
                   "id": "42e9dad7-c880-4410-af5e-1407e735db59",
                   "location": "内罗毕",
                   "stay": "酒店",
-                  "updatedAt": 1784392980149,
-                  "orderUpdatedAt": 1784392957891,
+                  "updatedAt": 1784393365184,
+                  "orderUpdatedAt": 1784393363163,
                   "activities": [
                     {
                       "id": "65d50b85-17f6-42a0-b649-6a351625ce12",
@@ -3902,6 +3902,21 @@
                       },
                       "transport": null,
                       "updatedAt": 1784392980149
+                    },
+                    {
+                      "id": "f5ad0fa5-02a5-4f26-be40-78ee54793414",
+                      "time": "",
+                      "title": "手机即时同步事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784393365184
                     }
                   ]
                 },
@@ -4026,11 +4041,11 @@
                 "limit": 0,
                 "updatedAt": 1784390957640
               },
-              "updatedAt": 1784392980149,
+              "updatedAt": 1784393365184,
               "orderUpdatedAt": 1784391055409
             },
             "createdAt": 1784390957640,
-            "updatedAt": 1784392980149
+            "updatedAt": 1784393365184
           }
         ],
         "deleted": {
@@ -4039,7 +4054,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784393317905
+        "updatedAt": 1784393366990
       }
     },
     "294A2A23": {
