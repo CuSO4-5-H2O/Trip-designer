@@ -135,7 +135,7 @@ function inferPlanHints(text) {
   const locationSequence = inferLocationSequence(source);
   const summedDays = locationSequence.reduce((sum, item) => sum + item.days, 0);
   const explicitTotals = [];
-  const totalPattern = /(?:共|总共|一共|合计|安排|玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*[天日]/g;
+  const totalPattern = /(?<!第)(?:共|总共|一共|合计|安排|玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*[天日]/g;
   let match;
   while ((match = totalPattern.exec(source))) {
     const count = parseChineseNumber(match[1]);
@@ -161,6 +161,7 @@ function inferLocationSequence(text) {
     while ((match = pattern.exec(cleaned))) {
       const days = parseChineseNumber(match[2]);
       const location = cleanLocation(match[1]);
+      if (!location || location === "第" || location.endsWith("第")) continue;
       if (days > 0 && days <= 60) sequence.push({ location, days });
     }
   }
