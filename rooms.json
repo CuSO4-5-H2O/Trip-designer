@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T10:46:19.669Z",
+  "savedAt": "2026-07-18T10:46:22.630Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3026,6 +3026,56 @@
           "members": {}
         },
         "updatedAt": 1784371579418
+      }
+    },
+    "TOMB97D428": {
+      "revision": 3,
+      "state": {
+        "version": 2,
+        "activeListId": "75233a47-e352-41dd-90bf-ff6b5b6fe9b8",
+        "members": [],
+        "lists": [
+          {
+            "id": "75233a47-e352-41dd-90bf-ff6b5b6fe9b8",
+            "name": "待删除事项",
+            "createdAt": 1784371581194,
+            "updatedAt": 1784371581553,
+            "trip": {
+              "tripTitle": "待删除事项",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "a0fe7014-3d30-4dc6-bc5c-c531f4c84458",
+              "dayLimit": 30,
+              "updatedAt": 1784371581553,
+              "orderUpdatedAt": 1784371581553,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784371581194
+              },
+              "days": [
+                {
+                  "id": "a0fe7014-3d30-4dc6-bc5c-c531f4c84458",
+                  "location": "墓碑",
+                  "stay": "",
+                  "updatedAt": 1784371581553,
+                  "orderUpdatedAt": 1784371581553,
+                  "activities": []
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {
+            "0d889bcd-1730-45ab-90eb-41c1b6aee688": 1784371581553
+          },
+          "members": {}
+        },
+        "updatedAt": 1784371582380
       }
     }
   }
