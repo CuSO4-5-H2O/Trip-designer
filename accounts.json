@@ -13,11 +13,16 @@
           "roomId": "E4CA7383",
           "role": "owner",
           "addedAt": "2026-07-18T09:20:10.478Z"
+        },
+        {
+          "roomId": "CODEXMRQ5OSYQ",
+          "role": "editor",
+          "addedAt": "2026-07-18T09:20:13.911Z"
         }
       ],
       "createdAt": "2026-07-18T09:20:10.478Z",
-      "updatedAt": "2026-07-18T09:20:10.478Z"
+      "updatedAt": "2026-07-18T09:20:13.911Z"
     }
   },
-  "savedAt": "2026-07-18T09:20:10.581Z"
+  "savedAt": "2026-07-18T09:20:13.911Z"
 }
