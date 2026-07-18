@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T11:05:46.476Z",
+  "savedAt": "2026-07-18T11:09:14.677Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3237,7 +3237,7 @@
       }
     },
     "JB127FB5": {
-      "revision": 1,
+      "revision": 2,
       "state": {
         "version": 2,
         "activeListId": "75acfb14-ce9a-4b45-b441-9fadc8ac826a",
@@ -3281,7 +3281,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784372688521
+        "updatedAt": 1784372954426
       }
     }
   }
