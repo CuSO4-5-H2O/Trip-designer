@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T10:45:41.729Z",
+  "savedAt": "2026-07-18T10:45:51.966Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -2572,7 +2572,7 @@
       }
     },
     "UIHC1C3C6": {
-      "revision": 1,
+      "revision": 2,
       "state": {
         "version": 2,
         "activeListId": "97e33f9f-1acf-46d2-9573-10f024e374c0",
@@ -2592,13 +2592,13 @@
                   "id": "20a7224b-b331-4afc-9a45-5154eb67d5a5",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784371541020,
+                  "updatedAt": 1784371551257,
                   "orderUpdatedAt": 1784371541020,
                   "activities": [
                     {
                       "id": "9e4ee9aa-1c75-468a-81c8-1df6199524fa",
                       "time": "",
-                      "title": "新事项",
+                      "title": "h版本验证事项",
                       "place": "",
                       "note": "",
                       "tags": [],
@@ -2608,7 +2608,7 @@
                         "currency": "CNY"
                       },
                       "transport": null,
-                      "updatedAt": 1784371541020
+                      "updatedAt": 1784371551257
                     }
                   ]
                 }
@@ -2619,11 +2619,11 @@
                 "limit": 0,
                 "updatedAt": 1784371512781
               },
-              "updatedAt": 1784371541020,
+              "updatedAt": 1784371551257,
               "orderUpdatedAt": 1784371512781
             },
             "createdAt": 1784371512781,
-            "updatedAt": 1784371541020
+            "updatedAt": 1784371551257
           }
         ],
         "deleted": {
@@ -2632,7 +2632,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784371541020
+        "updatedAt": 1784371551715
       }
     }
   }
