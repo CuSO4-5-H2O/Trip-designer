@@ -11,20 +11,31 @@ It is aimed at the recurring visible shake/flicker issue when clicking the day `
 - The guard preserves `window.scrollX` / `window.scrollY` around inline day/activity editing clicks inside `#dayList`.
 - Patched protected `focus()` calls to force `preventScroll: true` for itinerary-list editors.
 - Patched protected `input.select()` / `textarea.select()` calls so selecting inline text does not move the viewport.
+- Wrapped `TripPlanner.saveExternalLibrary()` so inline edits mark `window.__TripPendingLocalSave` before saving.
+- Pending inline edits now resist stale cloud refreshes during the 1-minute autosave window.
 - Updated `index.html` to `render-20260719b` and loaded the guard after the existing stability scripts.
 
 ## Data Safety
 
 - No room data or account data is modified by this release.
 - No local/private data source is introduced.
-- The change is UI-only and does not alter the GitHub-backed room store.
+- The change does not alter the GitHub-backed room store format.
 
-## Verification Target
+## Production Verification
 
-After Render deploys this version, verify on production:
+Verified on Render production room `0F9A81A6` after deployment:
 
-1. Open a room and scroll so a day card is visible.
-2. Click the day `+` button.
-3. Confirm a new activity row appears without the page jumping.
-4. Click time/title/place/transport/budget fields.
-5. Confirm inline editors open without viewport shake and no console errors appear.
+1. Opened the room at build `render-20260719b` and confirmed `viewport-stability.js` loaded.
+2. Scrolled to a visible day card and clicked the day `+` button by coordinate.
+3. Confirmed the activity count increased by 1, `scrollY` stayed unchanged, and no console warnings/errors appeared.
+4. Confirmed the newly added activity remained after the stale-refresh window that previously swallowed it.
+5. Edited a new activity title and confirmed it later appeared in both the UI and `/api/room-state` cloud data.
+6. Edited the activity place chip to `测试地点`, clicked the sync status to flush, and confirmed `/api/room-state` revision `12` contained the updated place.
+
+## Remaining Verification Target
+
+Continue verifying:
+
+1. Transport chip edit and budget chip edit.
+2. Same-room visibility from a second account/device.
+3. Mobile viewport interaction after the stability guard.
