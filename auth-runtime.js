@@ -170,13 +170,20 @@ function createAuthRuntime() {
   }
 
   function verifyToken(tokenValue) {
-    const [body, sig] = String(tokenValue || "").split(".");
-    if (!body || !sig) return null;
-    const expected = crypto.createHmac("sha256", secret).update(body).digest("base64url");
-    if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
-    const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
-    if (!payload.exp || payload.exp < Date.now()) return null;
-    return payload;
+    try {
+      const [body, sig] = String(tokenValue || "").split(".");
+      if (!body || !sig) return null;
+      const expected = crypto.createHmac("sha256", secret).update(body).digest("base64url");
+      const sigBuffer = Buffer.from(sig);
+      const expectedBuffer = Buffer.from(expected);
+      if (sigBuffer.length !== expectedBuffer.length) return null;
+      if (!crypto.timingSafeEqual(sigBuffer, expectedBuffer)) return null;
+      const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
+      if (!payload.exp || payload.exp < Date.now()) return null;
+      return payload;
+    } catch {
+      return null;
+    }
   }
 
   function save(reason) {
