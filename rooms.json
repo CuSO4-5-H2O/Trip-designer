@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T09:56:10.732Z",
+  "savedAt": "2026-07-18T09:56:42.931Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1578,7 +1578,7 @@
       }
     },
     "FIX18F63KS": {
-      "revision": 1,
+      "revision": 2,
       "state": {
         "version": 2,
         "activeListId": "55307009-fb18-4bbb-947b-ddf22a21a867",
@@ -1598,9 +1598,25 @@
                   "id": "272ecc72-d62c-4239-911b-55c70f259669",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784368567250,
-                  "orderUpdatedAt": 1784368567250,
-                  "activities": []
+                  "updatedAt": 1784368602246,
+                  "orderUpdatedAt": 1784368602246,
+                  "activities": [
+                    {
+                      "id": "1612aacc-16f6-4990-8658-2bf6b5ad72e1",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784368602246
+                    }
+                  ]
                 }
               ],
               "budget": {
@@ -1609,11 +1625,11 @@
                 "limit": 0,
                 "updatedAt": 1784368567250
               },
-              "updatedAt": 1784368567250,
+              "updatedAt": 1784368602246,
               "orderUpdatedAt": 1784368567250
             },
             "createdAt": 1784368567250,
-            "updatedAt": 1784368567250
+            "updatedAt": 1784368602246
           }
         ],
         "deleted": {
@@ -1622,7 +1638,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784368567250
+        "updatedAt": 1784368602680
       }
     }
   }
