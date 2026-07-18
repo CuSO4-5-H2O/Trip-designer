@@ -27,6 +27,8 @@ function createAuthRuntime() {
     ready: !enabled,
     lastLoadAt: "",
     lastSaveAt: "",
+    lastRoomInitAt: "",
+    lastRoomInitError: "",
     lastError: enabled ? "" : "GITHUB_DATA_TOKEN not configured",
   };
 
@@ -106,6 +108,7 @@ function createAuthRuntime() {
     };
     data.accounts[username] = account;
     await save("register");
+    await ensureRoomState(roomId, "register");
     sendJson(res, 200, publicSession(account));
   }
 
@@ -140,6 +143,7 @@ function createAuthRuntime() {
       account.updatedAt = now;
       await save("join-room");
     }
+    await ensureRoomState(roomId, "join-room");
     sendJson(res, 200, { ok: true, account: publicAccount(account), roomId });
   }
 
@@ -157,6 +161,7 @@ function createAuthRuntime() {
       account.updatedAt = now;
       await save("create-room");
     }
+    await ensureRoomState(roomId, "create-room");
     sendJson(res, 200, { ok: true, account: publicAccount(account), roomId });
   }
 
@@ -232,6 +237,37 @@ function createAuthRuntime() {
     status.lastError = "";
     status.lastSaveAt = new Date().toISOString();
     return { ok: true };
+  }
+
+  async function ensureRoomState(roomId, reason) {
+    const normalizedRoom = normalizeRoomId(roomId);
+    if (!normalizedRoom) return false;
+    try {
+      const baseUrl = process.env.INTERNAL_BASE_URL || `http://127.0.0.1:${process.env.PORT || 4177}`;
+      const getResponse = await fetch(`${baseUrl}/api/room-state?room=${encodeURIComponent(normalizedRoom)}`, { cache: "no-store" });
+      const payload = await getResponse.json().catch(() => ({}));
+      if (!getResponse.ok || !payload.ok || !payload.state) throw new Error(payload.error || `room-state GET ${getResponse.status}`);
+      const postResponse = await fetch(`${baseUrl}/api/room-state?room=${encodeURIComponent(normalizedRoom)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clientId: "auth-runtime",
+          roomId: normalizedRoom,
+          state: payload.state,
+          reason: `auth-${reason}`,
+          baseRevision: Number(payload.revision) || 0,
+        }),
+      });
+      const saved = await postResponse.json().catch(() => ({}));
+      if (!postResponse.ok || !saved.ok) throw new Error(saved.error || `room-state POST ${postResponse.status}`);
+      status.lastRoomInitAt = new Date().toISOString();
+      status.lastRoomInitError = "";
+      return true;
+    } catch (error) {
+      status.lastRoomInitError = error.message;
+      console.warn(`Could not initialize account room ${normalizedRoom}: ${error.message}`);
+      return false;
+    }
   }
 
   async function refreshSha() {
