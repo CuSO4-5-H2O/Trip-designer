@@ -35,11 +35,16 @@
           "roomId": "B6B1BC74",
           "role": "owner",
           "addedAt": "2026-07-18T09:35:06.284Z"
+        },
+        {
+          "roomId": "SHAREMRQ680CR",
+          "role": "editor",
+          "addedAt": "2026-07-18T09:35:07.277Z"
         }
       ],
       "createdAt": "2026-07-18T09:35:06.284Z",
-      "updatedAt": "2026-07-18T09:35:06.284Z"
+      "updatedAt": "2026-07-18T09:35:07.277Z"
     }
   },
-  "savedAt": "2026-07-18T09:35:06.349Z"
+  "savedAt": "2026-07-18T09:35:07.277Z"
 }
