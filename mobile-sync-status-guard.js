@@ -65,7 +65,7 @@
     try {
       if (typeof window.TripDesignerFlushSync === "function") {
         const ok = await window.TripDesignerFlushSync("mobile-sync-click");
-        if (ok) markSaved();
+        if (ok !== false) markSaved();
       }
     } finally {
       window.setTimeout(guardPendingStatus, 250);
