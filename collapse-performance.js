@@ -5,6 +5,7 @@
   const ANIMATION_MS = 170;
   let saveTimer = 0;
   let observer = null;
+  let observeRetry = 0;
 
   function init() {
     installStyles();
@@ -35,7 +36,7 @@
 
   function shouldHandle(main, target) {
     if (!main.closest("#dayList")) return false;
-    if (target.closest(".day-delete-inline,.drag-handle,.day-drag-handle,.day-inline-actions,[data-day-field],input,textarea,select,.inline-activity-input,.inline-budget-editor,.inline-transport-editor")) return false;
+    if (target.closest(".day-delete-inline,.drag-handle,.day-drag-handle,.day-inline-actions,[data-day-field],input,textarea,select,.inline-activity-input,.inline-budget-editor,.inline-transport-editor,.activity-row,.activity-list,.inline-empty-add")) return false;
     const nestedButton = target.closest("button");
     return !nestedButton || nestedButton === main;
   }
@@ -89,13 +90,27 @@
 
   function observeDayList() {
     if (observer || !window.MutationObserver) return;
-    observer = new MutationObserver(() => applyStoredState());
-    observer.observe(document.body, { childList: true, subtree: true });
+    const root = document.querySelector("#dayList");
+    if (!root) {
+      observeRetry = window.setTimeout(observeDayList, 250);
+      return;
+    }
+    clearTimeout(observeRetry);
+    observer = new MutationObserver((mutations) => {
+      if (!mutations.some(hasDayCardStructureChange)) return;
+      applyStoredState();
+    });
+    observer.observe(root, { childList: true });
+  }
+
+  function hasDayCardStructureChange(mutation) {
+    const nodes = [...mutation.addedNodes, ...mutation.removedNodes];
+    return nodes.some((node) => node.nodeType === 1 && (node.matches?.(".day-card") || node.querySelector?.(".day-card")));
   }
 
   function applyStoredState() {
     const collapsed = readCollapsed();
-    document.querySelectorAll(".day-card[data-day-id]").forEach((card) => {
+    document.querySelectorAll("#dayList .day-card[data-day-id]").forEach((card) => {
       const isCollapsed = collapsed.has(card.dataset.dayId);
       const content = card.querySelector(".day-content");
       const main = card.querySelector(".day-main");
