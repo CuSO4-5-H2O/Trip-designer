@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T10:49:55.975Z",
+  "savedAt": "2026-07-18T10:49:56.723Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3094,7 +3094,7 @@
       }
     },
     "DRAG24882B": {
-      "revision": 1,
+      "revision": 2,
       "state": {
         "version": 2,
         "activeListId": "6fd315d2-1bbe-4f8e-a5a6-50b0772d828d",
@@ -3114,13 +3114,13 @@
                   "id": "077aba52-47ef-41ff-bd1d-045a19e45101",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784371795263,
+                  "updatedAt": 1784371796013,
                   "orderUpdatedAt": 1784371795263,
                   "activities": [
                     {
                       "id": "d6cc7639-36d6-4a68-b93c-1a8bd652aa62",
                       "time": "",
-                      "title": "新事项",
+                      "title": "拖动事项A",
                       "place": "",
                       "note": "",
                       "tags": [],
@@ -3130,7 +3130,7 @@
                         "currency": "CNY"
                       },
                       "transport": null,
-                      "updatedAt": 1784371795263
+                      "updatedAt": 1784371796013
                     }
                   ]
                 }
@@ -3141,11 +3141,11 @@
                 "limit": 0,
                 "updatedAt": 1784371790545
               },
-              "updatedAt": 1784371795263,
+              "updatedAt": 1784371796013,
               "orderUpdatedAt": 1784371790545
             },
             "createdAt": 1784371790545,
-            "updatedAt": 1784371795263
+            "updatedAt": 1784371796013
           }
         ],
         "deleted": {
@@ -3154,7 +3154,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784371795263
+        "updatedAt": 1784371796473
       }
     }
   }
