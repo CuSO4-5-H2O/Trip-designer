@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T11:20:58.346Z",
+  "savedAt": "2026-07-18T11:22:08.339Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3531,7 +3531,7 @@
       }
     },
     "DGA8D655": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "25ce88c8-7d91-45e3-a7c7-c59de6470aef",
@@ -3614,7 +3614,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784373658095
+        "updatedAt": 1784373728088
       }
     }
   }
