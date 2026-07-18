@@ -5,7 +5,8 @@
   "description": "Collaborative itinerary planner with shareable room links.",
   "main": "runtime.js",
   "scripts": {
-    "start": "node runtime.js"
+    "start": "node runtime.js",
+    "test:production": "node production-api-smoke-test.js"
   },
   "engines": {
     "node": ">=20"
