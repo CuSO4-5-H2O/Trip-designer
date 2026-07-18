@@ -334,7 +334,7 @@ function handleMessage(socket, raw) {
       send(socket, { type: "error", clientId: "server", error: storageStatus.lastError || "GitHub data storage is not ready" });
       return;
     }
-    room.state = mergeLibraries(room.state, message.state);
+    room.state = adoptOrMergeLibrary(room, message.state);
     room.revision = (room.revision || 0) + 1;
     scheduleSave(message.reason || "state");
     send(socket, { type: "ack", clientId: "server", state: room.state, revision: room.revision, reason: message.reason || "state" });
@@ -380,7 +380,7 @@ async function handleRoomState(req, requestUrl, res) {
       sendJson(res, 400, { ok: false, error: "missing state" });
       return;
     }
-    room.state = mergeLibraries(room.state, message.state);
+    room.state = adoptOrMergeLibrary(room, message.state);
     room.revision = (room.revision || 0) + 1;
     scheduleSave(message.reason || "http-state");
     broadcast(roomId, { type: "state", clientId: message.clientId || "http", roomId, state: room.state, reason: message.reason || "http-state", revision: room.revision }, null);
@@ -388,6 +388,26 @@ async function handleRoomState(req, requestUrl, res) {
   } catch (error) {
     sendJson(res, 400, { ok: false, error: "invalid state request", detail: error.message });
   }
+}
+
+function adoptOrMergeLibrary(room, incomingState) {
+  const incoming = normalizeLibrary(incomingState);
+  if ((room.revision || 0) === 0 && isPristineRoomState(room.state)) return incoming;
+  return mergeLibraries(room.state, incoming);
+}
+
+function isPristineRoomState(state) {
+  const lib = normalizeLibrary(state);
+  if ((lib.members || []).length) return false;
+  if (lib.lists.length !== 1) return false;
+  const list = lib.lists[0];
+  const trip = list.trip || {};
+  const days = trip.days || [];
+  if (days.length !== 1) return false;
+  const day = days[0];
+  const blankDay = !day.location && !day.stay && !(day.activities || []).length;
+  const blankList = list.name === "新行程单" || trip.tripTitle === "新行程单";
+  return blankDay && blankList;
 }
 
 function mergeLibraries(serverState, incomingState) {
