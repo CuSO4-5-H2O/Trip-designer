@@ -4,6 +4,8 @@
   let cleanupTimer = 0;
   let addDayMenu = null;
   let styleInstalled = false;
+  let observer = null;
+  let observeRetry = 0;
 
   function init() {
     installStyles();
@@ -11,7 +13,30 @@
     document.addEventListener("click", handleDocumentClick, true);
     scheduleCleanup();
     window.setTimeout(scheduleCleanup, 250);
-    window.setInterval(scheduleCleanup, 1600);
+    observeStableRoots();
+  }
+
+  function observeStableRoots() {
+    if (observer || !window.MutationObserver) return;
+    const roots = [document.querySelector("#quickPlanPanel"), document.querySelector("#dayList")].filter(Boolean);
+    if (!roots.length) {
+      observeRetry = window.setTimeout(observeStableRoots, 250);
+      return;
+    }
+    clearTimeout(observeRetry);
+    observer = new MutationObserver((mutations) => {
+      if (!mutations.some(isRelevantMutation)) return;
+      scheduleCleanup();
+    });
+    roots.forEach((root) => observer.observe(root, { childList: true }));
+  }
+
+  function isRelevantMutation(mutation) {
+    const nodes = [...mutation.addedNodes, ...mutation.removedNodes];
+    return nodes.some((node) => node.nodeType === 1 && (
+      node.matches?.("#addDayBtn,.quick-plan-toggle,[data-quick-collapse]") ||
+      node.querySelector?.("#addDayBtn,.quick-plan-toggle,[data-quick-collapse]")
+    ));
   }
 
   function scheduleCleanup() {
