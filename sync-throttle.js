@@ -23,6 +23,7 @@
     const payload = parseJson(data);
     if (payload?.type === "state" && payload.roomId && payload.state) {
       lastStateByRoom.set(payload.roomId, payload.state);
+      markPending(payload.roomId);
       queueSocketState(this, payload.roomId, payload);
       setSyncText("本地待同步 · 1 分钟内自动保存", false);
       return;
@@ -47,6 +48,7 @@
     }
 
     lastStateByRoom.set(roomId, requestBody.state);
+    markPending(roomId);
     clearTimeout(pendingHttpByRoom.get(roomId)?.timer);
     pendingHttpByRoom.set(roomId, {
       roomId,
@@ -120,6 +122,7 @@
     const plannerState = window.TripPlanner?.getLibrary?.();
     const state = plannerState || lastStateByRoom.get(roomId);
     if (!roomId || !state) return false;
+    markPending(roomId);
     setSyncText("正在保存到云端", true);
     try {
       const response = await originalFetch(`/api/room-state?room=${encodeURIComponent(roomId)}`, {
@@ -135,9 +138,11 @@
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result?.ok) throw new Error(result?.error || `HTTP ${response.status}`);
+      clearPending(roomId);
       setSyncText("已保存到云端", true);
       return true;
     } catch {
+      markPending(roomId);
       scheduleRetry(roomId);
       setSyncText("云端同步失败，点击重试", false);
       return false;
@@ -172,11 +177,23 @@
   }
 
   function scheduleRetry(roomId) {
+    markPending(roomId);
     clearTimeout(pendingHttpByRoom.get(roomId)?.timer);
     pendingHttpByRoom.set(roomId, {
       roomId,
       timer: window.setTimeout(() => flushRoom(roomId, "retry-debounce"), 12_000),
     });
+  }
+
+  function markPending(roomId) {
+    window.__TripPendingLocalSave = { roomId, at: Date.now(), pending: true };
+  }
+
+  function clearPending(roomId) {
+    const pending = window.__TripPendingLocalSave;
+    if (pending?.roomId === roomId) {
+      window.__TripPendingLocalSave = { roomId, at: Date.now(), pending: false };
+    }
   }
 
   function initManualSync() {
