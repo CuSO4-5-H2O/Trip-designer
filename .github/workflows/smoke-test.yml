@@ -72,30 +72,30 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ! grep -q 'setInterval' entry-actions-lite.js
-          ! grep -q 'enhanceDayCards' entry-actions-lite.js
-          ! grep -q 'actions.prepend' entry-actions-lite.js
-          ! grep -q 'quick-plan-toggle' entry-actions-lite.js
-          ! grep -q 'toggle-quick-plan' entry-actions-lite.js
-          grep -q 'TripPlannerQuickAdd' entry-actions-lite.js
-          grep -q 'TripPlannerQuickAdd' interaction-hotfix.js
-          grep -q 'quickActivityModal' interaction-hotfix.js
-          grep -q 'saveExternalLibrary' interaction-hotfix.js
-          grep -q 'stopImmediatePropagation' interaction-hotfix.js
-          grep -q 'day-card-add-floating' interaction-hotfix.js
+          ! grep -Fq 'setInterval' entry-actions-lite.js
+          ! grep -Fq 'enhanceDayCards' entry-actions-lite.js
+          ! grep -Fq 'actions.prepend' entry-actions-lite.js
+          ! grep -Fq 'quick-plan-toggle' entry-actions-lite.js
+          ! grep -Fq 'toggle-quick-plan' entry-actions-lite.js
+          grep -Fq 'TripPlannerQuickAdd' entry-actions-lite.js
+          grep -Fq 'TripPlannerQuickAdd' interaction-hotfix.js
+          grep -Fq 'quickActivityModal' interaction-hotfix.js
+          grep -Fq 'saveExternalLibrary' interaction-hotfix.js
+          grep -Fq 'stopImmediatePropagation' interaction-hotfix.js
+          grep -Fq 'day-card-add-floating' interaction-hotfix.js
 
       - name: Guard room entry behavior
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'tripdesigner:last-room' room-bootstrap.js
-          grep -q 'showRoomGate' room-bootstrap.js
-          grep -q '进入同一个房间' room-bootstrap.js
+          grep -Fq 'tripdesigner:last-room' room-bootstrap.js
+          grep -Fq 'showRoomGate' room-bootstrap.js
+          grep -Fq '进入同一个房间' room-bootstrap.js
           grep -Eq 'APP_BUILD_VERSION = "render-[0-9a-z]+"' room-bootstrap.js
-          grep -q 'app-collab.js?v=${APP_BUILD_VERSION}' room-bootstrap.js
-          ! grep -q 'DEFAULT_ROOM_ID = "1075424A"' room-bootstrap.js
-          ! grep -q 'if (!roomId) return;' room-bootstrap.js
-          ! grep -q './app-collab.js?v=' index.html
+          grep -Fq 'app-collab.js?v=${APP_BUILD_VERSION}' room-bootstrap.js
+          ! grep -Fq 'DEFAULT_ROOM_ID = "1075424A"' room-bootstrap.js
+          ! grep -Fq 'if (!roomId) return;' room-bootstrap.js
+          ! grep -Fq './app-collab.js?v=' index.html
 
       - name: Start runtime and verify endpoints
         shell: bash
@@ -121,60 +121,60 @@ jobs:
           done
 
           cat "$RUNNER_TEMP/health.json"
-          grep -q '"ok":true' "$RUNNER_TEMP/health.json"
-          grep -q '"aiConfigured":true' "$RUNNER_TEMP/health.json"
+          grep -Fq '"ok":true' "$RUNNER_TEMP/health.json"
+          grep -Fq '"aiConfigured":true' "$RUNNER_TEMP/health.json"
 
           curl --fail --silent http://127.0.0.1:4177/api/cloud-storage-status >"$RUNNER_TEMP/cloud-status.json"
           cat "$RUNNER_TEMP/cloud-status.json"
-          grep -q '"ok":true' "$RUNNER_TEMP/cloud-status.json"
+          grep -Fq '"ok":true' "$RUNNER_TEMP/cloud-status.json"
 
           ai_status_code=$(curl --silent --output "$RUNNER_TEMP/ai-recommend-method.json" --write-out "%{http_code}" http://127.0.0.1:4177/api/ai/recommend)
           cat "$RUNNER_TEMP/ai-recommend-method.json"
           test "$ai_status_code" = "405"
-          grep -q '"method not allowed"' "$RUNNER_TEMP/ai-recommend-method.json"
+          grep -Fq '"method not allowed"' "$RUNNER_TEMP/ai-recommend-method.json"
 
           curl --fail --silent http://127.0.0.1:4177/api/map-config >"$RUNNER_TEMP/map-config.json"
           cat "$RUNNER_TEMP/map-config.json"
-          grep -q '"ok":true' "$RUNNER_TEMP/map-config.json"
-          grep -q '"defaultProvider":"amap"' "$RUNNER_TEMP/map-config.json"
-          grep -q '"google"' "$RUNNER_TEMP/map-config.json"
+          grep -Fq '"ok":true' "$RUNNER_TEMP/map-config.json"
+          grep -Fq '"defaultProvider":"amap"' "$RUNNER_TEMP/map-config.json"
+          grep -Fq '"google"' "$RUNNER_TEMP/map-config.json"
 
           curl --fail --silent 'http://127.0.0.1:4177/api/room-state?room=1075424A' >"$RUNNER_TEMP/room-state.json"
-          grep -q '"ok":true' "$RUNNER_TEMP/room-state.json"
+          grep -Fq '"ok":true' "$RUNNER_TEMP/room-state.json"
 
           curl --fail --silent 'http://127.0.0.1:4177/?room=1075424A' >"$RUNNER_TEMP/index.html"
-          grep -q 'name="trip-build"' "$RUNNER_TEMP/index.html"
+          grep -Fq 'name="trip-build"' "$RUNNER_TEMP/index.html"
           grep -Eq './room-bootstrap.js\?v=render-[0-9a-z]+' "$RUNNER_TEMP/index.html"
-          grep -q './input-performance.js' "$RUNNER_TEMP/index.html"
-          grep -q './cloud-only-storage-guard.js' "$RUNNER_TEMP/index.html"
-          grep -q './sync-throttle.js' "$RUNNER_TEMP/index.html"
-          grep -q './cloud-sync-guard.js' "$RUNNER_TEMP/index.html"
-          ! grep -q './app-collab.js?v=' "$RUNNER_TEMP/index.html"
-          grep -q './connection-guard.js' "$RUNNER_TEMP/index.html"
-          grep -q './map-providers-lite.js' "$RUNNER_TEMP/index.html"
-          grep -q './quick-plan.js' "$RUNNER_TEMP/index.html"
-          grep -q './document-import.js' "$RUNNER_TEMP/index.html"
-          grep -q './list-plus-menu.js' "$RUNNER_TEMP/index.html"
-          grep -q './timeline-ui-cleanup.js' "$RUNNER_TEMP/index.html"
-          grep -q './interaction-hotfix.js' "$RUNNER_TEMP/index.html"
-          grep -q './cloud-authority-refresh.js' "$RUNNER_TEMP/index.html"
-          grep -q './mobile-performance-lite.js' "$RUNNER_TEMP/index.html"
-          grep -q './layout-stability-hotfix.js' "$RUNNER_TEMP/index.html"
-          grep -q './room-status-warning.js' "$RUNNER_TEMP/index.html"
-          grep -q './context-editor-performance.css' "$RUNNER_TEMP/index.html"
-          grep -q './entry-actions-lite.js' "$RUNNER_TEMP/index.html"
-          grep -q './room-login.js' "$RUNNER_TEMP/index.html"
-          grep -q './inline-polish.js' "$RUNNER_TEMP/index.html"
-          grep -q './inline-anchor-preview.js' "$RUNNER_TEMP/index.html"
-          grep -q './collapse-performance.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './input-performance.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './cloud-only-storage-guard.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './sync-throttle.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './cloud-sync-guard.js' "$RUNNER_TEMP/index.html"
+          ! grep -Fq './app-collab.js?v=' "$RUNNER_TEMP/index.html"
+          grep -Fq './connection-guard.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './map-providers-lite.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './quick-plan.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './document-import.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './list-plus-menu.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './timeline-ui-cleanup.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './interaction-hotfix.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './cloud-authority-refresh.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './mobile-performance-lite.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './layout-stability-hotfix.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './room-status-warning.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './context-editor-performance.css' "$RUNNER_TEMP/index.html"
+          grep -Fq './entry-actions-lite.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './room-login.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './inline-polish.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './inline-anchor-preview.js' "$RUNNER_TEMP/index.html"
+          grep -Fq './collapse-performance.js' "$RUNNER_TEMP/index.html"
           ! grep -Eq 'config\.js|server-first\.js|trip-insights|travel-tools|activity-tags|context-popover-fixes|leaflet' "$RUNNER_TEMP/index.html"
-          ! grep -q './map-providers.js?v=' "$RUNNER_TEMP/index.html"
-          ! grep -q './entry-actions.js?v=' "$RUNNER_TEMP/index.html"
+          ! grep -Fq './map-providers.js?v=' "$RUNNER_TEMP/index.html"
+          ! grep -Fq './entry-actions.js?v=' "$RUNNER_TEMP/index.html"
 
           curl --fail --silent 'http://127.0.0.1:4177/room-bootstrap.js' >"$RUNNER_TEMP/room-bootstrap.js"
           grep -Eq 'APP_BUILD_VERSION = "render-[0-9a-z]+"' "$RUNNER_TEMP/room-bootstrap.js"
-          grep -q 'app-collab.js?v=${APP_BUILD_VERSION}' "$RUNNER_TEMP/room-bootstrap.js"
-          grep -q '进入同一个房间' "$RUNNER_TEMP/room-bootstrap.js"
+          grep -Fq 'app-collab.js?v=${APP_BUILD_VERSION}' "$RUNNER_TEMP/room-bootstrap.js"
+          grep -Fq '进入同一个房间' "$RUNNER_TEMP/room-bootstrap.js"
 
           assets=(
             room-bootstrap.js
@@ -233,5 +233,5 @@ jobs:
           done
 
           cat "$RUNNER_TEMP/server-map-config.json"
-          grep -q '"ok":true' "$RUNNER_TEMP/server-map-config.json"
-          grep -q '"defaultProvider":"amap"' "$RUNNER_TEMP/server-map-config.json"
+          grep -Fq '"ok":true' "$RUNNER_TEMP/server-map-config.json"
+          grep -Fq '"defaultProvider":"amap"' "$RUNNER_TEMP/server-map-config.json"
