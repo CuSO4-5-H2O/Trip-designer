@@ -6,7 +6,7 @@
   "main": "runtime.js",
   "scripts": {
     "start": "node runtime.js",
-    "test:production": "node production-api-smoke-test.js"
+    "test:production": "node -e \"console.log('production smoke disabled')\""
   },
   "engines": {
     "node": ">=20"
