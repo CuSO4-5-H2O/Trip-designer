@@ -268,7 +268,25 @@
       ],
       "createdAt": "2026-07-18T15:59:35.441Z",
       "updatedAt": "2026-07-18T16:00:06.428Z"
+    },
+    "qa_friend_qjyg76": {
+      "id": "ba048c9a-9330-4435-b5fb-9602ae4b01e2",
+      "username": "qa_friend_qjyg76",
+      "displayName": "qa_friend_qjyg76",
+      "passwordHash": "4a5b0f3fb174d107b29ee306966f3370cf8f1fb9672b2588604ec9517e995861",
+      "salt": "65df111e6ddaa7b8b2f9c01c882fa206",
+      "defaultRoomId": "8128E5E9",
+      "rooms": [
+        {
+          "roomId": "8128E5E9",
+          "role": "owner",
+          "addedAt": "2026-07-18T16:00:41.419Z",
+          "updatedAt": "2026-07-18T16:00:41.419Z"
+        }
+      ],
+      "createdAt": "2026-07-18T16:00:41.419Z",
+      "updatedAt": "2026-07-18T16:00:41.419Z"
     }
   },
-  "savedAt": "2026-07-18T16:00:06.428Z"
+  "savedAt": "2026-07-18T16:00:41.501Z"
 }
