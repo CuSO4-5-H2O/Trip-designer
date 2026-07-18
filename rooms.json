@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T11:14:20.647Z",
+  "savedAt": "2026-07-18T11:17:04.566Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3383,6 +3383,151 @@
           "members": {}
         },
         "updatedAt": 1784373260396
+      }
+    },
+    "QPF57151": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "caa8e25f-37b1-4149-a20d-c2cc37317993",
+        "members": [],
+        "lists": [
+          {
+            "id": "caa8e25f-37b1-4149-a20d-c2cc37317993",
+            "name": "新行程单",
+            "trip": {
+              "tripTitle": "新行程单",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "9e2fe74f-088c-4631-821b-3ee4307daa14",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "9e2fe74f-088c-4631-821b-3ee4307daa14",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784373422196,
+                  "orderUpdatedAt": 1784373422196,
+                  "activities": [
+                    {
+                      "id": "14ce0dd3-3c07-4189-88cc-f1ff7c426187",
+                      "time": "",
+                      "title": "抵达内罗毕",
+                      "place": "内罗毕",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784373422196
+                    },
+                    {
+                      "id": "5a4345fb-1705-4714-b1cf-d955356eead5",
+                      "time": "",
+                      "title": "逛市区",
+                      "place": "内罗毕市区",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784373422196
+                    }
+                  ]
+                },
+                {
+                  "id": "6f77e003-c57a-46cf-b6f0-2cd61c35b3d6",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784373422196,
+                  "orderUpdatedAt": 1784373422196,
+                  "activities": [
+                    {
+                      "id": "18cf4fab-f06d-4b4f-9342-3d2c3b998030",
+                      "time": "",
+                      "title": "基贝拉贫民窟",
+                      "place": "基贝拉贫民窟",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784373422196
+                    },
+                    {
+                      "id": "e9e0b426-0421-463f-b7f4-385b7e668531",
+                      "time": "",
+                      "title": "博物馆",
+                      "place": "内罗毕国家博物馆",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784373422196
+                    }
+                  ]
+                },
+                {
+                  "id": "a2526a9d-6046-4af8-9236-b71a20deeb64",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784373422196,
+                  "orderUpdatedAt": 1784373422196,
+                  "activities": [
+                    {
+                      "id": "d8a80b83-c54b-4d76-af58-aacf708f771a",
+                      "time": "",
+                      "title": "长颈鹿中心",
+                      "place": "长颈鹿中心",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784373422196
+                    },
+                    {
+                      "id": "0ae37d11-8ef0-4121-a428-c32361367789",
+                      "time": "",
+                      "title": "出发去马赛马拉",
+                      "place": "马赛马拉",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "内罗毕",
+                        "to": "马赛马拉",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1784373422196
+                    }
+                  ]
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784373262417
+              },
+              "updatedAt": 1784373422196,
+              "orderUpdatedAt": 1784373422196
+            },
+            "createdAt": 1784373262417,
+            "updatedAt": 1784373422196
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784373422196
       }
     }
   }
