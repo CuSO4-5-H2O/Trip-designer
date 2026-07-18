@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T16:11:58.903Z",
+  "savedAt": "2026-07-18T16:15:08.658Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3826,7 +3826,7 @@
       }
     },
     "0F9A81A6": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "442adb5c-bcf1-4ff3-a0a6-38e5b1a7563e",
@@ -3973,7 +3973,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784391118653
+        "updatedAt": 1784391308407
       }
     },
     "294A2A23": {
