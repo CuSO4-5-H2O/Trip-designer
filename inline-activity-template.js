@@ -5,13 +5,12 @@
   const transports = [["", "无交通"], ["plane", "飞机"], ["train", "火车"], ["bus", "大巴"], ["boat", "船"], ["car", "车"]];
   let enhanceTimer = 0;
   let observer = null;
+  let observeRetry = 0;
   let activeEditor = null;
-  let pointerHandled = false;
 
   function init() {
     installStyles();
     window.TripPlannerQuickAdd = addTemplateActivity;
-    document.addEventListener("pointerdown", handlePointerDown, true);
     document.addEventListener("click", handleClick, true);
     document.addEventListener("keydown", handleKeyDown, true);
     observeRows();
@@ -20,20 +19,33 @@
       window.TripPlannerQuickAdd = addTemplateActivity;
       scheduleEnhance();
     }, 450);
-    window.setInterval(() => {
-      if (window.TripPlannerQuickAdd !== addTemplateActivity) window.TripPlannerQuickAdd = addTemplateActivity;
-    }, 1200);
   }
 
   function observeRows() {
-    if (observer) return;
-    observer = new MutationObserver(() => scheduleEnhance());
-    observer.observe(document.body, { childList: true, subtree: true });
+    if (observer || !window.MutationObserver) return;
+    const root = document.querySelector("#dayList");
+    if (!root) {
+      observeRetry = window.setTimeout(observeRows, 250);
+      return;
+    }
+    clearTimeout(observeRetry);
+    observer = new MutationObserver((mutations) => {
+      if (!mutations.some(hasRelevantNodeChange)) return;
+      scheduleEnhance();
+    });
+    observer.observe(root, { childList: true, subtree: true });
+  }
+
+  function hasRelevantNodeChange(mutation) {
+    return [...mutation.addedNodes, ...mutation.removedNodes].some((node) => node.nodeType === 1 && (
+      node.matches?.(".day-card,.activity-row,.empty-state") ||
+      node.querySelector?.(".day-card,.activity-row,.empty-state")
+    ));
   }
 
   function scheduleEnhance() {
     clearTimeout(enhanceTimer);
-    enhanceTimer = window.setTimeout(enhanceAll, 70);
+    enhanceTimer = window.setTimeout(enhanceAll, 60);
   }
 
   function enhanceAll() {
@@ -42,7 +54,7 @@
   }
 
   function enhanceDayCards() {
-    document.querySelectorAll(".day-card[data-day-id]").forEach((card) => {
+    document.querySelectorAll("#dayList .day-card[data-day-id]").forEach((card) => {
       card.querySelector(".day-compact-location")?.setAttribute("data-day-field", "location");
       card.querySelector(".day-compact-stay")?.setAttribute("data-day-field", "stay");
       card.querySelector(".day-compact-budget")?.setAttribute("data-day-field", "budget");
@@ -57,11 +69,19 @@
   }
 
   function enhanceRows() {
-    document.querySelectorAll(".activity-row[data-activity-id]").forEach((row) => {
+    document.querySelectorAll("#dayList .activity-row[data-activity-id]").forEach((row) => {
       if (row.dataset.inlineEnhanced === "1") return;
       row.dataset.inlineEnhanced = "1";
       row.querySelector(".edit-activity")?.setAttribute("title", "行内编辑事项");
-      row.querySelector(".activity-time")?.classList.add("inline-clickable");
+      const time = row.querySelector(".activity-time");
+      if (time) {
+        time.dataset.selectField = "time";
+        time.classList.add("inline-clickable");
+        if (!time.textContent.trim()) {
+          time.textContent = "时间";
+          time.classList.add("is-placeholder");
+        }
+      }
       const body = row.querySelector(".activity-body");
       if (!body) return;
       const title = body.querySelector("strong[data-select-field='title']");
@@ -87,35 +107,13 @@
     return button;
   }
 
-  function handlePointerDown(event) {
-    if (!isEditableClick(event)) return;
-    if (routeEditableTarget(event)) {
-      pointerHandled = true;
-      window.setTimeout(() => { pointerHandled = false; }, 350);
-    }
-  }
-
   function handleClick(event) {
-    if (pointerHandled) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation?.();
-      return;
-    }
-    routeEditableTarget(event);
-  }
-
-  function isEditableClick(event) {
-    return event.button === undefined || event.button === 0;
-  }
-
-  function routeEditableTarget(event) {
     const addButton = event.target.closest?.(".day-card-add-floating,[data-hotfix-action='add-activity'],[data-lite-action='add-activity']");
     if (addButton) {
       stop(event);
       const dayId = addButton.closest(".day-card[data-day-id]")?.dataset.dayId || getSelectedDayId();
       addTemplateActivity(dayId);
-      return true;
+      return;
     }
 
     const empty = event.target.closest?.(".inline-empty-add");
@@ -123,7 +121,7 @@
       stop(event);
       const dayId = empty.closest(".day-card[data-day-id]")?.dataset.dayId || getSelectedDayId();
       addTemplateActivity(dayId);
-      return true;
+      return;
     }
 
     const dayField = event.target.closest?.("[data-day-field]");
@@ -131,30 +129,29 @@
       stop(event);
       const card = dayField.closest(".day-card[data-day-id]");
       const field = dayField.dataset.dayField;
-      if (!card || !field) return true;
-      if (field === "budget") openDayBudgetEditor(card.dataset.dayId, dayField);
+      if (!card || !field) return;
+      if (field === "budget") openDayBudgetEditor(card.dataset.dayId);
       else openDayFieldEditor(card, field, dayField);
-      return true;
+      return;
     }
 
     const editButton = event.target.closest?.(".edit-activity");
     if (editButton) {
       const row = editButton.closest(".activity-row[data-activity-id]");
-      if (!row) return false;
+      if (!row) return;
       stop(event);
       openFieldEditor(row, "title", row.querySelector("strong[data-select-field='title']") || row);
-      return true;
+      return;
     }
 
     const target = event.target.closest?.(".activity-row [data-select-field]");
-    if (!target) return false;
+    if (!target) return;
     const row = target.closest(".activity-row[data-activity-id]");
-    if (!row) return false;
+    if (!row) return;
     const field = target.dataset.selectField;
-    if (!["time", "title", "place", "note", "budget", "transport"].includes(field)) return false;
+    if (!["time", "title", "place", "note", "budget", "transport"].includes(field)) return;
     stop(event);
     openFieldEditor(row, field, target);
-    return true;
   }
 
   function stop(event) {
@@ -166,7 +163,7 @@
   function handleKeyDown(event) {
     if (event.key === "Escape" && activeEditor) {
       event.preventDefault();
-      closeEditor();
+      closeEditor(false);
     }
   }
 
@@ -212,7 +209,7 @@
   }
 
   function openDayFieldEditor(card, field, anchor) {
-    closeEditor();
+    closeEditor(true);
     const ref = getDayRefs(card.dataset.dayId);
     if (!ref.day) return;
     card.classList.add("inline-editing-row");
@@ -222,7 +219,7 @@
     input.placeholder = field === "location" ? "当天地点" : "住宿";
     input.value = field === "location" ? (ref.day.location || "") : (ref.day.stay || "");
     replaceAnchor(anchor, input, card);
-    activeEditor = { node: input, row: card, release: lockRowHeight(card) };
+    activeEditor = { node: input, row: card, anchor, release: lockRowHeight(card) };
     input.focus({ preventScroll: true });
     input.select?.();
     let saved = false;
@@ -234,7 +231,8 @@
         if (field === "location") day.location = value;
         if (field === "stay") day.stay = value;
       }, `inline-edit-day-${field}`);
-      closeEditor();
+      updateDayDom(card, field, value);
+      closeEditor(true);
     };
     input.addEventListener("blur", saveAndClose, { once: true });
     input.addEventListener("keydown", (event) => {
@@ -245,7 +243,7 @@
     });
   }
 
-  function openDayBudgetEditor(dayId, anchor) {
+  function openDayBudgetEditor(dayId) {
     const ref = getDayRefs(dayId);
     if (!ref.day) return;
     const activity = ref.day.activities?.[ref.day.activities.length - 1];
@@ -263,7 +261,7 @@
   }
 
   function openFieldEditor(row, field, anchor) {
-    closeEditor();
+    closeEditor(true);
     const ref = getRefs(row);
     const activity = ref.activity;
     if (!activity) return;
@@ -279,7 +277,7 @@
     if (field === "note") input.placeholder = "详细描述";
     input.value = activity[field] || "";
     replaceAnchor(anchor, input, row);
-    activeEditor = { node: input, row, release: lockRowHeight(row) };
+    activeEditor = { node: input, row, anchor, release: lockRowHeight(row) };
     input.focus({ preventScroll: true });
     if (field !== "time") input.select?.();
     let saved = false;
@@ -290,7 +288,9 @@
       updateActivity(row, (item) => {
         item[field] = field === "title" ? (value || "新事项") : value;
       }, `inline-edit-${field}`);
-      closeEditor();
+      const fresh = getRefs(row).activity;
+      updateActivityDom(row, field, fresh || activity);
+      closeEditor(true);
     };
     input.addEventListener("blur", saveAndClose, { once: true });
     input.addEventListener("keydown", (event) => {
@@ -307,7 +307,7 @@
     wrap.className = "inline-budget-editor inline-compound-editor";
     wrap.innerHTML = `<input class="inline-activity-input budget-amount" type="number" min="0" step="0.01" inputmode="decimal" value="${escapeAttr(Number(budget.amount ?? budget.cost ?? 0) || 0)}"><select class="inline-activity-input budget-currency">${currencies.map((code) => `<option value="${code}" ${code === (budget.currency || ref.trip?.budget?.currency || "CNY") ? "selected" : ""}>${code}</option>`).join("")}</select>`;
     replaceAnchor(anchor, wrap, row);
-    activeEditor = { node: wrap, row, release: lockRowHeight(row) };
+    activeEditor = { node: wrap, row, anchor, release: lockRowHeight(row) };
     const amount = wrap.querySelector(".budget-amount");
     const currency = wrap.querySelector(".budget-currency");
     amount.focus({ preventScroll: true });
@@ -319,7 +319,9 @@
       updateActivity(row, (item) => {
         item.budget = { amount: Math.max(0, Number(amount.value) || 0), currency: currency.value || "CNY" };
       }, "inline-edit-budget");
-      closeEditor();
+      const fresh = getRefs(row).activity;
+      updateActivityDom(row, "budget", fresh || ref.activity);
+      closeEditor(true);
     };
     wrap.addEventListener("focusout", () => window.setTimeout(() => {
       if (!wrap.contains(document.activeElement)) saveAndClose();
@@ -338,7 +340,7 @@
     wrap.className = "inline-transport-editor inline-compound-editor";
     wrap.innerHTML = `<select class="inline-activity-input transport-type">${transports.map(([id, label]) => `<option value="${id}" ${id === (transport.type || "") ? "selected" : ""}>${label}</option>`).join("")}</select><input class="inline-activity-input transport-from" value="${escapeAttr(transport.from || "")}" placeholder="出发地"><input class="inline-activity-input transport-to" value="${escapeAttr(transport.to || "")}" placeholder="到达地">`;
     replaceAnchor(anchor, wrap, row);
-    activeEditor = { node: wrap, row, release: lockRowHeight(row) };
+    activeEditor = { node: wrap, row, anchor, release: lockRowHeight(row) };
     wrap.querySelector(".transport-type")?.focus({ preventScroll: true });
     let saved = false;
     const saveAndClose = () => {
@@ -350,7 +352,9 @@
       updateActivity(row, (item) => {
         item.transport = type || from || to ? { type: type || "car", from, to, depart: item.transport?.depart || "", arrive: item.transport?.arrive || "" } : null;
       }, "inline-edit-transport");
-      closeEditor();
+      const fresh = getRefs(row).activity;
+      updateActivityDom(row, "transport", fresh || ref.activity);
+      closeEditor(true);
     };
     wrap.addEventListener("focusout", () => window.setTimeout(() => {
       if (!wrap.contains(document.activeElement)) saveAndClose();
@@ -378,16 +382,16 @@
 
   function closeEditor(restore = true) {
     if (!activeEditor) return;
-    const { node, row, release } = activeEditor;
-    const hidden = node.previousElementSibling;
-    lockRowHeight(row);
-    if (restore && hidden?.dataset?.inlineOriginalDisplay !== undefined) {
-      hidden.style.display = hidden.dataset.inlineOriginalDisplay;
-      delete hidden.dataset.inlineOriginalDisplay;
+    const { node, row, anchor, release } = activeEditor;
+    const heightRelease = lockRowHeight(row);
+    if (restore && anchor?.dataset?.inlineOriginalDisplay !== undefined) {
+      anchor.style.display = anchor.dataset.inlineOriginalDisplay;
+      delete anchor.dataset.inlineOriginalDisplay;
     }
     node.remove();
     row?.classList.remove("inline-editing-row");
     release?.();
+    heightRelease?.();
     activeEditor = null;
   }
 
@@ -401,7 +405,7 @@
       if (!row.isConnected || row.dataset.inlineLockedHeight !== "1") return;
       row.style.minHeight = "";
       delete row.dataset.inlineLockedHeight;
-    }, 180);
+    }, 260);
   }
 
   function updateDay(dayId, mutate, reason) {
@@ -429,6 +433,47 @@
     ref.list.updatedAt = stamp;
     library.updatedAt = stamp;
     window.TripPlanner?.saveExternalLibrary?.(library, reason);
+  }
+
+  function updateDayDom(card, field, value) {
+    const label = field === "location" ? `城市 ${value || "未填写地点"}` : `住宿 ${value || "未填写"}`;
+    card.querySelectorAll(`[data-day-field='${field}']`).forEach((node) => { node.textContent = label; });
+  }
+
+  function updateActivityDom(row, field, activity) {
+    if (!activity) return;
+    if (field === "time") {
+      const time = row.querySelector(".activity-time");
+      if (time) {
+        time.textContent = activity.time || "时间";
+        time.classList.toggle("is-placeholder", !activity.time);
+      }
+    }
+    if (field === "title") {
+      const title = row.querySelector("strong[data-select-field='title']");
+      if (title) title.textContent = activity.title || "新事项";
+    }
+    if (field === "place") {
+      const place = row.querySelector("[data-select-field='place']");
+      if (place) place.textContent = activity.place || "地点";
+    }
+    if (field === "note") {
+      const note = row.querySelector("[data-select-field='note']");
+      if (note) note.textContent = activity.note || "描述";
+    }
+    if (field === "budget") {
+      const budget = row.querySelector("[data-select-field='budget']");
+      if (budget) budget.textContent = budgetText(row);
+    }
+    if (field === "transport") {
+      const button = row.querySelector("[data-select-field='transport']");
+      if (button) {
+        const label = transportText(activity.transport);
+        button.textContent = label || "添加交通";
+        button.classList.toggle("activity-transport-chip", Boolean(label));
+        button.classList.toggle("activity-transport-add", !label);
+      }
+    }
   }
 
   function getRefs(row, library = window.TripPlanner?.getLibrary?.()) {
@@ -465,6 +510,13 @@
     return amount ? `预算 ${currency} ${amount}` : "预算";
   }
 
+  function transportText(transport) {
+    if (!transport) return "";
+    const label = transports.find(([id]) => id === transport.type)?.[1] || "交通";
+    const route = [transport.from, transport.to].filter(Boolean).join(" → ");
+    return [label, route].filter(Boolean).join(" · ");
+  }
+
   function toast(text) {
     const node = document.querySelector("#toast");
     if (!node) return;
@@ -478,7 +530,7 @@
     const style = document.createElement("style");
     style.id = "inlineActivityTemplateStyles";
     style.textContent = `
-      .activity-row .inline-clickable,.activity-row [data-select-field],.inline-day-chip,[data-day-field],.inline-empty-add{cursor:text}.inline-empty-add{transition:border-color 140ms var(--ease),background 140ms var(--ease),color 140ms var(--ease)}.inline-empty-add:hover{border-color:rgba(15,143,131,.46)!important;background:#eef9f6!important;color:var(--teal-dark)!important}.activity-row .inline-field-chip,.activity-transport-add,.activity-transport-chip{height:32px!important;min-height:32px!important;border-radius:999px!important;padding:0 13px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font:inherit!important;font-size:14px!important;font-weight:850!important;line-height:1!important;white-space:nowrap!important;vertical-align:top!important}.activity-row .inline-field-chip{width:max-content;border:1px solid transparent;background:#f4f8f6;color:var(--muted);cursor:text}.activity-row .inline-field-chip:hover,.activity-row [data-select-field]:hover,.inline-day-chip:hover,[data-day-field]:hover{border-color:rgba(15,143,131,.22);background:#eef9f6;color:var(--teal-dark)}.activity-row .inline-budget-chip{border-style:solid;color:#b63a28;background:#fff5f1}.inline-editing-row{outline:2px solid rgba(15,143,131,.55);outline-offset:2px}.inline-activity-input{height:32px!important;min-height:32px!important;border:1px solid rgba(15,143,131,.42);border-radius:999px!important;background:#fff;padding:0 12px!important;font:inherit;font-size:14px!important;font-weight:850!important;line-height:1!important;color:var(--ink);box-shadow:0 0 0 3px rgba(15,143,131,.08)}.activity-body .inline-chip-input{flex:0 1 190px!important;width:190px!important;max-width:min(48vw,260px)!important;margin:0!important;align-self:flex-start!important}.activity-body .inline-title-input{flex:1 1 100%!important;width:100%!important;border-radius:8px!important;font-size:16px!important}.activity-time+.inline-activity-input,.activity-row>.inline-activity-input[data-inline-editor='time']{width:78px!important;flex:0 0 78px!important}.inline-day-input{min-width:190px}.inline-compound-editor{display:inline-flex!important;align-items:center!important;gap:8px!important;flex-wrap:nowrap!important;vertical-align:top!important;min-height:32px!important;margin:0!important}.inline-budget-editor .budget-amount{width:112px}.inline-budget-editor .budget-currency{width:82px}.inline-transport-editor .transport-type{width:100px}.inline-transport-editor .transport-from,.inline-transport-editor .transport-to{width:132px}.activity-row[data-inline-locked-height='1'],.day-card[data-inline-locked-height='1']{overflow-anchor:none!important;transition:none!important}@media(max-width:780px){.activity-body .inline-chip-input{width:150px!important;max-width:52vw!important}.inline-compound-editor{flex-wrap:wrap!important;width:100%}.inline-budget-editor .inline-activity-input,.inline-transport-editor .inline-activity-input{width:auto!important;flex:1 1 96px!important}.activity-row .inline-field-chip,.activity-transport-add,.activity-transport-chip{height:32px!important;min-height:32px!important;padding-inline:12px!important;font-size:13px!important}.inline-day-input{width:min(70vw,260px)}}
+      .activity-row .inline-clickable,.activity-row [data-select-field],.inline-day-chip,[data-day-field],.inline-empty-add{cursor:text}.inline-empty-add{transition:border-color 140ms var(--ease),background 140ms var(--ease),color 140ms var(--ease)}.inline-empty-add:hover{border-color:rgba(15,143,131,.46)!important;background:#eef9f6!important;color:var(--teal-dark)!important}.activity-row .activity-body{display:flex!important;align-items:center!important;gap:9px!important;flex-wrap:wrap!important}.activity-row .activity-time{min-width:76px}.activity-row .activity-time.is-placeholder{color:var(--muted);font-weight:850}.activity-row .inline-field-chip,.activity-transport-add,.activity-transport-chip{height:32px!important;min-height:32px!important;border-radius:999px!important;padding:0 13px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font:inherit!important;font-size:14px!important;font-weight:850!important;line-height:1!important;white-space:nowrap!important;vertical-align:middle!important}.activity-row .inline-field-chip{width:max-content;border:1px solid transparent;background:#f4f8f6;color:var(--muted);cursor:text}.activity-row .inline-field-chip:hover,.activity-row [data-select-field]:hover,.inline-day-chip:hover,[data-day-field]:hover{border-color:rgba(15,143,131,.22);background:#eef9f6;color:var(--teal-dark)}.activity-row .inline-budget-chip{border-style:solid;color:#b63a28;background:#fff5f1}.inline-editing-row{outline:2px solid rgba(15,143,131,.55);outline-offset:2px}.inline-activity-input{height:32px!important;min-height:32px!important;border:1px solid rgba(15,143,131,.42);border-radius:999px!important;background:#fff;padding:0 12px!important;font:inherit;font-size:14px!important;font-weight:850!important;line-height:1!important;color:var(--ink);box-shadow:0 0 0 3px rgba(15,143,131,.08)}.activity-body .inline-chip-input{flex:0 1 190px!important;width:190px!important;max-width:min(48vw,260px)!important;margin:0!important;align-self:center!important}.activity-body .inline-title-input{flex:1 1 min(360px,100%)!important;width:min(520px,100%)!important;border-radius:8px!important;font-size:16px!important}.activity-time+.inline-activity-input,.activity-row>.inline-activity-input[data-inline-editor='time']{width:82px!important;flex:0 0 82px!important}.inline-day-input{min-width:190px}.inline-compound-editor{display:inline-flex!important;align-items:center!important;gap:8px!important;flex-wrap:nowrap!important;vertical-align:middle!important;min-height:32px!important;margin:0!important}.inline-budget-editor .budget-amount{width:112px}.inline-budget-editor .budget-currency{width:82px}.inline-transport-editor .transport-type{width:100px}.inline-transport-editor .transport-from,.inline-transport-editor .transport-to{width:132px}.activity-row[data-inline-locked-height='1'],.day-card[data-inline-locked-height='1']{overflow-anchor:none!important;transition:none!important}@media(max-width:780px){.activity-row .activity-body{gap:8px!important}.activity-body .inline-chip-input{width:150px!important;max-width:52vw!important}.inline-compound-editor{flex-wrap:wrap!important;width:100%}.inline-budget-editor .inline-activity-input,.inline-transport-editor .inline-activity-input{width:auto!important;flex:1 1 96px!important}.activity-row .inline-field-chip,.activity-transport-add,.activity-transport-chip{height:32px!important;min-height:32px!important;padding-inline:12px!important;font-size:13px!important}.inline-day-input{width:min(70vw,260px)}}
     `;
     document.head.append(style);
   }
