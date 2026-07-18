@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T10:46:22.630Z",
+  "savedAt": "2026-07-18T10:47:11.306Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -2572,7 +2572,7 @@
       }
     },
     "UIHC1C3C6": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "97e33f9f-1acf-46d2-9573-10f024e374c0",
@@ -2592,8 +2592,8 @@
                   "id": "20a7224b-b331-4afc-9a45-5154eb67d5a5",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784371551257,
-                  "orderUpdatedAt": 1784371541020,
+                  "updatedAt": 1784371630595,
+                  "orderUpdatedAt": 1784371630595,
                   "activities": [
                     {
                       "id": "9e4ee9aa-1c75-468a-81c8-1df6199524fa",
@@ -2609,6 +2609,21 @@
                       },
                       "transport": null,
                       "updatedAt": 1784371551257
+                    },
+                    {
+                      "id": "670a85e3-305c-4ce9-9b04-d94730ac7969",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784371630595
                     }
                   ]
                 }
@@ -2619,11 +2634,11 @@
                 "limit": 0,
                 "updatedAt": 1784371512781
               },
-              "updatedAt": 1784371551257,
+              "updatedAt": 1784371630595,
               "orderUpdatedAt": 1784371512781
             },
             "createdAt": 1784371512781,
-            "updatedAt": 1784371551257
+            "updatedAt": 1784371630595
           }
         ],
         "deleted": {
@@ -2632,7 +2647,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784371551715
+        "updatedAt": 1784371631056
       }
     },
     "16FBAC97": {
