@@ -180,6 +180,14 @@
     library.updatedAt = stamp;
     window.TripPlanner?.saveExternalLibrary?.(library, "inline-template-fallback-add");
     toast("已在当天末尾添加事项");
+    window.setTimeout(() => openInlineTitle(activity.id), 140);
+  }
+
+  function openInlineTitle(activityId) {
+    const row = document.querySelector(`.activity-row[data-activity-id="${cssEscape(activityId)}"]`);
+    const title = row?.querySelector("strong[data-select-field='title']");
+    if (!row || !title) return;
+    title.click();
   }
 
   function getSelectedDayId() {
@@ -200,6 +208,11 @@
     node.textContent = text;
     node.classList.add("show");
     window.setTimeout(() => node.classList.remove("show"), 1600);
+  }
+
+  function cssEscape(value) {
+    if (window.CSS?.escape) return CSS.escape(value);
+    return String(value || "").replace(/"/g, '\\"');
   }
 
   function installStyles() {
