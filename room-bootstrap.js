@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const APP_BUILD_VERSION = "render-20260714k";
+  const APP_BUILD_VERSION = "render-20260718a";
   const INLINE_EDITOR_VERSION = "render-20260714h";
   const LAST_ROOM_KEY = "tripdesigner:last-room";
   const params = new URLSearchParams(location.search);
@@ -10,7 +10,8 @@
   const roomId = requestedRoomId;
 
   if (!roomId) {
-    showRoomGate();
+    if (window.TripAuthBootstrap?.showGate) window.TripAuthBootstrap.showGate();
+    else showRoomGate();
     return;
   }
 
