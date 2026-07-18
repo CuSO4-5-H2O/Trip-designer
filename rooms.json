@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T10:01:36.862Z",
+  "savedAt": "2026-07-18T10:01:52.555Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1773,6 +1773,56 @@
           "members": {}
         },
         "updatedAt": 1784368896611
+      }
+    },
+    "TOMBUYL51S": {
+      "revision": 3,
+      "state": {
+        "version": 2,
+        "activeListId": "2dc52662-aa15-41eb-8524-e594183a823a",
+        "members": [],
+        "lists": [
+          {
+            "id": "2dc52662-aa15-41eb-8524-e594183a823a",
+            "name": "待删除事项",
+            "createdAt": 1784368910840,
+            "updatedAt": 1784368911481,
+            "trip": {
+              "tripTitle": "待删除事项",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "b839e05f-53cf-4a3e-b0e6-dba45d5e488e",
+              "dayLimit": 30,
+              "updatedAt": 1784368911481,
+              "orderUpdatedAt": 1784368910840,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784368910840
+              },
+              "days": [
+                {
+                  "id": "b839e05f-53cf-4a3e-b0e6-dba45d5e488e",
+                  "location": "云端验证",
+                  "stay": "",
+                  "updatedAt": 1784368911481,
+                  "orderUpdatedAt": 1784368911481,
+                  "activities": []
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {
+            "2386cb9f-f589-4330-839d-85732f8a1a29": 1784368911481
+          },
+          "members": {}
+        },
+        "updatedAt": 1784368912305
       }
     }
   }
