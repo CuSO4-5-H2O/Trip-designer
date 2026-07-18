@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T11:12:32.280Z",
+  "savedAt": "2026-07-18T11:12:49.838Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3285,7 +3285,7 @@
       }
     },
     "KD33054B": {
-      "revision": 4,
+      "revision": 5,
       "state": {
         "version": 2,
         "activeListId": "4be3a88d-aeca-41bc-b28b-36f7030e0191",
@@ -3367,7 +3367,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784373152030
+        "updatedAt": 1784373169588
       }
     }
   }
