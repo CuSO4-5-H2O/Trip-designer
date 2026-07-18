@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T10:28:52.554Z",
+  "savedAt": "2026-07-18T10:28:53.554Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -2347,7 +2347,7 @@
       }
     },
     "TOMB1B814E": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "7a0279b8-ba31-4233-8e66-e34f2cb2995c",
@@ -2393,7 +2393,7 @@
           },
           "members": {}
         },
-        "updatedAt": 1784370532304
+        "updatedAt": 1784370533303
       }
     }
   }
