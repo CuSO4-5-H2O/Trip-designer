@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-14T01:51:46.849Z",
+  "savedAt": "2026-07-18T09:20:15.125Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1228,6 +1228,99 @@
           }
         },
         "updatedAt": 1783993906598
+      }
+    },
+    "CODEXMRQ5OSYQ": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "list-mrq5osyq",
+        "members": [],
+        "lists": [
+          {
+            "id": "006bf6a1-14c4-4e91-9778-6f0cbe76c564",
+            "name": "新行程单",
+            "trip": {
+              "tripTitle": "新行程单",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "9bf13cb2-7f61-43e6-b89a-5f13837f6f50",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "9bf13cb2-7f61-43e6-b89a-5f13837f6f50",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1784366414873,
+                  "orderUpdatedAt": 1784366414873
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784366414873
+              },
+              "updatedAt": 1784366414873,
+              "orderUpdatedAt": 1784366414873
+            },
+            "createdAt": 1784366414873,
+            "updatedAt": 1784366414873
+          },
+          {
+            "id": "list-mrq5osyq",
+            "name": "Codex Sync Test mrq5osyq",
+            "createdAt": 1784366409122,
+            "updatedAt": 1784366409122,
+            "trip": {
+              "version": 1,
+              "tripTitle": "Codex Sync Test mrq5osyq",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "day-mrq5osyq",
+              "dayLimit": 30,
+              "updatedAt": 1784366409122,
+              "orderUpdatedAt": 1784366409122,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784366409122
+              },
+              "days": [
+                {
+                  "id": "day-mrq5osyq",
+                  "location": "同步测试城市",
+                  "stay": "同步测试酒店",
+                  "activities": [
+                    {
+                      "id": "act-mrq5osyq",
+                      "time": "09:00",
+                      "title": "同步测试事项",
+                      "place": "同步测试地点",
+                      "note": "codex temporary sync check",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784366409122
+                    }
+                  ],
+                  "updatedAt": 1784366409122,
+                  "orderUpdatedAt": 1784366409122
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784366414874
       }
     }
   }
