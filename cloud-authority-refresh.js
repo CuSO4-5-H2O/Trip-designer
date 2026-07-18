@@ -28,6 +28,10 @@
       const localSignature = signature(planner.getLibrary?.());
       appliedSignature = cloudSignature;
       if (localSignature !== cloudSignature) {
+        if (hasPendingLocalEdits()) {
+          markCloudReady(state, payload.revision);
+          return;
+        }
         applyCloudStateLocally(state, Number(payload.revision) || 0, reason);
         toast("已从云端载入最新行程");
       }
@@ -35,6 +39,13 @@
     } catch (error) {
       console.warn("Cloud authority refresh failed", error);
     }
+  }
+
+  function hasPendingLocalEdits() {
+    const pending = window.__TripPendingLocalSave;
+    if (pending?.roomId === roomId && pending.pending && Date.now() - Number(pending.at || 0) < 1000 * 60 * 3) return true;
+    const status = document.querySelector("#syncText")?.textContent || "";
+    return /本地待同步|正在保存|云端同步失败/.test(status);
   }
 
   function applyCloudStateLocally(state, revision, reason) {
