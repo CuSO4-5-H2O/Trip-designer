@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T09:57:02.796Z",
+  "savedAt": "2026-07-18T09:57:04.090Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1578,7 +1578,7 @@
       }
     },
     "FIX18F63KS": {
-      "revision": 3,
+      "revision": 4,
       "state": {
         "version": 2,
         "activeListId": "55307009-fb18-4bbb-947b-ddf22a21a867",
@@ -1598,14 +1598,14 @@
                   "id": "272ecc72-d62c-4239-911b-55c70f259669",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784368622112,
+                  "updatedAt": 1784368623406,
                   "orderUpdatedAt": 1784368602246,
                   "activities": [
                     {
                       "id": "1612aacc-16f6-4990-8658-2bf6b5ad72e1",
                       "time": "",
                       "title": "线上验证事项18F",
-                      "place": "",
+                      "place": "验证地点18F",
                       "note": "",
                       "tags": [],
                       "done": false,
@@ -1614,7 +1614,7 @@
                         "currency": "CNY"
                       },
                       "transport": null,
-                      "updatedAt": 1784368622112
+                      "updatedAt": 1784368623406
                     }
                   ]
                 }
@@ -1625,11 +1625,11 @@
                 "limit": 0,
                 "updatedAt": 1784368567250
               },
-              "updatedAt": 1784368622112,
+              "updatedAt": 1784368623406,
               "orderUpdatedAt": 1784368567250
             },
             "createdAt": 1784368567250,
-            "updatedAt": 1784368622112
+            "updatedAt": 1784368623406
           }
         ],
         "deleted": {
@@ -1638,7 +1638,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784368622545
+        "updatedAt": 1784368623839
       }
     }
   }
