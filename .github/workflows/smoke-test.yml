@@ -98,7 +98,7 @@ jobs:
               process.exit(1);
             }
           };
-          for (const token of ['tripdesigner:last-room', 'showRoomGate', '进入同一个房间', 'app-collab.js?v=${APP_BUILD_VERSION}']) {
+          for (const token of ['tripdesigner:last-room', 'showRoomGate', 'if (!roomId) {', 'app-collab.js?v=${APP_BUILD_VERSION}']) {
             assert(room.includes(token), `room-bootstrap.js missing ${token}`);
           }
           assert(/APP_BUILD_VERSION = "render-[0-9a-z]+"/.test(room), 'room-bootstrap.js missing dynamic render build version');
@@ -196,7 +196,7 @@ jobs:
           }
           assert(/APP_BUILD_VERSION = "render-[0-9a-z]+"/.test(roomBootstrap), 'served room-bootstrap missing render build version');
           assert(roomBootstrap.includes('app-collab.js?v=${APP_BUILD_VERSION}'), 'served room-bootstrap missing dynamic app-collab load');
-          assert(roomBootstrap.includes('进入同一个房间'), 'served room-bootstrap missing room entry text');
+          assert(roomBootstrap.includes('showRoomGate'), 'served room-bootstrap missing room gate behavior');
           NODE
 
           assets=(
