@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T10:11:07.404Z",
+  "savedAt": "2026-07-18T10:11:10.120Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1974,6 +1974,79 @@
           "members": {}
         },
         "updatedAt": 1784369466702
+      }
+    },
+    "3EE355B7": {
+      "revision": 2,
+      "state": {
+        "version": 2,
+        "activeListId": "91720832-9266-40ad-9205-349b672f3b54",
+        "members": [],
+        "lists": [
+          {
+            "id": "91720832-9266-40ad-9205-349b672f3b54",
+            "name": "共享room验证",
+            "createdAt": 1784369469051,
+            "updatedAt": 1784369469419,
+            "trip": {
+              "tripTitle": "共享room验证",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "ac58470a-23bb-45a8-818c-dcd7daa1b5f9",
+              "dayLimit": 30,
+              "updatedAt": 1784369469419,
+              "orderUpdatedAt": 1784369469051,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784369469051
+              },
+              "days": [
+                {
+                  "id": "ac58470a-23bb-45a8-818c-dcd7daa1b5f9",
+                  "location": "共享验证",
+                  "stay": "",
+                  "updatedAt": 1784369469419,
+                  "orderUpdatedAt": 1784369469419,
+                  "activities": [
+                    {
+                      "id": "93956546-c7f6-48b9-98b4-3c9538374aab",
+                      "time": "",
+                      "title": "房主事项",
+                      "place": "owner",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784369469051
+                    },
+                    {
+                      "id": "b437023f-9b3e-4c69-bee5-7e07d3c508e8",
+                      "time": "",
+                      "title": "好友事项",
+                      "place": "friend",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784369469419
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784369469869
       }
     }
   }
