@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T09:29:32.835Z",
+  "savedAt": "2026-07-18T09:49:22.003Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -1447,6 +1447,70 @@
           "members": {}
         },
         "updatedAt": 1784366972585
+      }
+    },
+    "FIX18DWFG8": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "b528e32f-4142-4ce6-986b-9e227df78a52",
+        "members": [],
+        "lists": [
+          {
+            "id": "b528e32f-4142-4ce6-986b-9e227df78a52",
+            "name": "新行程单",
+            "trip": {
+              "tripTitle": "新行程单",
+              "startDate": "2026-07-18",
+              "originCity": "",
+              "selectedDayId": "a721721f-a385-4158-be5c-c7a5eb6c90fa",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "a721721f-a385-4158-be5c-c7a5eb6c90fa",
+                  "location": "",
+                  "stay": "",
+                  "updatedAt": 1784368161324,
+                  "orderUpdatedAt": 1784368161324,
+                  "activities": [
+                    {
+                      "id": "1236500f-fa29-4ae6-b054-c8547fdfd3b7",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784368161324
+                    }
+                  ]
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784368159455
+              },
+              "updatedAt": 1784368161324,
+              "orderUpdatedAt": 1784368159455
+            },
+            "createdAt": 1784368159455,
+            "updatedAt": 1784368161324
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784368161324
       }
     }
   }
