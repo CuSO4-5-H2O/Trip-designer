@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-18T11:12:49.838Z",
+  "savedAt": "2026-07-18T11:13:17.042Z",
   "rooms": {
     "STATICCFG_WS": {
       "revision": 1,
@@ -3285,7 +3285,7 @@
       }
     },
     "KD33054B": {
-      "revision": 5,
+      "revision": 6,
       "state": {
         "version": 2,
         "activeListId": "4be3a88d-aeca-41bc-b28b-36f7030e0191",
@@ -3305,8 +3305,8 @@
                   "id": "8e8feda3-3ec7-4359-86c3-7b73d7d1f6b3",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784373135371,
-                  "orderUpdatedAt": 1784372976557,
+                  "updatedAt": 1784373195236,
+                  "orderUpdatedAt": 1784373194404,
                   "activities": [
                     {
                       "id": "b0184b1a-55cf-41aa-bdc5-651202eda8b0",
@@ -3328,6 +3328,21 @@
                         "arrive": ""
                       },
                       "updatedAt": 1784373135371
+                    },
+                    {
+                      "id": "11ec4da3-1d10-4c1f-859d-c9fdd96d10c1",
+                      "time": "",
+                      "title": "好友添加事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784373195236
                     }
                   ]
                 },
@@ -3354,11 +3369,11 @@
                 "limit": 0,
                 "updatedAt": 1784372956743
               },
-              "updatedAt": 1784373135371,
+              "updatedAt": 1784373195236,
               "orderUpdatedAt": 1784373085946
             },
             "createdAt": 1784372956743,
-            "updatedAt": 1784373135371
+            "updatedAt": 1784373195236
           }
         ],
         "deleted": {
@@ -3367,7 +3382,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784373169588
+        "updatedAt": 1784373196792
       }
     }
   }
