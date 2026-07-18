@@ -3,18 +3,27 @@
 
   let installed = false;
   let pendingPlan = null;
+  let installTimer = 0;
+  let installAttempts = 0;
 
   function init() {
     installStyles();
-    const observer = new MutationObserver(() => installPanel());
-    observer.observe(document.body, { childList: true, subtree: true });
-    installPanel();
+    scheduleInstall(0);
+  }
+
+  function scheduleInstall(delay = 120) {
+    clearTimeout(installTimer);
+    installTimer = window.setTimeout(() => {
+      if (installPanel()) return;
+      installAttempts += 1;
+      if (installAttempts < 80) scheduleInstall(Math.min(600, 120 + installAttempts * 20));
+    }, delay);
   }
 
   function installPanel() {
-    if (installed) return;
+    if (installed) return true;
     const panel = document.querySelector(".ai-panel");
-    if (!panel) return;
+    if (!panel) return false;
     installed = true;
     const box = document.createElement("section");
     box.className = "ai-quick-plan";
@@ -34,6 +43,7 @@
     panel.insertBefore(box, status || null);
     box.querySelector("#aiQuickGenerate").onclick = generatePlan;
     box.querySelector("#aiQuickApply").onclick = applyPlan;
+    return true;
   }
 
   async function generatePlan() {
@@ -108,9 +118,8 @@
   }
 
   function makeDay(day, trip, stamp) {
-    const id = crypto.randomUUID();
     return {
-      id,
+      id: crypto.randomUUID(),
       location: day.location || "",
       stay: day.stay || "",
       activities: (day.activities || []).map((activity) => makeActivity(activity, trip, stamp)),
