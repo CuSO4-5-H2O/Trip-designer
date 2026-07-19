@@ -49,7 +49,6 @@
 
   async function generatePlan() {
     const text = document.querySelector("#aiQuickPlanText")?.value.trim() || "";
-    const status = document.querySelector("#aiQuickStatus");
     const apply = document.querySelector("#aiQuickApply");
     const preview = document.querySelector("#aiQuickPreview");
     pendingPlan = null;
@@ -129,7 +128,14 @@
     try {
       if (typeof window.TripDesignerFlushSync === "function") {
         const ok = await window.TripDesignerFlushSync("ai-quick-plan-apply-manual");
-        setStatus(ok === false ? "已应用到页面，本地待同步；点击同步条可重试" : `已应用 ${generatedDays.length} 天并保存到云端`);
+        if (ok === false) {
+          setStatus("已应用到页面，本地待同步；点击同步条可重试");
+        } else {
+          markCloudSaved();
+          window.setTimeout(markCloudSaved, 250);
+          window.setTimeout(markCloudSaved, 900);
+          setStatus(`已应用 ${generatedDays.length} 天并保存到云端`);
+        }
       } else {
         setStatus(`已应用 ${generatedDays.length} 天，本地待同步`);
       }
@@ -173,6 +179,16 @@
 
   function activeList(library) {
     return library?.lists?.find((list) => list.id === library.activeListId) || library?.lists?.[0];
+  }
+
+  function markCloudSaved() {
+    const roomId = new URLSearchParams(location.search).get("room") || window.TripRoom?.id || "";
+    if (roomId) window.__TripPendingLocalSave = { roomId, at: Date.now(), pending: false };
+    const syncText = document.querySelector("#syncText");
+    const syncState = document.querySelector("#syncState");
+    if (syncText) syncText.textContent = "已保存到云端";
+    syncState?.classList.remove("offline", "mobile-sync-pending");
+    syncState?.classList.add("connected");
   }
 
   function setStatus(text) {
