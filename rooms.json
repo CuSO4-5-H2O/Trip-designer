@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:22:05.856Z",
+  "savedAt": "2026-07-19T03:22:06.670Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6079,7 +6079,7 @@
       }
     },
     "QAMOB088": {
-      "revision": 7,
+      "revision": 8,
       "state": {
         "version": 2,
         "activeListId": "c491e2a3-17fa-4722-8295-d4441d54a030",
@@ -6092,7 +6092,7 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-19",
               "originCity": "",
-              "selectedDayId": "53704f6d-2be7-4ccd-aa11-3dbd602bf5f1",
+              "selectedDayId": "baa4284a-4e11-4ba4-9971-8e7c793ceeb2",
               "dayLimit": 30,
               "days": [
                 {
@@ -6129,9 +6129,17 @@
                   "id": "53704f6d-2be7-4ccd-aa11-3dbd602bf5f1",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1784431324659,
-                  "orderUpdatedAt": 1784431324659
+                  "orderUpdatedAt": 1784431324659,
+                  "activities": []
+                },
+                {
+                  "id": "baa4284a-4e11-4ba4-9971-8e7c793ceeb2",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1784431325474,
+                  "orderUpdatedAt": 1784431325474
                 }
               ],
               "budget": {
@@ -6140,11 +6148,11 @@
                 "limit": 0,
                 "updatedAt": 1784430680587
               },
-              "updatedAt": 1784431324659,
-              "orderUpdatedAt": 1784431324659
+              "updatedAt": 1784431325474,
+              "orderUpdatedAt": 1784431325474
             },
             "createdAt": 1784430680587,
-            "updatedAt": 1784431324659
+            "updatedAt": 1784431325474
           }
         ],
         "deleted": {
@@ -6153,7 +6161,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784431325605
+        "updatedAt": 1784431326420
       }
     }
   }
