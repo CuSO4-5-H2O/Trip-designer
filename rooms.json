@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:03:43.272Z",
+  "savedAt": "2026-07-19T03:10:32.036Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6014,6 +6014,68 @@
           "members": {}
         },
         "updatedAt": 1784430223021
+      }
+    },
+    "LOCAL": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "33558cdf-a665-4b17-a87f-d485fc1b98a5",
+        "members": [],
+        "lists": [
+          {
+            "id": "33558cdf-a665-4b17-a87f-d485fc1b98a5",
+            "name": "移动端测试行程",
+            "createdAt": 1784430622505,
+            "updatedAt": 1784430622505,
+            "trip": {
+              "tripTitle": "移动端测试行程",
+              "startDate": "2026-08-05",
+              "dayLimit": 30,
+              "originCity": "上海",
+              "selectedDayId": "faaf3cd1-3b0a-4c42-8a35-60a0405cc341",
+              "days": [
+                {
+                  "id": "faaf3cd1-3b0a-4c42-8a35-60a0405cc341",
+                  "location": "内罗毕",
+                  "stay": "测试酒店",
+                  "activities": [],
+                  "updatedAt": 1784430622505,
+                  "orderUpdatedAt": 1784430622505
+                },
+                {
+                  "id": "ebbe4cdc-de20-4f0d-981a-8177099dcccf",
+                  "location": "马赛马拉",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1784430622505,
+                  "orderUpdatedAt": 1784430622505
+                }
+              ],
+              "members": [
+                {
+                  "id": "6b70a222-8c86-4265-beee-7a24b0c37cd9",
+                  "name": "我",
+                  "updatedAt": 1784430622505
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "updatedAt": 1784430622505
+              },
+              "updatedAt": 1784430622505,
+              "orderUpdatedAt": 1784430622505
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784430622505
       }
     }
   }
