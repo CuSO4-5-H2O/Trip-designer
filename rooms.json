@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:47:03.832Z",
+  "savedAt": "2026-07-19T02:55:56.781Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -2923,7 +2923,7 @@
       }
     },
     "F6F48EC8": {
-      "revision": 0,
+      "revision": 1,
       "state": {
         "version": 2,
         "activeListId": "3016121c-c51f-4974-9956-86916e97321e",
@@ -2943,9 +2943,25 @@
                   "id": "a9a68c4a-edfa-4205-a90f-05bd44340327",
                   "location": "",
                   "stay": "",
-                  "activities": [],
-                  "updatedAt": 1784371570602,
-                  "orderUpdatedAt": 1784371570602
+                  "updatedAt": 1784429755597,
+                  "orderUpdatedAt": 1784429755597,
+                  "activities": [
+                    {
+                      "id": "ae9d57aa-1c16-4291-83b5-9f354288f441",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784429755597
+                    }
+                  ]
                 }
               ],
               "budget": {
@@ -2954,11 +2970,11 @@
                 "limit": 0,
                 "updatedAt": 1784371570602
               },
-              "updatedAt": 1784371570602,
+              "updatedAt": 1784429755598,
               "orderUpdatedAt": 1784371570602
             },
             "createdAt": 1784371570602,
-            "updatedAt": 1784371570602
+            "updatedAt": 1784429755598
           }
         ],
         "deleted": {
@@ -2967,7 +2983,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784371570602
+        "updatedAt": 1784429755598
       }
     },
     "AICLOUD6BDBC3": {
