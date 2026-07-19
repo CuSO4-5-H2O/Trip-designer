@@ -97,8 +97,10 @@
         localStorage.setItem(accountKey, JSON.stringify(data.account));
         renderHome(data.account);
       } catch (error) {
-        localStorage.removeItem(tokenKey);
-        localStorage.removeItem(accountKey);
+        if (isExpiredAuthError(error)) {
+          localStorage.removeItem(tokenKey);
+          localStorage.removeItem(accountKey);
+        }
         showAuth(friendlyError(error, "无法验证本机登录，请重新登录"));
       }
     }
@@ -256,6 +258,11 @@
       if (/GitHub auth storage not ready|账号服务暂时不可用/i.test(text)) return "账号服务正在启动，请稍后重试";
       if (/not signed in|登录已过期/i.test(text)) return "登录已过期，请重新登录";
       return text || fallback;
+    }
+
+    function isExpiredAuthError(error) {
+      const text = String(error?.message || "").trim();
+      return /not signed in|登录已过期|invalid token|token expired|HTTP 401|401/i.test(text);
     }
 
     function normalizeRoom(value) { return String(value || "").trim().toUpperCase().replace(/[^0-9A-Z_-]/g, "").slice(0, 32); }
