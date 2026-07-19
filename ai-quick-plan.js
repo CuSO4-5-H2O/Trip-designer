@@ -31,14 +31,14 @@
     box.innerHTML = `
       <div class="ai-quick-head">
         <strong>文本快速添加</strong>
-        <span>输入自然语言，AI 会生成天数和事项；确认后才写入当前 list</span>
+        <span>输入自然语言，AI 会生成天数和事项；确认后写入当前选中的日期位置</span>
       </div>
       <textarea id="aiQuickPlanText" rows="4" placeholder="例如：在内罗毕玩3天，第一天抵达并逛市区，第二天去基贝拉贫民窟和博物馆，第三天去长颈鹿中心后出发去马赛马拉"></textarea>
       <div class="ai-quick-actions">
         <button class="mini-action" id="aiQuickGenerate" type="button">生成行程</button>
-        <button class="mini-action muted" id="aiQuickApply" type="button" disabled>应用到当前 list</button>
+        <button class="mini-action muted" id="aiQuickApply" type="button" disabled>应用到选中日期</button>
       </div>
-      <div class="ai-quick-status" id="aiQuickStatus">生成后会先预览，不会自动覆盖已有行程。</div>
+      <div class="ai-quick-status" id="aiQuickStatus">生成后会先预览；空白选中日会被替换，非空选中日会在其后插入。</div>
       <div class="ai-quick-preview" id="aiQuickPreview"></div>`;
     const status = panel.querySelector(".ai-status") || panel.lastElementChild;
     panel.insertBefore(box, status || null);
@@ -72,7 +72,7 @@
       renderPreview(pendingPlan, pendingMeta);
       apply.disabled = false;
       const sourceText = pendingMeta.source === "deepseek" ? "DeepSeek" : "规则解析";
-      setStatus(`已生成 ${pendingPlan.days.length} 天（${sourceText}），确认后应用到当前 list`);
+      setStatus(`已生成 ${pendingPlan.days.length} 天（${sourceText}），会应用到当前选中的日期位置`);
     } catch (error) {
       setStatus(error.message || "解析失败，请重试");
     }
@@ -105,12 +105,9 @@
     if (!library || !list || !trip) return setStatus("行程还没有加载完成");
     const stamp = Date.now();
     const generatedDays = pendingPlan.days.map((day) => makeDay(day, stamp));
-    if (isBlankTrip(trip)) {
-      tombstoneDays(library, trip.days, stamp);
-      trip.days = generatedDays;
-    } else {
-      trip.days.push(...generatedDays);
-    }
+    const insertResult = insertGeneratedDays(library, trip, generatedDays, stamp);
+    if (!insertResult.ok) return setStatus(insertResult.message || "没有可应用的行程");
+
     trip.selectedDayId = generatedDays[0]?.id || trip.selectedDayId;
     trip.dayLimit = Math.max(Number(trip.dayLimit) || 30, trip.days.length);
     if (pendingPlan.title && (!trip.tripTitle || /^新行程单/.test(trip.tripTitle))) {
@@ -123,7 +120,7 @@
     list.updatedAt = stamp;
     library.updatedAt = stamp;
     window.TripPlanner?.saveExternalLibrary?.(library, "ai-quick-plan-apply");
-    setStatus(`已应用 ${generatedDays.length} 天，正在保存到云端...`);
+    setStatus(`${insertResult.message}，正在保存到云端...`);
     pendingPlan = null;
     pendingMeta = null;
     const apply = document.querySelector("#aiQuickApply");
@@ -137,25 +134,47 @@
           markCloudSaved();
           window.setTimeout(markCloudSaved, 250);
           window.setTimeout(markCloudSaved, 900);
-          setStatus(`已应用 ${generatedDays.length} 天并保存到云端`);
+          setStatus(`${insertResult.message}并保存到云端`);
         }
       } else {
-        setStatus(`已应用 ${generatedDays.length} 天，本地待同步`);
+        setStatus(`${insertResult.message}，本地待同步`);
       }
     } catch {
       setStatus("已应用到页面，本地待同步；点击同步条可重试");
     }
   }
 
+  function insertGeneratedDays(library, trip, generatedDays, stamp) {
+    if (!generatedDays.length) return { ok: false, message: "没有可应用的行程" };
+    if (isBlankTrip(trip)) {
+      tombstoneDays(library, trip.days, stamp);
+      trip.days = generatedDays;
+      return { ok: true, message: `已替换空白行程并应用 ${generatedDays.length} 天` };
+    }
+    const selectedId = window.TripPlanner?.getSelection?.().dayId || trip.selectedDayId;
+    const selectedIndex = Math.max(0, trip.days.findIndex((day) => day.id === selectedId));
+    const anchorIndex = selectedIndex >= 0 ? selectedIndex : Math.max(0, trip.days.length - 1);
+    const anchorDay = trip.days[anchorIndex];
+    if (isBlankDay(anchorDay)) {
+      tombstoneDays(library, [anchorDay], stamp);
+      trip.days.splice(anchorIndex, 1, ...generatedDays);
+      return { ok: true, message: `已在选中空白日期替换为 ${generatedDays.length} 天` };
+    }
+    trip.days.splice(anchorIndex + 1, 0, ...generatedDays);
+    return { ok: true, message: `已在选中日期后插入 ${generatedDays.length} 天` };
+  }
+
   function isBlankTrip(trip) {
     const days = Array.isArray(trip?.days) ? trip.days : [];
     if (!days.length) return true;
-    return days.every((day) => {
-      const activities = Array.isArray(day?.activities) ? day.activities : [];
-      return !String(day?.location || "").trim()
-        && !String(day?.stay || "").trim()
-        && activities.length === 0;
-    });
+    return days.every(isBlankDay);
+  }
+
+  function isBlankDay(day) {
+    const activities = Array.isArray(day?.activities) ? day.activities : [];
+    return !String(day?.location || "").trim()
+      && !String(day?.stay || "").trim()
+      && activities.length === 0;
   }
 
   function tombstoneDays(library, days, stamp) {
