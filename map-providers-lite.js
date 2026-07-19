@@ -28,8 +28,17 @@
       const toolbar = document.createElement("div");
       toolbar.className = "map-provider-toolbar";
       if (segmented) toolbar.append(segmented);
-      toolbar.insertAdjacentHTML("beforeend", `<button class="mini-action" id="mapCalculateBtn" type="button">计算路线</button><button class="mini-action" type="button" data-panel-collapse="map">收起</button>`);
+      toolbar.insertAdjacentHTML("beforeend", `<label class="map-provider-choice"><span>地图</span><select id="mapProviderSelect"><option value="auto">自动</option><option value="amap">高德</option><option value="google">Google</option></select></label><button class="mini-action" id="mapCalculateBtn" type="button">计算路线</button><button class="mini-action" type="button" data-panel-collapse="map">收起</button>`);
       head.append(toolbar);
+      const saved = readLocal("tripdesigner:map-provider") || "auto";
+      const select = toolbar.querySelector("#mapProviderSelect");
+      if (["auto", "amap", "google"].includes(saved)) select.value = saved;
+      select.addEventListener("change", () => {
+        writeLocal("tripdesigner:map-provider", select.value);
+        lastPlan = null;
+        setMapStatus("已切换地图源，点击计算路线");
+        setRouteStatus("");
+      });
     }
     if (!panel.querySelector("#routeStatus")) panel.insertAdjacentHTML("beforeend", `<div class="route-status" id="routeStatus"></div>`);
     if (!document.querySelector("#mapStatus")?.textContent?.trim()) setMapStatus("点击计算路线");
@@ -94,7 +103,8 @@
     try {
       const configResponse = await fetch("/api/map-config", { cache: "no-store" });
       const config = await configResponse.json();
-      const provider = config.defaultProvider || "amap";
+      refreshProviderOptions(config);
+      const provider = selectedProvider(config);
       const response = await fetch("/api/map/plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -107,12 +117,29 @@
       renderRouteSummary(plan);
       const located = (plan.points || []).filter((point) => point.located !== false).length;
       const failed = (plan.points || []).length - located;
-      setMapStatus(failed ? `已定位 ${located} 个地点，${failed} 个未定位` : `已定位 ${located} 个地点`);
+      const providerLabel = plan.provider === "google" ? "Google" : plan.provider === "amap" ? "高德" : "地图";
+      setMapStatus(failed ? `${providerLabel} 已定位 ${located} 个地点，${failed} 个未定位` : `${providerLabel} 已定位 ${located} 个地点`);
     } catch (error) {
       lastPlan = null;
       setMapStatus(error.message || "地图加载失败");
       setRouteStatus("请检查地点是否足够具体，或稍后重试");
     }
+  }
+
+  function selectedProvider(config) {
+    const selected = document.querySelector("#mapProviderSelect")?.value || readLocal("tripdesigner:map-provider") || "auto";
+    if (selected === "amap" && config.providers?.amap?.configured) return "amap";
+    if (selected === "google" && config.providers?.google?.configured) return "google";
+    return "auto";
+  }
+
+  function refreshProviderOptions(config) {
+    const select = document.querySelector("#mapProviderSelect");
+    if (!select) return;
+    const amap = select.querySelector('option[value="amap"]');
+    const google = select.querySelector('option[value="google"]');
+    if (amap) amap.disabled = !config.providers?.amap?.configured;
+    if (google) google.disabled = !config.providers?.google?.configured;
   }
 
   function renderStaticMap(plan) {
@@ -183,6 +210,8 @@
     return `${city} ${place}`;
   }
 
+  function readLocal(key) { try { return localStorage.getItem(key) || ""; } catch { return ""; } }
+  function writeLocal(key, value) { try { localStorage.setItem(key, value); } catch {} }
   function setMapStatus(text) { const status = document.querySelector("#mapStatus"); if (status) status.textContent = text; }
   function setRouteStatus(html) { const box = document.querySelector("#routeStatus"); if (box) box.innerHTML = html || ""; }
   function normalize(value) { return String(value || "").replace(/\s+/g, "").toLowerCase(); }
