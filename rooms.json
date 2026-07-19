@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:19:55.649Z",
+  "savedAt": "2026-07-19T03:20:10.670Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6079,7 +6079,7 @@
       }
     },
     "QAMOB088": {
-      "revision": 4,
+      "revision": 5,
       "state": {
         "version": 2,
         "activeListId": "c491e2a3-17fa-4722-8295-d4441d54a030",
@@ -6099,13 +6099,13 @@
                   "id": "7db0cb2c-b8b9-4e8a-b9e9-bd1c39980215",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784431194452,
+                  "updatedAt": 1784431209475,
                   "orderUpdatedAt": 1784431194452,
                   "activities": [
                     {
                       "id": "68befd36-9253-490e-93f8-3fd4dec3577f",
                       "time": "",
-                      "title": "新事项",
+                      "title": "手机端可编辑事项",
                       "place": "",
                       "note": "",
                       "tags": [],
@@ -6115,7 +6115,7 @@
                         "currency": "CNY"
                       },
                       "transport": null,
-                      "updatedAt": 1784431194452
+                      "updatedAt": 1784431209475
                     }
                   ]
                 }
@@ -6126,11 +6126,11 @@
                 "limit": 0,
                 "updatedAt": 1784430680587
               },
-              "updatedAt": 1784431194453,
+              "updatedAt": 1784431209475,
               "orderUpdatedAt": 1784430680587
             },
             "createdAt": 1784430680587,
-            "updatedAt": 1784431194453
+            "updatedAt": 1784431209475
           }
         ],
         "deleted": {
@@ -6139,7 +6139,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784431195398
+        "updatedAt": 1784431210419
       }
     }
   }
