@@ -2,6 +2,7 @@
   "use strict";
 
   const PENDING_TEXT = "本地待同步 · 点击立即保存";
+  const SAVED_PATTERN = /已保存到云端|已保存到服务器|已同步|协作者已更新|HTTP 同步可用/;
   let observer = null;
   let timer = 0;
 
@@ -25,13 +26,26 @@
   }
 
   function guardPendingStatus() {
-    if (!hasPendingLocalSave()) return;
     const syncText = document.querySelector("#syncText");
     const syncState = document.querySelector("#syncState");
     if (!syncText || !syncState) return;
+    if (SAVED_PATTERN.test(syncText.textContent.trim())) {
+      clearPendingMarker();
+      return;
+    }
+    if (!hasPendingLocalSave()) return;
     if (syncText.textContent.trim() !== PENDING_TEXT) syncText.textContent = PENDING_TEXT;
     syncState.classList.add("offline", "mobile-sync-pending");
     syncState.classList.remove("connected");
+  }
+
+  function clearPendingMarker() {
+    const roomId = currentRoomId();
+    const pending = window.__TripPendingLocalSave;
+    if (roomId && pending?.roomId === roomId) window.__TripPendingLocalSave = { roomId, at: Date.now(), pending: false };
+    const syncState = document.querySelector("#syncState");
+    syncState?.classList.remove("offline", "mobile-sync-pending");
+    syncState?.classList.add("connected");
   }
 
   function markSaved() {
