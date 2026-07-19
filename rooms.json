@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:57:59.082Z",
+  "savedAt": "2026-07-19T03:02:03.405Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -5888,6 +5888,96 @@
           "members": {}
         },
         "updatedAt": 1784429878826
+      }
+    },
+    "QAINSWJM": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "list-5ggnsy6i",
+        "members": [],
+        "lists": [
+          {
+            "id": "list-5ggnsy6i",
+            "name": "AI插入位置测试",
+            "createdAt": 1784430121896,
+            "updatedAt": 1784430121896,
+            "trip": {
+              "tripTitle": "AI插入位置测试",
+              "startDate": "2026-07-19",
+              "originCity": "",
+              "selectedDayId": "day2-vk6lrfti",
+              "dayLimit": 30,
+              "updatedAt": 1784430121896,
+              "orderUpdatedAt": 1784430121896,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784430121896
+              },
+              "days": [
+                {
+                  "id": "day1-v4jwrnnf",
+                  "location": "原第1天",
+                  "stay": "",
+                  "updatedAt": 1784430121896,
+                  "orderUpdatedAt": 1784430121896,
+                  "activities": [
+                    {
+                      "id": "act-swp00pj2",
+                      "time": "",
+                      "title": "原第1天事项",
+                      "place": "原第1天",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784430121896
+                    }
+                  ]
+                },
+                {
+                  "id": "day2-vk6lrfti",
+                  "location": "",
+                  "stay": "",
+                  "updatedAt": 1784430121896,
+                  "orderUpdatedAt": 1784430121896,
+                  "activities": []
+                },
+                {
+                  "id": "day3-vtum3h4z",
+                  "location": "原第3天",
+                  "stay": "",
+                  "updatedAt": 1784430121896,
+                  "orderUpdatedAt": 1784430121896,
+                  "activities": [
+                    {
+                      "id": "act-b1yygdr9",
+                      "time": "",
+                      "title": "原第3天事项",
+                      "place": "原第3天",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784430121896
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784430121896
       }
     }
   }
