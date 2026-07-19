@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T04:32:37.536Z",
+  "savedAt": "2026-07-19T04:38:56.605Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -7052,6 +7052,67 @@
           "members": {}
         },
         "updatedAt": 1784435556036
+      }
+    },
+    "QASY8C12": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "list-QASY8C12",
+        "members": [],
+        "lists": [
+          {
+            "id": "list-QASY8C12",
+            "name": "同步节流QA",
+            "trip": {
+              "tripTitle": "同步节流QA",
+              "startDate": "2026-08-03",
+              "originCity": "上海",
+              "selectedDayId": "d1-QASY8C12",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "d1-QASY8C12",
+                  "location": "测试城市",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "a1-QASY8C12",
+                      "time": "09:00",
+                      "title": "原事项",
+                      "place": "测试城市",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784435935038
+                    }
+                  ],
+                  "updatedAt": 1784435935038,
+                  "orderUpdatedAt": 1784435935038
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784435935037
+              },
+              "updatedAt": 1784435935047,
+              "orderUpdatedAt": 1784435935047
+            },
+            "createdAt": 1784435935037,
+            "updatedAt": 1784435935047
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784435935047
       }
     }
   }
