@@ -6,10 +6,19 @@
   let pendingMeta = null;
   let installTimer = 0;
   let installAttempts = 0;
+  let lastTouchedDayId = "";
 
   function init() {
     installStyles();
+    document.addEventListener("pointerdown", captureDayIntent, true);
+    document.addEventListener("click", captureDayIntent, true);
     scheduleInstall(0);
+  }
+
+  function captureDayIntent(event) {
+    const card = event.target.closest?.("#dayList .day-card[data-day-id]");
+    if (!card) return;
+    lastTouchedDayId = card.dataset.dayId || lastTouchedDayId;
   }
 
   function scheduleInstall(delay = 120) {
@@ -108,7 +117,8 @@
     const insertResult = insertGeneratedDays(library, trip, generatedDays, stamp);
     if (!insertResult.ok) return setStatus(insertResult.message || "没有可应用的行程");
 
-    trip.selectedDayId = generatedDays[0]?.id || trip.selectedDayId;
+    trip.selectedDayId = insertResult.selectedDayId || generatedDays[0]?.id || trip.selectedDayId;
+    lastTouchedDayId = trip.selectedDayId;
     trip.dayLimit = Math.max(Number(trip.dayLimit) || 30, trip.days.length);
     if (pendingPlan.title && (!trip.tripTitle || /^新行程单/.test(trip.tripTitle))) {
       trip.tripTitle = pendingPlan.title;
@@ -149,19 +159,34 @@
     if (isBlankTrip(trip)) {
       tombstoneDays(library, trip.days, stamp);
       trip.days = generatedDays;
-      return { ok: true, message: `已替换空白行程并应用 ${generatedDays.length} 天` };
+      return { ok: true, selectedDayId: generatedDays[0]?.id || "", message: `已替换空白行程并应用 ${generatedDays.length} 天` };
     }
-    const selectedId = window.TripPlanner?.getSelection?.().dayId || trip.selectedDayId;
-    const selectedIndex = Math.max(0, trip.days.findIndex((day) => day.id === selectedId));
-    const anchorIndex = selectedIndex >= 0 ? selectedIndex : Math.max(0, trip.days.length - 1);
+    const anchorIndex = resolveAnchorIndex(trip);
     const anchorDay = trip.days[anchorIndex];
     if (isBlankDay(anchorDay)) {
       tombstoneDays(library, [anchorDay], stamp);
       trip.days.splice(anchorIndex, 1, ...generatedDays);
-      return { ok: true, message: `已在选中空白日期替换为 ${generatedDays.length} 天` };
+      return { ok: true, selectedDayId: generatedDays[0]?.id || "", message: `已在选中空白日期替换为 ${generatedDays.length} 天` };
     }
     trip.days.splice(anchorIndex + 1, 0, ...generatedDays);
-    return { ok: true, message: `已在选中日期后插入 ${generatedDays.length} 天` };
+    return { ok: true, selectedDayId: generatedDays[0]?.id || "", message: `已在选中日期后插入 ${generatedDays.length} 天` };
+  }
+
+  function resolveAnchorIndex(trip) {
+    const selection = window.TripPlanner?.getSelection?.() || {};
+    const candidateIds = [
+      lastTouchedDayId,
+      selection.dayId,
+      document.querySelector("#dayList .day-card.selected-context[data-day-id]")?.dataset.dayId,
+      document.querySelector("#dayList .activity-row.selected-context[data-day-id]")?.dataset.dayId,
+      document.querySelector("#dayList .day-card.active[data-day-id]")?.dataset.dayId,
+      trip.selectedDayId,
+    ].filter(Boolean);
+    for (const id of candidateIds) {
+      const index = trip.days.findIndex((day) => day.id === id);
+      if (index >= 0) return index;
+    }
+    return Math.max(0, trip.days.length - 1);
   }
 
   function isBlankTrip(trip) {
