@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T04:43:30.331Z",
+  "savedAt": "2026-07-19T04:44:00.608Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -7055,7 +7055,7 @@
       }
     },
     "QASY8C12": {
-      "revision": 4,
+      "revision": 5,
       "state": {
         "version": 2,
         "activeListId": "list-QASY8C12",
@@ -7075,8 +7075,8 @@
                   "id": "d1-QASY8C12",
                   "location": "测试城市",
                   "stay": "",
-                  "updatedAt": 1784436205008,
-                  "orderUpdatedAt": 1784435935038,
+                  "updatedAt": 1784436239353,
+                  "orderUpdatedAt": 1784436239353,
                   "activities": [
                     {
                       "id": "a1-QASY8C12",
@@ -7089,6 +7089,18 @@
                       "budget": null,
                       "transport": null,
                       "updatedAt": 1784436205008
+                    },
+                    {
+                      "id": "ws-remote-1784436239353",
+                      "time": "16:00",
+                      "title": "包装后远端同步事项",
+                      "place": "测试城市",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784436239353
                     }
                   ]
                 }
@@ -7099,11 +7111,11 @@
                 "limit": 0,
                 "updatedAt": 1784435935037
               },
-              "updatedAt": 1784436205009,
+              "updatedAt": 1784436239353,
               "orderUpdatedAt": 1784435935047
             },
             "createdAt": 1784435935037,
-            "updatedAt": 1784436205009
+            "updatedAt": 1784436239353
           }
         ],
         "deleted": {
@@ -7112,7 +7124,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784436210080
+        "updatedAt": 1784436240359
       }
     }
   }
