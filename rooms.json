@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T01:43:02.401Z",
+  "savedAt": "2026-07-19T01:52:12.386Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -4368,7 +4368,7 @@
       }
     },
     "47F10036": {
-      "revision": 4,
+      "revision": 5,
       "state": {
         "version": 2,
         "activeListId": "ff115b4a-cf1a-4da4-b568-97991882b884",
@@ -4381,13 +4381,15 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-19",
               "originCity": "",
-              "selectedDayId": "1b095995-5871-4b9c-9b9e-66460623ab34",
+              "selectedDayId": "e416a42d-d4b5-45ad-8e96-b559314c4284",
               "dayLimit": 30,
               "days": [
                 {
                   "id": "1b095995-5871-4b9c-9b9e-66460623ab34",
                   "location": "",
                   "stay": "",
+                  "updatedAt": 1784425381249,
+                  "orderUpdatedAt": 1784425381249,
                   "activities": [
                     {
                       "id": "c3a0f2a9-7f0a-4c45-b034-98679a9e8390",
@@ -4413,9 +4415,118 @@
                       "transport": null,
                       "updatedAt": 1784425381249
                     }
-                  ],
-                  "updatedAt": 1784425381249,
-                  "orderUpdatedAt": 1784425381249
+                  ]
+                },
+                {
+                  "id": "e416a42d-d4b5-45ad-8e96-b559314c4284",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784425931220,
+                  "orderUpdatedAt": 1784425931220,
+                  "activities": [
+                    {
+                      "id": "46e48880-ce24-4026-9cfb-8b1a4dbd9b92",
+                      "time": "",
+                      "title": "抵达内罗毕",
+                      "place": "内罗毕",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784425931220
+                    },
+                    {
+                      "id": "61497013-7683-4c8a-8cbf-38998ab9ed90",
+                      "time": "",
+                      "title": "入住酒店",
+                      "place": "酒店",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784425931220
+                    }
+                  ]
+                },
+                {
+                  "id": "7b694692-b787-4bed-ae77-0531ce8c1301",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784425931220,
+                  "orderUpdatedAt": 1784425931220,
+                  "activities": [
+                    {
+                      "id": "47a6e71e-cea7-4a8c-8af3-05f0bd6dd026",
+                      "time": "",
+                      "title": "基贝拉贫民窟",
+                      "place": "基贝拉贫民窟",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784425931220
+                    },
+                    {
+                      "id": "52015509-4900-4cba-b599-fa5a9bb4eb9f",
+                      "time": "",
+                      "title": "国家博物馆",
+                      "place": "国家博物馆",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784425931220
+                    }
+                  ]
+                },
+                {
+                  "id": "869ccfc4-23f8-4b2a-aca4-799b6b05ed52",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784425931220,
+                  "orderUpdatedAt": 1784425931220,
+                  "activities": [
+                    {
+                      "id": "91a6839d-b3bf-4e81-8139-4c3db9c1fb50",
+                      "time": "",
+                      "title": "长颈鹿中心",
+                      "place": "长颈鹿中心",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784425931220
+                    },
+                    {
+                      "id": "67949856-7f26-460a-bf8a-c9c8143da12f",
+                      "time": "",
+                      "title": "马赛市场",
+                      "place": "马赛市场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784425931220
+                    },
+                    {
+                      "id": "c73109d9-6f2e-49d5-90db-a787db3569fa",
+                      "time": "",
+                      "title": "准备出发",
+                      "place": "内罗毕",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784425931220
+                    }
+                  ]
                 }
               ],
               "budget": {
@@ -4424,11 +4535,11 @@
                 "limit": 0,
                 "updatedAt": 1784425378125
               },
-              "updatedAt": 1784425381249,
-              "orderUpdatedAt": 1784425381249
+              "updatedAt": 1784425931221,
+              "orderUpdatedAt": 1784425931220
             },
             "createdAt": 1784425378125,
-            "updatedAt": 1784425381249
+            "updatedAt": 1784425931221
           }
         ],
         "deleted": {
@@ -4437,7 +4548,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784425382150
+        "updatedAt": 1784425932135
       }
     },
     "6FDFD8AC": {
