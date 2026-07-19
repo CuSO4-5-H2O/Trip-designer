@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:56:40.867Z",
+  "savedAt": "2026-07-19T02:56:44.834Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -2923,7 +2923,7 @@
       }
     },
     "F6F48EC8": {
-      "revision": 13,
+      "revision": 14,
       "state": {
         "version": 2,
         "activeListId": "3016121c-c51f-4974-9956-86916e97321e",
@@ -2982,8 +2982,8 @@
                   "id": "36dfcf4d-3b21-448d-9b3a-546ea4368caa",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784429793751,
-                  "orderUpdatedAt": 1784429793751,
+                  "updatedAt": 1784429803651,
+                  "orderUpdatedAt": 1784429803651,
                   "activities": [
                     {
                       "id": "36352da4-cea8-4b83-b6cf-254639a28973",
@@ -3006,6 +3006,28 @@
                         "arrive": "09:00"
                       },
                       "updatedAt": 1784429793750
+                    },
+                    {
+                      "id": "abc560d7-df1f-46f5-bae3-754d946214bd",
+                      "time": "09:00",
+                      "title": "参观故宫博物院",
+                      "place": "北京市东城区景山前街4号",
+                      "note": "建议提前网上购票，避免排队",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 60,
+                        "currency": "CNY",
+                        "category": "play"
+                      },
+                      "transport": {
+                        "type": "car",
+                        "from": "住宿地点",
+                        "to": "故宫博物院",
+                        "depart": "08:30",
+                        "arrive": "09:00"
+                      },
+                      "updatedAt": 1784429803651
                     }
                   ]
                 }
@@ -3016,11 +3038,11 @@
                 "limit": 0,
                 "updatedAt": 1784371570602
               },
-              "updatedAt": 1784429799683,
+              "updatedAt": 1784429803651,
               "orderUpdatedAt": 1784429775181
             },
             "createdAt": 1784371570602,
-            "updatedAt": 1784429799683
+            "updatedAt": 1784429803651
           }
         ],
         "deleted": {
@@ -3029,7 +3051,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784429800616
+        "updatedAt": 1784429804584
       }
     },
     "AICLOUD6BDBC3": {
