@@ -88,7 +88,7 @@ function mergeFallbackDays(days, fallbackDays) {
     const day = days[index] || { location: "", stay: "", activities: [] };
     const fallback = fallbackDays[index] || { location: "", stay: "", activities: [] };
     merged.push({
-      location: day.location || fallback.location || "",
+      location: cleanLocation(day.location || fallback.location || ""),
       stay: day.stay || fallback.stay || "",
       activities: reconcileActivities(day.activities || [], fallback.activities || []),
     });
@@ -178,7 +178,7 @@ function sameActivity(left, right) {
 
 function normalizeDay(day = {}) {
   const activities = Array.isArray(day.activities) ? day.activities : [];
-  return { location: clean(day.location || day.city), stay: clean(day.stay || day.hotel), activities: polishActivities(activities.map(normalizeActivity).filter(Boolean)).slice(0, 30) };
+  return { location: cleanLocation(day.location || day.city), stay: clean(day.stay || day.hotel), activities: polishActivities(activities.map(normalizeActivity).filter(Boolean)).slice(0, 30) };
 }
 
 function normalizeActivity(activity = {}) {
@@ -230,7 +230,7 @@ function extractActivities(text, hints = {}) {
 function stripPlanningClauses(text) {
   return String(text || "")
     .replace(/第\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*天/g, "")
-    .replace(/(?:在|去|到|前往)?\s*[^，,。；;\s]{1,24}(?:玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*[天日]/g, "")
+    .replace(/(?:在|去|到|前往)?\s*[^，,。；;\s]{1,24}(?:安排|计划|玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*[天日]/g, "")
     .trim();
 }
 
@@ -280,17 +280,17 @@ function makePlaceholderDay(index, hints) {
 
 function applyLocationHints(days, sequence = []) {
   if (!Array.isArray(sequence) || !sequence.length) return days;
-  return days.map((day, index) => day.location ? day : { ...day, location: locationForDay(index, sequence) || day.location });
+  return days.map((day, index) => day.location ? { ...day, location: cleanLocation(day.location) } : { ...day, location: locationForDay(index, sequence) || day.location });
 }
 
 function locationForDay(index, sequence = []) {
   let cursor = 0;
   for (const item of sequence) {
     const length = Math.max(0, Number(item.days) || 0);
-    if (index >= cursor && index < cursor + length) return item.location || "";
+    if (index >= cursor && index < cursor + length) return cleanLocation(item.location || "");
     cursor += length;
   }
-  return sequence[sequence.length - 1]?.location || "";
+  return cleanLocation(sequence[sequence.length - 1]?.location || "");
 }
 
 function inferPlanHints(text) {
@@ -314,7 +314,7 @@ function inferLocationSequence(text) {
   for (const piece of String(text || "").split(/[，,。；;\n]+/)) {
     const cleaned = piece.trim();
     if (!cleaned) continue;
-    const pattern = /(?:在|去|到|前往)?\s*([^\s，,。；;0-9一二两三四五六七八九十天日]{1,24}?)(?:玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*天/g;
+    const pattern = /(?:在|去|到|前往)?\s*([^\s，,。；;0-9一二两三四五六七八九十天日]{1,24}?)(?:安排|计划|玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*天/g;
     let match;
     while ((match = pattern.exec(cleaned))) {
       const days = parseChineseNumber(match[2]);
@@ -335,7 +335,7 @@ function inferMentionedOrdinalDays(text) {
 }
 
 function inferDefaultLocation(text) {
-  const match = String(text || "").match(/(?:在|去|到|前往)\s*([^，,。；;\s]{1,24}?)(?:玩|游玩|停留|待|住|第|，|,|。|；|;|$)/);
+  const match = String(text || "").match(/(?:在|去|到|前往)\s*([^，,。；;\s]{1,24}?)(?:安排|计划|玩|游玩|停留|待|住|第|，|,|。|；|;|$)/);
   return match ? cleanLocation(match[1]) : "";
 }
 
@@ -372,7 +372,10 @@ function normalizeTime(value) {
 }
 
 function cleanLocation(value) {
-  return clean(value).replace(/^(?:在|去|到|前往|后|之后)/, "").replace(/(?:玩|游玩|停留|待|住)$/g, "").trim();
+  return clean(value)
+    .replace(/^(?:在|去|到|前往|后|之后)/, "")
+    .replace(/(?:安排|计划|玩|游玩|停留|待|住)$/g, "")
+    .trim();
 }
 
 function cleanPlace(value) {
