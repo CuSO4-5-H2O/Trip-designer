@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:48:31.720Z",
+  "savedAt": "2026-07-19T03:49:22.477Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6396,7 +6396,7 @@
       }
     },
     "QAGDB93B": {
-      "revision": 3,
+      "revision": 4,
       "state": {
         "version": 2,
         "activeListId": "0c4a415c-7192-4161-8957-c8fca01fbbab",
@@ -6406,19 +6406,21 @@
             "id": "0c4a415c-7192-4161-8957-c8fca01fbbab",
             "name": "空白覆盖保护测试",
             "createdAt": 1784432885337,
-            "updatedAt": 1784432885337,
+            "updatedAt": 1784432961264,
             "trip": {
               "version": 1,
               "tripTitle": "空白覆盖保护测试",
               "startDate": "2026-07-20",
               "originCity": "",
-              "selectedDayId": "d3220b81-a69c-4dbb-a4d0-15700d1a72ac",
+              "selectedDayId": "9a892678-35bd-43d1-89c1-56063edee8a9",
               "dayLimit": 30,
               "days": [
                 {
                   "id": "18d92425-6bc9-4e70-a0a4-0535ef4655c5",
                   "location": "真实一",
                   "stay": "",
+                  "updatedAt": 1784432885337,
+                  "orderUpdatedAt": 1784432885337,
                   "activities": [
                     {
                       "id": "645096a3-31bc-4e87-b66e-7f3a54bc6b55",
@@ -6432,14 +6434,14 @@
                       "transport": null,
                       "updatedAt": 1784432885337
                     }
-                  ],
-                  "updatedAt": 1784432885337,
-                  "orderUpdatedAt": 1784432885337
+                  ]
                 },
                 {
                   "id": "d3220b81-a69c-4dbb-a4d0-15700d1a72ac",
                   "location": "真实二",
                   "stay": "",
+                  "updatedAt": 1784432885337,
+                  "orderUpdatedAt": 1784432885337,
                   "activities": [
                     {
                       "id": "70ac4a81-fe22-42b8-a57c-573625d78156",
@@ -6453,14 +6455,47 @@
                       "transport": null,
                       "updatedAt": 1784432885337
                     }
-                  ],
-                  "updatedAt": 1784432885337,
-                  "orderUpdatedAt": 1784432885337
+                  ]
+                },
+                {
+                  "id": "9a892678-35bd-43d1-89c1-56063edee8a9",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784432961262,
+                  "orderUpdatedAt": 1784432961262,
+                  "activities": [
+                    {
+                      "id": "abced0d5-c912-4112-9817-a97516daa0f6",
+                      "time": "",
+                      "title": "国家博物馆",
+                      "place": "国家博物馆",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784432961262
+                    },
+                    {
+                      "id": "3d18f755-2fc2-4fa1-aff2-b474052b8bb0",
+                      "time": "",
+                      "title": "咖啡馆休息",
+                      "place": "咖啡馆休息",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784432961262
+                    }
+                  ]
                 },
                 {
                   "id": "b7f00e0d-b95f-44b3-afb3-81666790678d",
                   "location": "真实三",
                   "stay": "",
+                  "updatedAt": 1784432885337,
+                  "orderUpdatedAt": 1784432885337,
                   "activities": [
                     {
                       "id": "410f0287-7a1b-4800-a64e-22a892109200",
@@ -6474,9 +6509,7 @@
                       "transport": null,
                       "updatedAt": 1784432885337
                     }
-                  ],
-                  "updatedAt": 1784432885337,
-                  "orderUpdatedAt": 1784432885337
+                  ]
                 }
               ],
               "budget": {
@@ -6485,8 +6518,8 @@
                 "limit": 0,
                 "updatedAt": 1784432885337
               },
-              "updatedAt": 1784432885337,
-              "orderUpdatedAt": 1784432885337
+              "updatedAt": 1784432961264,
+              "orderUpdatedAt": 1784432961262
             }
           }
         ],
@@ -6496,7 +6529,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784432911470
+        "updatedAt": 1784432962226
       }
     }
   }
