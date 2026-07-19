@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:21:33.563Z",
+  "savedAt": "2026-07-19T02:21:53.666Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -4872,7 +4872,7 @@
       }
     },
     "F9736909": {
-      "revision": 2,
+      "revision": 4,
       "state": {
         "version": 2,
         "activeListId": "59363234-4ce7-41e6-83a9-f480b3b7f5a3",
@@ -4885,9 +4885,120 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-19",
               "originCity": "",
-              "selectedDayId": "67c08990-3de9-4429-917b-f1552576a26b",
+              "selectedDayId": "50a1007a-db5d-43cc-a235-3415a623ac51",
               "dayLimit": 30,
               "days": [
+                {
+                  "id": "50a1007a-db5d-43cc-a235-3415a623ac51",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784427712490,
+                  "orderUpdatedAt": 1784427712490,
+                  "activities": [
+                    {
+                      "id": "9254f2d1-20c4-4ca0-9434-2f708d04b82b",
+                      "time": "",
+                      "title": "抵达内罗毕",
+                      "place": "内罗毕",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784427712490
+                    },
+                    {
+                      "id": "5e78eca5-16d1-4330-808e-b1b906fd8a7b",
+                      "time": "",
+                      "title": "入住酒店",
+                      "place": "酒店",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784427712490
+                    }
+                  ]
+                },
+                {
+                  "id": "ac724968-43ce-4507-8cb0-6a8d435be129",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784427712490,
+                  "orderUpdatedAt": 1784427712490,
+                  "activities": [
+                    {
+                      "id": "f71ad439-b1df-44e9-b6e9-b72ed1d76998",
+                      "time": "",
+                      "title": "基贝拉贫民窟",
+                      "place": "基贝拉贫民窟",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784427712490
+                    },
+                    {
+                      "id": "f7571330-7ccd-4d09-b83e-a73600e031f8",
+                      "time": "",
+                      "title": "国家博物馆",
+                      "place": "国家博物馆",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784427712490
+                    }
+                  ]
+                },
+                {
+                  "id": "f00e0cf3-4c06-4458-9931-b520b49c720f",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784427712490,
+                  "orderUpdatedAt": 1784427712490,
+                  "activities": [
+                    {
+                      "id": "812c14e2-871e-4bba-946a-0eaf6f1b594f",
+                      "time": "",
+                      "title": "长颈鹿中心",
+                      "place": "长颈鹿中心",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784427712490
+                    },
+                    {
+                      "id": "52cc7a25-5cb2-4309-b0cf-7db1bac28bd9",
+                      "time": "",
+                      "title": "马赛市场",
+                      "place": "马赛市场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784427712490
+                    },
+                    {
+                      "id": "e4489961-6919-4630-94e1-fabd3329e52a",
+                      "time": "",
+                      "title": "准备出发",
+                      "place": "内罗毕",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784427712490
+                    }
+                  ]
+                },
                 {
                   "id": "67c08990-3de9-4429-917b-f1552576a26b",
                   "location": "",
@@ -4903,11 +5014,11 @@
                 "limit": 0,
                 "updatedAt": 1784427688909
               },
-              "updatedAt": 1784427688909,
-              "orderUpdatedAt": 1784427688909
+              "updatedAt": 1784427712491,
+              "orderUpdatedAt": 1784427712490
             },
             "createdAt": 1784427688909,
-            "updatedAt": 1784427688909
+            "updatedAt": 1784427712491
           }
         ],
         "deleted": {
@@ -4916,7 +5027,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784427693312
+        "updatedAt": 1784427713415
       }
     }
   }
