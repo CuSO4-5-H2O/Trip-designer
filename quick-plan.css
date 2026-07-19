@@ -12,12 +12,38 @@
 
 .quick-plan-heading {
   margin-bottom: 0;
+  align-items: center;
+}
+
+.quick-plan-title {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.quick-plan-title p {
+  margin: 0;
 }
 
 .quick-plan-heading span {
   color: var(--muted);
   font-size: 12px;
   font-weight: 760;
+}
+
+.quick-plan-collapse {
+  flex: 0 0 auto;
+}
+
+.quick-plan-panel.is-collapsed {
+  gap: 0;
+  padding-block: 10px;
+}
+
+.quick-plan-panel.is-collapsed .quick-plan-form,
+.quick-plan-panel.is-collapsed .quick-plan-batch,
+.quick-plan-panel.is-collapsed .quick-segment-list {
+  display: none !important;
 }
 
 .quick-plan-form {
@@ -185,8 +211,17 @@
   }
 
   .quick-plan-heading {
-    display: grid;
-    gap: 3px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .quick-plan-title span {
+    display: none;
+  }
+
+  .quick-plan-collapse {
+    min-width: 64px;
+    min-height: 44px;
   }
 
   .quick-plan-form {
