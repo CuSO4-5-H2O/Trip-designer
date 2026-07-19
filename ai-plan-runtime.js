@@ -1,29 +1,24 @@
 "use strict";
 
+const TRANSPORT_TYPES = new Set(["plane", "train", "bus", "boat", "car"]);
+
 async function handleAiPlan(req, res, requestUrl) {
   if (requestUrl.pathname !== "/api/ai/quick-plan") return false;
-  if (req.method !== "POST") {
-    sendJson(res, 405, { ok: false, error: "method not allowed" });
-    return true;
-  }
+  if (req.method !== "POST") return sendJson(res, 405, { ok: false, error: "method not allowed" });
+
   try {
     const body = JSON.parse(await readBody(req));
     const text = String(body.text || "").trim();
-    if (text.length < 4) {
-      sendJson(res, 400, { ok: false, error: "请输入要解析的行程文本" });
-      return true;
-    }
-    const trip = body.trip || {};
+    if (text.length < 4) return sendJson(res, 400, { ok: false, error: "请输入要解析的行程文本" });
+
     const hints = inferPlanHints(text);
     const fallback = buildDeterministicPlan(text, hints);
     const apiKey = process.env.deepseek || process.env.DEEPSEEK_API_KEY;
     if (!apiKey) {
-      sendJson(res, 200, { ok: true, plan: fallback, source: "deterministic", warning: "missing deepseek api key", hints: { expectedDays: hints.expectedDays || fallback.days.length } });
-      return true;
+      return sendJson(res, 200, { ok: true, plan: fallback, source: "deterministic", warning: "missing deepseek api key", hints: publicHints(hints, fallback) });
     }
 
     try {
-      const prompt = buildPrompt(text, trip, hints, fallback);
       const response = await fetch("https://api.deepseek.com/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -33,7 +28,7 @@ async function handleAiPlan(req, res, requestUrl) {
           response_format: { type: "json_object" },
           messages: [
             { role: "system", content: "你是严谨的旅行行程结构化助手。你只输出可解析 JSON，不输出 markdown。" },
-            { role: "user", content: prompt },
+            { role: "user", content: buildPrompt(text, body.trip || {}, hints, fallback) },
           ],
         }),
       });
@@ -42,27 +37,24 @@ async function handleAiPlan(req, res, requestUrl) {
       const parsed = JSON.parse(data.choices?.[0]?.message?.content || "{}");
       const plan = normalizePlan(parsed.plan || parsed, hints, fallback);
       if (!plan.days.length) throw new Error("no days parsed");
-      sendJson(res, 200, { ok: true, plan, source: "deepseek", hints: { expectedDays: hints.expectedDays || plan.days.length } });
-      return true;
+      return sendJson(res, 200, { ok: true, plan, source: "deepseek", hints: publicHints(hints, plan) });
     } catch (error) {
-      sendJson(res, 200, { ok: true, plan: fallback, source: "deterministic-fallback", warning: error.message, hints: { expectedDays: hints.expectedDays || fallback.days.length } });
-      return true;
+      return sendJson(res, 200, { ok: true, plan: fallback, source: "deterministic-fallback", warning: error.message, hints: publicHints(hints, fallback) });
     }
   } catch (error) {
-    sendJson(res, 502, { ok: false, error: "ai quick plan failed", detail: error.message });
-    return true;
+    return sendJson(res, 502, { ok: false, error: "ai quick plan failed", detail: error.message });
   }
 }
 
-function buildPrompt(text, trip, hints = {}, fallback = null) {
+function buildPrompt(text, trip, hints, fallback) {
   return [
     "请把用户输入的自然语言行程严格转成结构化 JSON。",
     "不要自动覆盖已有行程，只生成计划对象。",
     "必须根据文本中的天数创建准确数量的 days。例如“内罗毕玩3天”必须生成 3 个 day。",
     hints.expectedDays ? `后端已解析到目标天数：${hints.expectedDays} 天；你必须返回正好 ${hints.expectedDays} 个 day。` : "如果文本没有总天数，请根据第几天和城市段推断最小天数。",
     hints.locationSequence.length ? `城市天数序列：${hints.locationSequence.map((item) => `${item.location || "未指定"} ${item.days}天`).join("，")}。` : "",
-    fallback?.days?.length ? `后端规则解析草案如下；请保持天数和“第几天”的归属，不要把第二天/第三天事项挪到别的天：${JSON.stringify(fallback)}` : "",
-    "如果文本写了第几天/第二天/第三天，事项必须放到对应 day；如果只写城市+天数但没有细节，则每天至少给一个空 activities 数组并保留 location。",
+    fallback?.days?.length ? `后端规则解析草案如下；必须保持天数和第几天归属，可以补充字段，但不要删除或弱化这些明确事项：${JSON.stringify(fallback)}` : "",
+    "如果文本写了第几天/第二天/第三天，事项必须放到对应 day。",
     "不要编造用户没有暗示的必去景点；可以把不确定内容放进 note。",
     "时间不确定时 time 为空字符串。地点尽量写具体 place；当天城市写 location。住宿不确定时 stay 为空。",
     "交通 type 只能是 plane/train/bus/boat/car 或空字符串。预算不确定时 budget 为 null。",
@@ -84,11 +76,7 @@ function normalizePlan(input = {}, hints = {}, fallback = null) {
     days = applyLocationHints(days, hints.locationSequence);
   }
   if (fallback?.days?.length) days = mergeFallbackDays(days, fallback.days);
-  return {
-    title: clean(input.title),
-    originCity: clean(input.originCity),
-    days,
-  };
+  return { title: clean(input.title), originCity: clean(input.originCity), days };
 }
 
 function mergeFallbackDays(days, fallbackDays) {
@@ -100,19 +88,46 @@ function mergeFallbackDays(days, fallbackDays) {
     merged.push({
       location: day.location || fallback.location || "",
       stay: day.stay || fallback.stay || "",
-      activities: (day.activities && day.activities.length ? day.activities : fallback.activities || []).map(normalizeActivity).filter(Boolean),
+      activities: reconcileActivities(day.activities || [], fallback.activities || []),
     });
   }
   return merged;
 }
 
+function reconcileActivities(primaryActivities, fallbackActivities) {
+  if (!primaryActivities.length) return fallbackActivities.map(normalizeActivity).filter(Boolean);
+  const normalizedPrimary = primaryActivities.map(normalizeActivity).filter(Boolean);
+  const normalizedFallback = fallbackActivities.map(normalizeActivity).filter(Boolean);
+  const output = normalizedPrimary.map((activity, index) => {
+    const fallback = normalizedFallback[index];
+    if (!fallback) return activity;
+    const next = { ...activity };
+    if (isMoreSpecific(fallback.title, activity.title)) next.title = fallback.title;
+    if (!next.place || isMoreSpecific(fallback.place, next.place)) next.place = fallback.place;
+    if (!next.note && fallback.note) next.note = fallback.note;
+    return next;
+  });
+  for (const fallback of normalizedFallback) {
+    if (!output.some((activity) => sameActivity(activity, fallback))) output.push(fallback);
+  }
+  return dedupeActivities(output);
+}
+
+function isMoreSpecific(candidate, current) {
+  const next = clean(candidate);
+  const prev = clean(current);
+  return Boolean(next && (!prev || (next.length > prev.length && next.includes(prev))));
+}
+
+function sameActivity(left, right) {
+  const a = clean(left.title || left.place);
+  const b = clean(right.title || right.place);
+  return Boolean(a && b && (a === b || a.includes(b) || b.includes(a)));
+}
+
 function normalizeDay(day = {}) {
   const activities = Array.isArray(day.activities) ? day.activities : [];
-  return {
-    location: clean(day.location || day.city),
-    stay: clean(day.stay || day.hotel),
-    activities: activities.map(normalizeActivity).filter(Boolean).slice(0, 30),
-  };
+  return { location: clean(day.location || day.city), stay: clean(day.stay || day.hotel), activities: activities.map(normalizeActivity).filter(Boolean).slice(0, 30) };
 }
 
 function normalizeActivity(activity = {}) {
@@ -121,14 +136,7 @@ function normalizeActivity(activity = {}) {
   const note = clean(activity.note || activity.description || activity.reason);
   const time = normalizeTime(activity.time || activity.startTime || "");
   if (!title && !place && !note) return null;
-  return {
-    time,
-    title: title || place || "待安排事项",
-    place,
-    note,
-    transport: normalizeTransport(activity.transport),
-    budget: normalizeBudget(activity.budget),
-  };
+  return { time, title: title || place || "待安排事项", place, note, transport: normalizeTransport(activity.transport), budget: normalizeBudget(activity.budget) };
 }
 
 function buildDeterministicPlan(text, hints = {}) {
@@ -139,18 +147,10 @@ function buildDeterministicPlan(text, hints = {}) {
   if (preamble.length) days[0].activities.push(...preamble);
   for (const segment of segments.days) {
     const index = Math.max(0, Math.min(days.length - 1, segment.dayNumber - 1));
-    const activities = extractActivities(segment.text, hints);
-    days[index].activities.push(...activities);
+    days[index].activities.push(...extractActivities(segment.text, hints));
   }
-  if (!segments.days.length && !preamble.length) {
-    const activities = extractActivities(stripPlanningClauses(text), hints);
-    if (activities.length) days[0].activities.push(...activities);
-  }
-  return {
-    title: hints.defaultLocation && expected ? `${hints.defaultLocation}${expected}天行程` : "",
-    originCity: "",
-    days: days.map((day) => ({ ...day, activities: dedupeActivities(day.activities) })),
-  };
+  if (!segments.days.length && !preamble.length) days[0].activities.push(...extractActivities(stripPlanningClauses(text), hints));
+  return { title: hints.defaultLocation && expected ? `${hints.defaultLocation}${expected}天行程` : "", originCity: "", days: days.map((day) => ({ ...day, activities: dedupeActivities(day.activities) })) };
 }
 
 function splitByOrdinalDays(text) {
@@ -173,8 +173,7 @@ function extractActivities(text, hints = {}) {
   const normalized = stripPlanningClauses(text)
     .replace(/(然后|之后|随后|接着|再去|再到|再前往|并且|并|以及|和|、)/g, "，")
     .replace(/(上午|中午|下午|晚上|早上|傍晚)(?=[^，,。；;]{1,20})/g, "，$1");
-  const parts = normalized.split(/[，,。；;\n]+/).map(cleanActivityText).filter(Boolean);
-  return parts.map((part) => phraseToActivity(part, hints)).filter(Boolean).slice(0, 30);
+  return normalized.split(/[，,。；;\n]+/).map(cleanActivityText).filter(Boolean).map((part) => phraseToActivity(part, hints)).filter(Boolean).slice(0, 30);
 }
 
 function stripPlanningClauses(text) {
@@ -186,7 +185,7 @@ function stripPlanningClauses(text) {
 
 function cleanActivityText(value) {
   return clean(value)
-    .replace(/^(?:先|可|可以|安排|计划|准备|去|到|前往|参观|游览|打卡|逛|看|体验)\s*/g, "")
+    .replace(/^(?:先|可|可以|安排|计划|去|到|前往|参观|游览|打卡|逛|看|体验)\s*/g, "")
     .replace(/^(?:上午|中午|下午|晚上|早上|傍晚)\s*/g, "")
     .replace(/^(?:，|,|。|；|;)+/, "")
     .replace(/(?:，|,|。|；|;)+$/, "")
@@ -198,8 +197,7 @@ function phraseToActivity(phrase, hints = {}) {
   if (!title) return null;
   if (/^(玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*[天日]$/.test(title)) return null;
   if (title === hints.defaultLocation) return null;
-  const place = inferActivityPlace(title, hints);
-  return { time: "", title, place, note: "", transport: null, budget: null };
+  return { time: "", title, place: inferActivityPlace(title, hints), note: "", transport: null, budget: null };
 }
 
 function inferActivityPlace(title, hints = {}) {
@@ -216,7 +214,7 @@ function dedupeActivities(activities) {
   const seen = new Set();
   const result = [];
   for (const activity of activities || []) {
-    const key = `${activity.title}|${activity.place}`;
+    const key = `${clean(activity.title)}|${clean(activity.place)}`;
     if (seen.has(key)) continue;
     seen.add(key);
     result.push(activity);
@@ -225,16 +223,12 @@ function dedupeActivities(activities) {
 }
 
 function makePlaceholderDay(index, hints) {
-  const location = locationForDay(index, hints.locationSequence) || hints.defaultLocation || "";
-  return { location, stay: "", activities: [] };
+  return { location: locationForDay(index, hints.locationSequence) || hints.defaultLocation || "", stay: "", activities: [] };
 }
 
 function applyLocationHints(days, sequence = []) {
   if (!Array.isArray(sequence) || !sequence.length) return days;
-  return days.map((day, index) => {
-    if (day.location) return day;
-    return { ...day, location: locationForDay(index, sequence) || day.location };
-  });
+  return days.map((day, index) => day.location ? day : { ...day, location: locationForDay(index, sequence) || day.location });
 }
 
 function locationForDay(index, sequence = []) {
@@ -260,17 +254,12 @@ function inferPlanHints(text) {
   }
   const ordinalDays = inferMentionedOrdinalDays(source);
   const expectedDays = Math.max(summedDays, ...explicitTotals, ordinalDays, 0) || 0;
-  return {
-    expectedDays: expectedDays || null,
-    locationSequence,
-    defaultLocation: locationSequence[0]?.location || inferDefaultLocation(source),
-  };
+  return { expectedDays: expectedDays || null, locationSequence, defaultLocation: locationSequence[0]?.location || inferDefaultLocation(source) };
 }
 
 function inferLocationSequence(text) {
   const sequence = [];
-  const pieces = String(text || "").split(/[，,。；;\n]+/);
-  for (const piece of pieces) {
+  for (const piece of String(text || "").split(/[，,。；;\n]+/)) {
     const cleaned = piece.trim();
     if (!cleaned) continue;
     const pattern = /(?:在|去|到|前往)?\s*([^\s，,。；;0-9一二两三四五六七八九十天日]{1,24}?)(?:玩|游玩|停留|待|住)?\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*天/g;
@@ -289,9 +278,7 @@ function inferMentionedOrdinalDays(text) {
   let max = 0;
   const pattern = /第\s*([0-9]{1,2}|[一二两三四五六七八九十]{1,4})\s*天/g;
   let match;
-  while ((match = pattern.exec(String(text || "")))) {
-    max = Math.max(max, parseChineseNumber(match[1]));
-  }
+  while ((match = pattern.exec(String(text || "")))) max = Math.max(max, parseChineseNumber(match[1]));
   return max;
 }
 
@@ -307,16 +294,14 @@ function parseChineseNumber(value) {
   if (text === "十") return 10;
   if (text.includes("十")) {
     const [left, right] = text.split("十");
-    const tens = left ? digits[left] || 0 : 1;
-    const ones = right ? digits[right] || 0 : 0;
-    return tens * 10 + ones;
+    return (left ? digits[left] || 0 : 1) * 10 + (right ? digits[right] || 0 : 0);
   }
   return digits[text] || 0;
 }
 
 function normalizeTransport(value) {
   if (!value || typeof value !== "object") return null;
-  const type = ["plane", "train", "bus", "boat", "car"].includes(value.type) ? value.type : "";
+  const type = TRANSPORT_TYPES.has(value.type) ? value.type : "";
   const result = { type, from: clean(value.from), to: clean(value.to), depart: normalizeTime(value.depart), arrive: normalizeTime(value.arrive) };
   return Object.values(result).some(Boolean) ? result : null;
 }
@@ -325,21 +310,21 @@ function normalizeBudget(value) {
   if (!value || typeof value !== "object") return null;
   const amount = Number(value.amount ?? value.cost ?? 0);
   if (!Number.isFinite(amount) || amount <= 0) return null;
-  const currency = clean(value.currency || "CNY").toUpperCase().slice(0, 3) || "CNY";
-  return { amount, currency, category: clean(value.category || "other") || "other" };
+  return { amount, currency: clean(value.currency || "CNY").toUpperCase().slice(0, 3) || "CNY", category: clean(value.category || "other") || "other" };
 }
 
 function normalizeTime(value) {
-  const text = clean(value);
-  const match = text.match(/^(\d{1,2}):(\d{2})$/);
+  const match = clean(value).match(/^(\d{1,2}):(\d{2})$/);
   if (!match) return "";
-  const hour = Math.max(0, Math.min(23, Number(match[1])));
-  const minute = Math.max(0, Math.min(59, Number(match[2])));
-  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  return `${String(Math.max(0, Math.min(23, Number(match[1])))).padStart(2, "0")}:${String(Math.max(0, Math.min(59, Number(match[2])))).padStart(2, "0")}`;
 }
 
 function cleanLocation(value) {
   return clean(value).replace(/^(?:在|去|到|前往)/, "").replace(/(?:玩|游玩|停留|待|住)$/g, "").trim();
+}
+
+function publicHints(hints, plan) {
+  return { expectedDays: hints.expectedDays || plan.days.length, defaultLocation: hints.defaultLocation || "" };
 }
 
 function clean(value) { return String(value || "").trim().slice(0, 300); }
