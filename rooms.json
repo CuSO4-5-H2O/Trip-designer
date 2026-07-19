@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T04:29:43.729Z",
+  "savedAt": "2026-07-19T04:31:44.393Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6781,7 +6781,7 @@
       }
     },
     "QAPASABE3": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "list-QAPASABE3",
@@ -6822,9 +6822,22 @@
                   "id": "d2-QAPASABE3",
                   "location": "云端第二天",
                   "stay": "",
-                  "activities": [],
-                  "updatedAt": 1784435355273,
-                  "orderUpdatedAt": 1784435355273
+                  "activities": [
+                    {
+                      "id": "remote-act-1784435502953",
+                      "time": "15:30",
+                      "title": "远端同步测试事项",
+                      "place": "云端第二天",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784435502953
+                    }
+                  ],
+                  "updatedAt": 1784435502953,
+                  "orderUpdatedAt": 1784435502953
                 }
               ],
               "budget": {
@@ -6833,11 +6846,11 @@
                 "limit": 0,
                 "updatedAt": 1784435355271
               },
-              "updatedAt": 1784435355281,
+              "updatedAt": 1784435502953,
               "orderUpdatedAt": 1784435355281
             },
             "createdAt": 1784435355271,
-            "updatedAt": 1784435355281
+            "updatedAt": 1784435502953
           }
         ],
         "deleted": {
@@ -6846,7 +6859,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784435383479
+        "updatedAt": 1784435504143
       }
     }
   }
