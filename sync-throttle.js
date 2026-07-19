@@ -2,15 +2,19 @@
   "use strict";
 
   const AUTO_SAVE_DELAY_MS = 60_000;
+  const NativeWebSocket = window.WebSocket;
   const originalFetch = window.fetch.bind(window);
-  const originalSend = WebSocket.prototype.send;
+  const originalSend = NativeWebSocket.prototype.send;
   const lastStateByRoom = new Map();
   const pendingHttpByRoom = new Map();
   const pendingSocketByRoom = new Map();
+  const socketRoomBySocket = new WeakMap();
 
   window.TripDesignerFlushSync = flushNow;
   window.fetch = guardedFetch;
-  WebSocket.prototype.send = queuedSend;
+  NativeWebSocket.prototype.send = queuedSend;
+  window.WebSocket = GuardedWebSocket;
+  copyWebSocketStatics(NativeWebSocket, GuardedWebSocket);
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initManualSync, { once: true });
   else initManualSync();
@@ -18,6 +22,34 @@
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") flushForUnload();
   });
+
+  function GuardedWebSocket(url, protocols) {
+    const socket = protocols === undefined ? new NativeWebSocket(url) : new NativeWebSocket(url, protocols);
+    socketRoomBySocket.set(socket, roomFromSocketUrl(url));
+    let assignedMessageHandler = null;
+    Object.defineProperty(socket, "onmessage", {
+      configurable: true,
+      enumerable: true,
+      get() { return assignedMessageHandler; },
+      set(handler) { assignedMessageHandler = typeof handler === "function" ? handler : null; },
+    });
+    socket.addEventListener("message", (event) => {
+      if (!assignedMessageHandler) return;
+      assignedMessageHandler.call(socket, compactMessageEvent(socket, event));
+    });
+    return socket;
+  }
+
+  function compactMessageEvent(socket, event) {
+    const payload = parseJson(event?.data);
+    if (!payload?.state || payload.type !== "ack") return event;
+    const roomId = payload.roomId || socketRoomBySocket.get(socket) || "";
+    const localState = lastStateByRoom.get(roomId) || window.TripPlanner?.getLibrary?.();
+    if (!roomId || !localState || !sameVisibleState(localState, payload.state)) return event;
+    const compact = { ...payload, stateOmitted: true };
+    delete compact.state;
+    return { ...event, data: JSON.stringify(compact) };
+  }
 
   function queuedSend(data) {
     const payload = parseJson(data);
@@ -29,7 +61,7 @@
       }
       markPending(payload.roomId);
       queueSocketState(this, payload.roomId, payload);
-      setSyncText("本地待同步 · 1 分钟内自动保存", false);
+      setSyncText("待同步到云端 · 1 分钟内自动保存", false);
       return;
     }
     return originalSend.call(this, data);
@@ -61,7 +93,7 @@
       body: requestBody,
       timer: window.setTimeout(() => flushRoom(roomId, "auto-debounce"), AUTO_SAVE_DELAY_MS),
     });
-    setSyncText("本地待同步 · 1 分钟内自动保存", false);
+    setSyncText("待同步到云端 · 1 分钟内自动保存", false);
     return jsonResponse({
       ok: true,
       queued: true,
@@ -106,7 +138,7 @@
     if (!pending) return false;
     clearTimeout(pending.timer);
     pendingSocketByRoom.delete(roomId);
-    if (pending.socket?.readyState !== WebSocket.OPEN) return false;
+    if (pending.socket?.readyState !== NativeWebSocket.OPEN) return false;
     try {
       originalSend.call(pending.socket, JSON.stringify(pending.payload));
       setSyncText("正在保存到云端", true);
@@ -216,7 +248,23 @@
   }
 
   function shouldSendImmediately(reason) {
-    return /manual|unload|flush|beforeunload|retry|add-day|delete-day|add-list|delete-list|save-activity|delete-activity|reorder-|inline-template-add-activity|inline-edit-|add-ai|apply-ai|ai-quick-plan-apply|create-room|join-room/i.test(String(reason || ""));
+    return /manual|unload|flush|beforeunload|retry|add-day|delete-day|add-list|delete-list|delete-activity|reorder-|add-ai|apply-ai|ai-quick-plan-apply|create-room|join-room/i.test(String(reason || ""));
+  }
+
+  function roomFromSocketUrl(value) {
+    try {
+      const url = new URL(String(value || ""), location.href);
+      return url.searchParams.get("room") || "";
+    } catch {
+      return "";
+    }
+  }
+
+  function copyWebSocketStatics(source, target) {
+    target.prototype = source.prototype;
+    for (const key of ["CONNECTING", "OPEN", "CLOSING", "CLOSED"]) {
+      Object.defineProperty(target, key, { value: source[key], enumerable: true });
+    }
   }
 
   function clonePostInit(init = {}) {
