@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:56:11.176Z",
+  "savedAt": "2026-07-19T02:56:13.813Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -2923,7 +2923,7 @@
       }
     },
     "F6F48EC8": {
-      "revision": 8,
+      "revision": 9,
       "state": {
         "version": 2,
         "activeListId": "3016121c-c51f-4974-9956-86916e97321e",
@@ -2943,8 +2943,8 @@
                   "id": "a9a68c4a-edfa-4205-a90f-05bd44340327",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784429769993,
-                  "orderUpdatedAt": 1784429755597,
+                  "updatedAt": 1784429772630,
+                  "orderUpdatedAt": 1784429772630,
                   "activities": [
                     {
                       "id": "ae9d57aa-1c16-4291-83b5-9f354288f441",
@@ -2960,6 +2960,21 @@
                       },
                       "transport": null,
                       "updatedAt": 1784429768153
+                    },
+                    {
+                      "id": "937ef488-3c3a-4a2c-936b-ed60989e5262",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784429772630
                     }
                   ]
                 }
@@ -2970,11 +2985,11 @@
                 "limit": 0,
                 "updatedAt": 1784371570602
               },
-              "updatedAt": 1784429769994,
+              "updatedAt": 1784429772631,
               "orderUpdatedAt": 1784371570602
             },
             "createdAt": 1784371570602,
-            "updatedAt": 1784429769994
+            "updatedAt": 1784429772631
           }
         ],
         "deleted": {
@@ -2983,7 +2998,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784429770926
+        "updatedAt": 1784429773563
       }
     },
     "AICLOUD6BDBC3": {
