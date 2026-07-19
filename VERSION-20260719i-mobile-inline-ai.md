@@ -10,6 +10,7 @@
 - Collapsed AI panels now hide the quick-plan body too, preventing large empty AI space on mobile.
 - Added larger mobile hit targets and higher z-index for activity controls, day controls, plus menus, and add-day menus.
 - AI quick-plan apply writes generated days at the selected date position: blank selected day is replaced; nonblank selected day inserts after it.
+- Hardened AI quick-plan target detection: applying a generated plan now prioritizes the last clicked day card, then the selected/active day in the DOM, then the trip's saved `selectedDayId`. This prevents generated AI days from falling to the bottom when the UI selection state is stale.
 - Added `startup-cloud-primer.js` and loaded it before the room app boot path. It reads the current room from `/api/room-state` before `app-collab.js` initializes, then primes the guarded storage read so the app starts from the GitHub cloud room state instead of generating and displaying a default blank itinerary first.
 
 ## Verification Notes
@@ -21,6 +22,7 @@
 - Cloud `/api/room-state` confirmed the mobile edit persisted at revision 6.
 - AI quick-plan UI generated a DeepSeek plan and applied it after selected Day 1, producing order: original Day 1, AI generated Day 2, old Day 2, old Day 3.
 - Cloud `/api/room-state` confirmed the AI insertion order at revision 10.
+- Follow-up hardening commit `9fd0b8c9d1f2ce43e68f04dc0e0213be361e6ec2` fixed stale selection fallback by recording the last touched day card before applying AI generated days.
 - Mobile screenshot check had no horizontal overflow: `documentElement.scrollWidth <= innerWidth`.
 - Startup cloud primer QA used production room `QAPR3723`, seeded with one list named `云端保留测试`, 2 days, and 2 activities.
 - Opening `QAPR3723` rendered `云端保留测试` immediately with both cloud days; the page did not show or save a default `新行程单1 天 · 0 项` state.
