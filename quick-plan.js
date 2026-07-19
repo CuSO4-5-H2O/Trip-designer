@@ -6,6 +6,7 @@ let draggedSegmentIndex = -1;
 
 window.addEventListener("load", initQuickPlan);
 window.addEventListener("tripplanner:render", scheduleQuickPlanRender);
+window.addEventListener("resize", syncQuickPlanCollapseButton, { passive: true });
 
 function initQuickPlan() {
   if (!quickPlanStorageKey) return;
@@ -25,8 +26,11 @@ function injectQuickPlanPanel() {
   timelineHead.insertAdjacentHTML("afterend", `
     <section class="quick-plan-panel" id="quickPlanPanel">
       <div class="section-heading quick-plan-heading">
-        <p>\u5feb\u901f\u89c4\u5212</p>
-        <span>\u57ce\u5e02 + \u5929\u6570\u4e00\u952e\u6dfb\u52a0\uff0c\u57ce\u5e02\u6bb5\u53ef\u62d6\u52a8</span>
+        <div class="quick-plan-title">
+          <p>\u5feb\u901f\u89c4\u5212</p>
+          <span>\u57ce\u5e02 + \u5929\u6570\u4e00\u952e\u6dfb\u52a0\uff0c\u57ce\u5e02\u6bb5\u53ef\u62d6\u52a8</span>
+        </div>
+        <button class="mini-action quick-plan-collapse" type="button" data-quick-collapse aria-expanded="true">\u6536\u8d77</button>
       </div>
       <div class="quick-plan-form">
         <label class="field quick-city-field">
@@ -48,12 +52,15 @@ function injectQuickPlanPanel() {
   `);
   document.querySelector("#quickPlanAddBtn")?.addEventListener("click", addSingleQuickPlanSegment);
   document.querySelector("#quickPlanBatchBtn")?.addEventListener("click", addBatchQuickPlanSegments);
+  document.querySelector("[data-quick-collapse]")?.addEventListener("click", toggleQuickPlanCollapse);
   document.querySelector("#quickPlanCity")?.addEventListener("keydown", (event) => {
     if (event.key === "Enter") addSingleQuickPlanSegment();
   });
   document.querySelector("#quickPlanDays")?.addEventListener("keydown", (event) => {
     if (event.key === "Enter") addSingleQuickPlanSegment();
   });
+  if (isQuickPlanMobile()) setQuickPlanCollapsed(true);
+  else syncQuickPlanCollapseButton();
 }
 
 function renderQuickPlanSegments() {
@@ -61,9 +68,36 @@ function renderQuickPlanSegments() {
   const library = readQuickLibrary();
   const trip = getQuickActiveTrip(library);
   const target = document.querySelector("#quickSegmentList");
+  syncQuickPlanCollapseButton();
   if (!trip || !target) return;
   const segments = getCitySegments(trip);
   target.replaceChildren(...segments.map((segment, index) => createQuickSegmentItem(segment, index, segments.length)));
+}
+
+function toggleQuickPlanCollapse() {
+  const panel = document.querySelector("#quickPlanPanel");
+  if (!panel) return;
+  setQuickPlanCollapsed(!panel.classList.contains("is-collapsed"));
+}
+
+function setQuickPlanCollapsed(collapsed) {
+  const panel = document.querySelector("#quickPlanPanel");
+  if (!panel) return;
+  panel.classList.toggle("is-collapsed", Boolean(collapsed));
+  syncQuickPlanCollapseButton();
+}
+
+function syncQuickPlanCollapseButton() {
+  const panel = document.querySelector("#quickPlanPanel");
+  const button = document.querySelector("[data-quick-collapse]");
+  if (!panel || !button) return;
+  const collapsed = panel.classList.contains("is-collapsed");
+  button.textContent = collapsed ? "\u5c55\u5f00" : "\u6536\u8d77";
+  button.setAttribute("aria-expanded", String(!collapsed));
+}
+
+function isQuickPlanMobile() {
+  return window.matchMedia("(max-width: 780px)").matches;
 }
 
 function createQuickSegmentItem(segment, index, total) {
