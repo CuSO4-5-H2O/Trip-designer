@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:35:36.729Z",
+  "savedAt": "2026-07-19T02:35:41.196Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -5455,7 +5455,7 @@
       }
     },
     "4AD8AF43": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "28dbe368-e9d8-4a97-8eca-049b87b23b72",
@@ -5475,9 +5475,9 @@
                   "id": "72298a9b-a526-40a1-b17f-b7a6ed6f4d98",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1784428533564,
-                  "orderUpdatedAt": 1784428533564
+                  "orderUpdatedAt": 1784428533564,
+                  "activities": []
                 }
               ],
               "budget": {
@@ -5499,7 +5499,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784428536065
+        "updatedAt": 1784428540946
       }
     },
     "CEDD4070": {
