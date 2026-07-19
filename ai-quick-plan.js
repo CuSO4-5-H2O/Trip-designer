@@ -104,9 +104,8 @@
     const trip = list?.trip;
     if (!library || !list || !trip) return setStatus("行程还没有加载完成");
     const stamp = Date.now();
-    const hasOnlyBlankDay = trip.days.length === 1 && !trip.days[0].location && !trip.days[0].stay && !(trip.days[0].activities || []).length;
     const generatedDays = pendingPlan.days.map((day) => makeDay(day, stamp));
-    if (hasOnlyBlankDay) trip.days = generatedDays;
+    if (isBlankTrip(trip)) trip.days = generatedDays;
     else trip.days.push(...generatedDays);
     trip.selectedDayId = generatedDays[0]?.id || trip.selectedDayId;
     trip.dayLimit = Math.max(Number(trip.dayLimit) || 30, trip.days.length);
@@ -142,6 +141,17 @@
     } catch {
       setStatus("已应用到页面，本地待同步；点击同步条可重试");
     }
+  }
+
+  function isBlankTrip(trip) {
+    const days = Array.isArray(trip?.days) ? trip.days : [];
+    if (!days.length) return true;
+    return days.every((day) => {
+      const activities = Array.isArray(day?.activities) ? day.activities : [];
+      return !String(day?.location || "").trim()
+        && !String(day?.stay || "").trim()
+        && activities.length === 0;
+    });
   }
 
   function makeDay(day, stamp) {
