@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:29:26.934Z",
+  "savedAt": "2026-07-19T03:29:51.251Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6248,6 +6248,88 @@
           "members": {}
         },
         "updatedAt": 1784431396343
+      }
+    },
+    "QAPR3723": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "c78804ff-a814-4677-9e88-4d1b1f4b9522",
+        "members": [],
+        "lists": [
+          {
+            "id": "c78804ff-a814-4677-9e88-4d1b1f4b9522",
+            "name": "云端保留测试",
+            "createdAt": 1784431789526,
+            "updatedAt": 1784431789526,
+            "trip": {
+              "tripTitle": "云端保留测试",
+              "startDate": "2026-09-01",
+              "originCity": "上海",
+              "selectedDayId": "f4b9ca9d-0eb5-40f3-a654-b0711f477d2e",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "f4b9ca9d-0eb5-40f3-a654-b0711f477d2e",
+                  "location": "云端城市一",
+                  "stay": "云端酒店一",
+                  "activities": [
+                    {
+                      "id": "735ab2e5-fc62-49f4-8df0-d4639d57da35",
+                      "time": "09:00",
+                      "title": "云端事项一",
+                      "place": "云端地点一",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784431789526
+                    }
+                  ],
+                  "updatedAt": 1784431789526,
+                  "orderUpdatedAt": 1784431789526
+                },
+                {
+                  "id": "22040ca9-7d08-4a5b-9097-227675848483",
+                  "location": "云端城市二",
+                  "stay": "云端酒店二",
+                  "activities": [
+                    {
+                      "id": "78f63ff4-2c41-441b-a48e-a7727aee326b",
+                      "time": "10:00",
+                      "title": "云端事项二",
+                      "place": "云端地点二",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784431789526
+                    }
+                  ],
+                  "updatedAt": 1784431789526,
+                  "orderUpdatedAt": 1784431789526
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784431789526
+              },
+              "updatedAt": 1784431789526,
+              "orderUpdatedAt": 1784431789526
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784431789526
       }
     }
   }
