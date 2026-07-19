@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:30:59.990Z",
+  "savedAt": "2026-07-19T03:31:07.268Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6251,7 +6251,7 @@
       }
     },
     "QAPR3723": {
-      "revision": 4,
+      "revision": 6,
       "state": {
         "version": 2,
         "activeListId": "c78804ff-a814-4677-9e88-4d1b1f4b9522",
@@ -6261,7 +6261,7 @@
             "id": "c78804ff-a814-4677-9e88-4d1b1f4b9522",
             "name": "云端保留测试",
             "createdAt": 1784431789526,
-            "updatedAt": 1784431789526,
+            "updatedAt": 1784431866065,
             "trip": {
               "tripTitle": "云端保留测试",
               "startDate": "2026-09-01",
@@ -6273,8 +6273,8 @@
                   "id": "f4b9ca9d-0eb5-40f3-a654-b0711f477d2e",
                   "location": "云端城市一",
                   "stay": "云端酒店一",
-                  "updatedAt": 1784431789526,
-                  "orderUpdatedAt": 1784431789526,
+                  "updatedAt": 1784431866065,
+                  "orderUpdatedAt": 1784431865170,
                   "activities": [
                     {
                       "id": "735ab2e5-fc62-49f4-8df0-d4639d57da35",
@@ -6287,6 +6287,21 @@
                       "budget": null,
                       "transport": null,
                       "updatedAt": 1784431789526
+                    },
+                    {
+                      "id": "e5423e66-c298-45e8-b0f0-a83298d0b005",
+                      "time": "",
+                      "title": "双端同步新增事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784431866065
                     }
                   ]
                 },
@@ -6318,7 +6333,7 @@
                 "limit": 0,
                 "updatedAt": 1784431789526
               },
-              "updatedAt": 1784431789526,
+              "updatedAt": 1784431866065,
               "orderUpdatedAt": 1784431789526
             }
           }
@@ -6329,7 +6344,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784431859740
+        "updatedAt": 1784431867017
       }
     }
   }
