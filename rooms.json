@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:31:07.268Z",
+  "savedAt": "2026-07-19T03:38:03.291Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6345,6 +6345,110 @@
           "members": {}
         },
         "updatedAt": 1784431867017
+      }
+    },
+    "QAAIA94F": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "390880e3-bce2-4d9d-850e-252c4e138e16",
+        "members": [],
+        "lists": [
+          {
+            "id": "390880e3-bce2-4d9d-850e-252c4e138e16",
+            "name": "AI插入位置测试",
+            "createdAt": 1784432281760,
+            "updatedAt": 1784432281760,
+            "trip": {
+              "version": 1,
+              "tripTitle": "AI插入位置测试",
+              "startDate": "2026-07-20",
+              "originCity": "",
+              "selectedDayId": "9fee5bca-f3e6-4e1c-8f79-67ad94988d82",
+              "dayLimit": 30,
+              "updatedAt": 1784432281760,
+              "orderUpdatedAt": 1784432281760,
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784432281760
+              },
+              "days": [
+                {
+                  "id": "9fee5bca-f3e6-4e1c-8f79-67ad94988d82",
+                  "location": "第一天原始",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "77722805-7cce-421a-b3f9-1aac72093911",
+                      "time": "01:00",
+                      "title": "第一天事项",
+                      "place": "第一天原始",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784432281760
+                    }
+                  ],
+                  "updatedAt": 1784432281760,
+                  "orderUpdatedAt": 1784432281760
+                },
+                {
+                  "id": "df3bfa4d-488d-41b2-9fab-bd5c887215f7",
+                  "location": "第二天目标",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "5ebedc47-a5ad-46d6-bdb7-39ddb322b7c5",
+                      "time": "02:00",
+                      "title": "第二天事项",
+                      "place": "第二天目标",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784432281760
+                    }
+                  ],
+                  "updatedAt": 1784432281760,
+                  "orderUpdatedAt": 1784432281760
+                },
+                {
+                  "id": "9ed50fed-3eb1-4b36-8eef-addeac2fdba8",
+                  "location": "第三天原始",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "466e0f3c-abcc-40b0-bd88-476afefd130a",
+                      "time": "03:00",
+                      "title": "第三天事项",
+                      "place": "第三天原始",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784432281760
+                    }
+                  ],
+                  "updatedAt": 1784432281760,
+                  "orderUpdatedAt": 1784432281760
+                }
+              ]
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784432281760
       }
     }
   }
