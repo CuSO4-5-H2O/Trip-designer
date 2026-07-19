@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:02:27.514Z",
+  "savedAt": "2026-07-19T03:02:53.364Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -5891,7 +5891,7 @@
       }
     },
     "QAINSWJM": {
-      "revision": 2,
+      "revision": 4,
       "state": {
         "version": 2,
         "activeListId": "list-5ggnsy6i",
@@ -5901,15 +5901,15 @@
             "id": "list-5ggnsy6i",
             "name": "AI插入位置测试",
             "createdAt": 1784430121896,
-            "updatedAt": 1784430121896,
+            "updatedAt": 1784430172160,
             "trip": {
               "tripTitle": "AI插入位置测试",
               "startDate": "2026-07-19",
               "originCity": "",
-              "selectedDayId": "day2-vk6lrfti",
+              "selectedDayId": "7e46a407-6b4b-4068-9a8c-d73b98dbad46",
               "dayLimit": 30,
-              "updatedAt": 1784430121896,
-              "orderUpdatedAt": 1784430121896,
+              "updatedAt": 1784430172160,
+              "orderUpdatedAt": 1784430172159,
               "budget": {
                 "currency": "CNY",
                 "items": {},
@@ -5939,12 +5939,46 @@
                   ]
                 },
                 {
-                  "id": "day2-vk6lrfti",
-                  "location": "",
+                  "id": "7e46a407-6b4b-4068-9a8c-d73b98dbad46",
+                  "location": "内罗毕",
                   "stay": "",
-                  "updatedAt": 1784430121896,
-                  "orderUpdatedAt": 1784430121896,
-                  "activities": []
+                  "updatedAt": 1784430172159,
+                  "orderUpdatedAt": 1784430172159,
+                  "activities": [
+                    {
+                      "id": "d7b1eaaf-8a85-4dbb-adac-31abadb26381",
+                      "time": "",
+                      "title": "国家博物馆",
+                      "place": "国家博物馆",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784430172159
+                    }
+                  ]
+                },
+                {
+                  "id": "5002bf07-32bf-4a5c-a5fa-47b3f8d0d65f",
+                  "location": "内罗毕",
+                  "stay": "",
+                  "updatedAt": 1784430172159,
+                  "orderUpdatedAt": 1784430172159,
+                  "activities": [
+                    {
+                      "id": "6f643694-9727-43a5-ad5f-351b00cd21c0",
+                      "time": "",
+                      "title": "长颈鹿中心",
+                      "place": "长颈鹿中心",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784430172159
+                    }
+                  ]
                 },
                 {
                   "id": "day3-vtum3h4z",
@@ -5973,11 +6007,13 @@
         ],
         "deleted": {
           "lists": {},
-          "days": {},
+          "days": {
+            "day2-vk6lrfti": 1784430172159
+          },
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784430147265
+        "updatedAt": 1784430173112
       }
     }
   }
