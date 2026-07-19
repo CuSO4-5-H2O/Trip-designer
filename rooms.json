@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:30:13.672Z",
+  "savedAt": "2026-07-19T03:30:31.071Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6251,7 +6251,7 @@
       }
     },
     "QAPR3723": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "c78804ff-a814-4677-9e88-4d1b1f4b9522",
@@ -6273,6 +6273,8 @@
                   "id": "f4b9ca9d-0eb5-40f3-a654-b0711f477d2e",
                   "location": "云端城市一",
                   "stay": "云端酒店一",
+                  "updatedAt": 1784431789526,
+                  "orderUpdatedAt": 1784431789526,
                   "activities": [
                     {
                       "id": "735ab2e5-fc62-49f4-8df0-d4639d57da35",
@@ -6286,14 +6288,14 @@
                       "transport": null,
                       "updatedAt": 1784431789526
                     }
-                  ],
-                  "updatedAt": 1784431789526,
-                  "orderUpdatedAt": 1784431789526
+                  ]
                 },
                 {
                   "id": "22040ca9-7d08-4a5b-9097-227675848483",
                   "location": "云端城市二",
                   "stay": "云端酒店二",
+                  "updatedAt": 1784431789526,
+                  "orderUpdatedAt": 1784431789526,
                   "activities": [
                     {
                       "id": "78f63ff4-2c41-441b-a48e-a7727aee326b",
@@ -6307,9 +6309,7 @@
                       "transport": null,
                       "updatedAt": 1784431789526
                     }
-                  ],
-                  "updatedAt": 1784431789526,
-                  "orderUpdatedAt": 1784431789526
+                  ]
                 }
               ],
               "budget": {
@@ -6329,7 +6329,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784431813422
+        "updatedAt": 1784431830821
       }
     }
   }
