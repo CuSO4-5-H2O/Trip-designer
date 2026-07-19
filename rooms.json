@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T04:38:56.605Z",
+  "savedAt": "2026-07-19T04:39:14.587Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6781,7 +6781,7 @@
       }
     },
     "QAPASABE3": {
-      "revision": 3,
+      "revision": 4,
       "state": {
         "version": 2,
         "activeListId": "list-QAPASABE3",
@@ -6801,6 +6801,8 @@
                   "id": "d1-QAPASABE3",
                   "location": "云端第一天",
                   "stay": "",
+                  "updatedAt": 1784435355272,
+                  "orderUpdatedAt": 1784435355272,
                   "activities": [
                     {
                       "id": "a1-QAPASABE3",
@@ -6814,14 +6816,14 @@
                       "transport": null,
                       "updatedAt": 1784435355272
                     }
-                  ],
-                  "updatedAt": 1784435355272,
-                  "orderUpdatedAt": 1784435355272
+                  ]
                 },
                 {
                   "id": "d2-QAPASABE3",
                   "location": "云端第二天",
                   "stay": "",
+                  "updatedAt": 1784435502953,
+                  "orderUpdatedAt": 1784435502953,
                   "activities": [
                     {
                       "id": "remote-act-1784435502953",
@@ -6835,9 +6837,7 @@
                       "transport": null,
                       "updatedAt": 1784435502953
                     }
-                  ],
-                  "updatedAt": 1784435502953,
-                  "orderUpdatedAt": 1784435502953
+                  ]
                 }
               ],
               "budget": {
@@ -6859,7 +6859,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784435504143
+        "updatedAt": 1784435954336
       }
     },
     "A2E0892C": {
