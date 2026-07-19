@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:20:42.129Z",
+  "savedAt": "2026-07-19T02:20:48.286Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -4808,7 +4808,7 @@
       }
     },
     "7DE6EED4": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "0937ce38-a79c-4604-9eb5-546542d81452",
@@ -4828,9 +4828,25 @@
                   "id": "4aaaf02e-6315-47e1-adc7-8fa748a97154",
                   "location": "",
                   "stay": "",
-                  "activities": [],
-                  "updatedAt": 1784427632099,
-                  "orderUpdatedAt": 1784427632099
+                  "updatedAt": 1784427647121,
+                  "orderUpdatedAt": 1784427647121,
+                  "activities": [
+                    {
+                      "id": "6b445403-bd7a-482b-9cec-cf856bbc1411",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784427647121
+                    }
+                  ]
                 }
               ],
               "budget": {
@@ -4839,11 +4855,11 @@
                 "limit": 0,
                 "updatedAt": 1784427632099
               },
-              "updatedAt": 1784427632099,
+              "updatedAt": 1784427647122,
               "orderUpdatedAt": 1784427632099
             },
             "createdAt": 1784427632099,
-            "updatedAt": 1784427632099
+            "updatedAt": 1784427647122
           }
         ],
         "deleted": {
@@ -4852,7 +4868,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784427641879
+        "updatedAt": 1784427648035
       }
     }
   }
