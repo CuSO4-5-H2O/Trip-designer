@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:22:06.670Z",
+  "savedAt": "2026-07-19T03:23:16.593Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6079,7 +6079,7 @@
       }
     },
     "QAMOB088": {
-      "revision": 8,
+      "revision": 10,
       "state": {
         "version": 2,
         "activeListId": "c491e2a3-17fa-4722-8295-d4441d54a030",
@@ -6092,7 +6092,7 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-19",
               "originCity": "",
-              "selectedDayId": "baa4284a-4e11-4ba4-9971-8e7c793ceeb2",
+              "selectedDayId": "299a0742-1075-4898-962b-db50cd94f98f",
               "dayLimit": 30,
               "days": [
                 {
@@ -6126,6 +6126,27 @@
                   ]
                 },
                 {
+                  "id": "299a0742-1075-4898-962b-db50cd94f98f",
+                  "location": "内罗毕安排",
+                  "stay": "",
+                  "updatedAt": 1784431395380,
+                  "orderUpdatedAt": 1784431395380,
+                  "activities": [
+                    {
+                      "id": "803c9669-0ecf-40da-85fe-6e92106d84aa",
+                      "time": "",
+                      "title": "国家博物馆",
+                      "place": "国家博物馆",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784431395380
+                    }
+                  ]
+                },
+                {
                   "id": "53704f6d-2be7-4ccd-aa11-3dbd602bf5f1",
                   "location": "",
                   "stay": "",
@@ -6137,9 +6158,9 @@
                   "id": "baa4284a-4e11-4ba4-9971-8e7c793ceeb2",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1784431325474,
-                  "orderUpdatedAt": 1784431325474
+                  "orderUpdatedAt": 1784431325474,
+                  "activities": []
                 }
               ],
               "budget": {
@@ -6148,11 +6169,11 @@
                 "limit": 0,
                 "updatedAt": 1784430680587
               },
-              "updatedAt": 1784431325474,
-              "orderUpdatedAt": 1784431325474
+              "updatedAt": 1784431395380,
+              "orderUpdatedAt": 1784431395380
             },
             "createdAt": 1784430680587,
-            "updatedAt": 1784431325474
+            "updatedAt": 1784431395380
           }
         ],
         "deleted": {
@@ -6161,7 +6182,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784431326420
+        "updatedAt": 1784431396343
       }
     }
   }
