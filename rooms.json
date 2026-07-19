@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:02:03.405Z",
+  "savedAt": "2026-07-19T03:02:21.965Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -5274,7 +5274,7 @@
       }
     },
     "EBB7204B": {
-      "revision": 8,
+      "revision": 9,
       "state": {
         "version": 2,
         "activeListId": "ef4f18ee-647c-4db7-b180-408f0c082467",
@@ -5423,7 +5423,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784429175926
+        "updatedAt": 1784430141714
       }
     },
     "984188C0": {
