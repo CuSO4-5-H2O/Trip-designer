@@ -24,7 +24,9 @@
 - AI quick-plan UI generated a DeepSeek plan and applied it after selected Day 1, producing order: original Day 1, AI generated Day 2, old Day 2, old Day 3.
 - Cloud `/api/room-state` confirmed the AI insertion order at revision 10.
 - Follow-up hardening commit `9fd0b8c9d1f2ce43e68f04dc0e0213be361e6ec2` fixed stale selection fallback by recording the last touched day card before applying AI generated days.
-- Follow-up server commit `c632f46e98ed7d12b70781da8597218838a1a95d` restored the full server file and added protection against blank startup state overwrites.
+- Follow-up server commit `c632f46e98ed7d12b70781da8597218838a1a95d` restored the full server file and added protection against blank startup state overwrites; commit `f26f9d86da081bc9b2d691592346f35860c6d707` documents this guard.
+- Production blank-overwrite QA used room `QAGDB93B`: after seeding three real days, a deliberate blank `新行程单` write was ignored and the cloud still returned `真实一 / 真实二 / 真实三`.
+- Production AI selected-day QA used room `QAGDB93B`: with Day 2 selected, DeepSeek generated a one-day Nairobi plan and applying it produced cloud order `真实一 / 真实二 / 内罗毕 / 真实三`, confirming it inserted after the selected day instead of at the bottom.
 - Mobile screenshot check had no horizontal overflow: `documentElement.scrollWidth <= innerWidth`.
 - Startup cloud primer QA used production room `QAPR3723`, seeded with one list named `云端保留测试`, 2 days, and 2 activities.
 - Opening `QAPR3723` rendered `云端保留测试` immediately with both cloud days; the page did not show or save a default `新行程单1 天 · 0 项` state.
