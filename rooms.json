@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T04:06:03.328Z",
+  "savedAt": "2026-07-19T04:15:43.103Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6642,6 +6642,109 @@
           "members": {}
         },
         "updatedAt": 1784433558595
+      }
+    },
+    "QAINSB23C": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "list-QAINSB23C",
+        "members": [],
+        "lists": [
+          {
+            "id": "list-QAINSB23C",
+            "name": "AI插入位置QA",
+            "trip": {
+              "tripTitle": "AI插入位置QA",
+              "startDate": "2026-08-01",
+              "originCity": "上海",
+              "selectedDayId": "day2-QAINSB23C",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "day1-QAINSB23C",
+                  "location": "真实一",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "day1-QAINSB23Ca",
+                      "time": "09:00",
+                      "title": "真实一原事项",
+                      "place": "真实一",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784434541499
+                    }
+                  ],
+                  "updatedAt": 1784434541499,
+                  "orderUpdatedAt": 1784434541499
+                },
+                {
+                  "id": "day2-QAINSB23C",
+                  "location": "真实二",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "day2-QAINSB23Ca",
+                      "time": "09:00",
+                      "title": "真实二原事项",
+                      "place": "真实二",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784434541500
+                    }
+                  ],
+                  "updatedAt": 1784434541500,
+                  "orderUpdatedAt": 1784434541500
+                },
+                {
+                  "id": "day3-QAINSB23C",
+                  "location": "真实三",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "day3-QAINSB23Ca",
+                      "time": "09:00",
+                      "title": "真实三原事项",
+                      "place": "真实三",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784434541501
+                    }
+                  ],
+                  "updatedAt": 1784434541501,
+                  "orderUpdatedAt": 1784434541501
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784434541498
+              },
+              "updatedAt": 1784434541508,
+              "orderUpdatedAt": 1784434541508
+            },
+            "createdAt": 1784434541498,
+            "updatedAt": 1784434541508
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784434541508
       }
     }
   }
