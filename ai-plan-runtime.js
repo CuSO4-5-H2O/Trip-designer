@@ -55,6 +55,7 @@ function buildPrompt(text, trip, hints, fallback) {
     hints.locationSequence.length ? `城市天数序列：${hints.locationSequence.map((item) => `${item.location || "未指定"} ${item.days}天`).join("，")}。` : "",
     fallback?.days?.length ? `后端规则解析草案如下；必须保持天数和第几天归属，可以补充字段，但不要删除或弱化这些明确事项：${JSON.stringify(fallback)}` : "",
     "如果文本写了第几天/第二天/第三天，事项必须放到对应 day。",
+    "遇到“长颈鹿中心后出发去马赛马拉”这类句子时，应拆成游玩长颈鹿中心和出发去马赛马拉两个事项。",
     "不要编造用户没有暗示的必去景点；可以把不确定内容放进 note。",
     "时间不确定时 time 为空字符串。地点尽量写具体 place；当天城市写 location。住宿不确定时 stay 为空。",
     "交通 type 只能是 plane/train/bus/boat/car 或空字符串。预算不确定时 budget 为 null。",
@@ -76,6 +77,7 @@ function normalizePlan(input = {}, hints = {}, fallback = null) {
     days = applyLocationHints(days, hints.locationSequence);
   }
   if (fallback?.days?.length) days = mergeFallbackDays(days, fallback.days);
+  days = days.map((day) => ({ ...day, activities: polishActivities(day.activities || [], hints).slice(0, 30) }));
   return { title: clean(input.title), originCity: clean(input.originCity), days };
 }
 
@@ -95,7 +97,7 @@ function mergeFallbackDays(days, fallbackDays) {
 }
 
 function reconcileActivities(primaryActivities, fallbackActivities) {
-  if (!primaryActivities.length) return fallbackActivities.map(normalizeActivity).filter(Boolean);
+  if (!primaryActivities.length) return polishActivities(fallbackActivities.map(normalizeActivity).filter(Boolean));
   const normalizedPrimary = primaryActivities.map(normalizeActivity).filter(Boolean);
   const normalizedFallback = fallbackActivities.map(normalizeActivity).filter(Boolean);
   const output = normalizedPrimary.map((activity, index) => {
@@ -110,7 +112,56 @@ function reconcileActivities(primaryActivities, fallbackActivities) {
   for (const fallback of normalizedFallback) {
     if (!output.some((activity) => sameActivity(activity, fallback))) output.push(fallback);
   }
-  return dedupeActivities(output);
+  return polishActivities(output);
+}
+
+function polishActivities(activities, hints = {}) {
+  return dedupeActivities((activities || []).flatMap((activity) => expandCompoundActivity(activity, hints)).map((activity) => ({
+    ...activity,
+    title: cleanActivityText(activity.title),
+    place: cleanPlace(activity.place),
+    note: clean(activity.note),
+  })).filter((activity) => activity.title || activity.place || activity.note));
+}
+
+function expandCompoundActivity(activity, hints = {}) {
+  if (!activity) return [];
+  const title = cleanActivityText(activity.title);
+  if (!title) return [activity];
+
+  const travel = title.match(/^(.{1,40}?)(?:后|之后)(出发|前往|去|到)(.{1,40})$/);
+  if (travel) {
+    const firstTitle = cleanActivityText(travel[1]);
+    const verb = travel[2];
+    const destination = cleanLocation(travel[3]);
+    const first = firstTitle ? {
+      ...activity,
+      title: firstTitle,
+      place: cleanPlace(activity.place) && !/^后/.test(cleanPlace(activity.place)) ? cleanPlace(activity.place) : inferActivityPlace(firstTitle, hints),
+      transport: null,
+    } : null;
+    const secondTitle = destination ? (verb === "出发" ? `出发去${destination}` : `前往${destination}`) : title;
+    const second = {
+      ...activity,
+      title: secondTitle,
+      place: destination || cleanPlace(activity.place),
+      note: activity.note || "",
+      transport: activity.transport || (destination ? { type: "car", from: firstTitle || hints.defaultLocation || "", to: destination, depart: "", arrive: "" } : null),
+    };
+    return [first, second].filter(Boolean);
+  }
+
+  const arriveThen = title.match(/^(抵达.{0,24}?)(?:后|之后)(.+)$/);
+  if (arriveThen) {
+    const firstTitle = cleanActivityText(arriveThen[1]);
+    const secondTitle = cleanActivityText(arriveThen[2]);
+    return [
+      firstTitle ? { ...activity, title: firstTitle, place: inferActivityPlace(firstTitle, hints), transport: null } : null,
+      secondTitle ? { ...activity, title: secondTitle, place: inferActivityPlace(secondTitle, hints), transport: null } : null,
+    ].filter(Boolean);
+  }
+
+  return [activity];
 }
 
 function isMoreSpecific(candidate, current) {
@@ -127,12 +178,12 @@ function sameActivity(left, right) {
 
 function normalizeDay(day = {}) {
   const activities = Array.isArray(day.activities) ? day.activities : [];
-  return { location: clean(day.location || day.city), stay: clean(day.stay || day.hotel), activities: activities.map(normalizeActivity).filter(Boolean).slice(0, 30) };
+  return { location: clean(day.location || day.city), stay: clean(day.stay || day.hotel), activities: polishActivities(activities.map(normalizeActivity).filter(Boolean)).slice(0, 30) };
 }
 
 function normalizeActivity(activity = {}) {
-  const title = clean(activity.title || activity.name || activity.activity);
-  const place = clean(activity.place || activity.location || activity.poi);
+  const title = cleanActivityText(activity.title || activity.name || activity.activity);
+  const place = cleanPlace(activity.place || activity.location || activity.poi);
   const note = clean(activity.note || activity.description || activity.reason);
   const time = normalizeTime(activity.time || activity.startTime || "");
   if (!title && !place && !note) return null;
@@ -150,7 +201,7 @@ function buildDeterministicPlan(text, hints = {}) {
     days[index].activities.push(...extractActivities(segment.text, hints));
   }
   if (!segments.days.length && !preamble.length) days[0].activities.push(...extractActivities(stripPlanningClauses(text), hints));
-  return { title: hints.defaultLocation && expected ? `${hints.defaultLocation}${expected}天行程` : "", originCity: "", days: days.map((day) => ({ ...day, activities: dedupeActivities(day.activities) })) };
+  return { title: hints.defaultLocation && expected ? `${hints.defaultLocation}${expected}天行程` : "", originCity: "", days: days.map((day) => ({ ...day, activities: polishActivities(day.activities, hints) })) };
 }
 
 function splitByOrdinalDays(text) {
@@ -187,6 +238,7 @@ function cleanActivityText(value) {
   return clean(value)
     .replace(/^(?:先|可|可以|安排|计划|去|到|前往|参观|游览|打卡|逛|看|体验)\s*/g, "")
     .replace(/^(?:上午|中午|下午|晚上|早上|傍晚)\s*/g, "")
+    .replace(/^(?:后|之后)\s*/g, "")
     .replace(/^(?:，|,|。|；|;)+/, "")
     .replace(/(?:，|,|。|；|;)+$/, "")
     .trim();
@@ -201,11 +253,11 @@ function phraseToActivity(phrase, hints = {}) {
 }
 
 function inferActivityPlace(title, hints = {}) {
-  const text = clean(title);
+  const text = cleanActivityText(title);
   const hotel = text.match(/入住(.{0,20}?)(酒店|旅店|民宿|住宿|营地)/);
   if (hotel) return clean(hotel[0].replace(/^入住/, ""));
   const arrive = text.match(/^抵达(.{1,24})$/);
-  if (arrive) return clean(arrive[1]);
+  if (arrive) return cleanLocation(arrive[1]);
   if (/出发|离开|返程|准备出发/.test(text)) return hints.defaultLocation || "";
   return text;
 }
@@ -302,7 +354,7 @@ function parseChineseNumber(value) {
 function normalizeTransport(value) {
   if (!value || typeof value !== "object") return null;
   const type = TRANSPORT_TYPES.has(value.type) ? value.type : "";
-  const result = { type, from: clean(value.from), to: clean(value.to), depart: normalizeTime(value.depart), arrive: normalizeTime(value.arrive) };
+  const result = { type, from: cleanPlace(value.from), to: cleanPlace(value.to), depart: normalizeTime(value.depart), arrive: normalizeTime(value.arrive) };
   return Object.values(result).some(Boolean) ? result : null;
 }
 
@@ -320,7 +372,11 @@ function normalizeTime(value) {
 }
 
 function cleanLocation(value) {
-  return clean(value).replace(/^(?:在|去|到|前往)/, "").replace(/(?:玩|游玩|停留|待|住)$/g, "").trim();
+  return clean(value).replace(/^(?:在|去|到|前往|后|之后)/, "").replace(/(?:玩|游玩|停留|待|住)$/g, "").trim();
+}
+
+function cleanPlace(value) {
+  return cleanLocation(value).replace(/^(?:后|之后)/, "").trim();
 }
 
 function publicHints(hints, plan) {
