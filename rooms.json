@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T01:43:01.394Z",
+  "savedAt": "2026-07-19T01:43:02.401Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -4368,7 +4368,7 @@
       }
     },
     "47F10036": {
-      "revision": 3,
+      "revision": 4,
       "state": {
         "version": 2,
         "activeListId": "ff115b4a-cf1a-4da4-b568-97991882b884",
@@ -4400,10 +4400,22 @@
                       "budget": null,
                       "transport": null,
                       "updatedAt": 1784425380233
+                    },
+                    {
+                      "id": "bc817879-3959-49e7-8e82-b953b0969246",
+                      "time": "09:00",
+                      "title": "朋友协作事项-co9pjf",
+                      "place": "云端测试地点",
+                      "note": "sync qa",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784425381249
                     }
                   ],
-                  "updatedAt": 1784425380233,
-                  "orderUpdatedAt": 1784425380233
+                  "updatedAt": 1784425381249,
+                  "orderUpdatedAt": 1784425381249
                 }
               ],
               "budget": {
@@ -4412,11 +4424,11 @@
                 "limit": 0,
                 "updatedAt": 1784425378125
               },
-              "updatedAt": 1784425380233,
-              "orderUpdatedAt": 1784425380233
+              "updatedAt": 1784425381249,
+              "orderUpdatedAt": 1784425381249
             },
             "createdAt": 1784425378125,
-            "updatedAt": 1784425380233
+            "updatedAt": 1784425381249
           }
         ],
         "deleted": {
@@ -4425,7 +4437,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784425381144
+        "updatedAt": 1784425382150
       }
     },
     "6FDFD8AC": {
