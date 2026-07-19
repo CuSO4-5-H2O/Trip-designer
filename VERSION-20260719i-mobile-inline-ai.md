@@ -13,6 +13,9 @@
 - Hardened AI quick-plan target detection: applying a generated plan now prioritizes the last clicked day card, then the selected/active day in the DOM, then the trip's saved `selectedDayId`. This prevents generated AI days from falling to the bottom when the UI selection state is stale.
 - Bumped the production entrypoint to `render-20260719l` and loaded `ai-quick-plan.js?v=render-20260719l`, forcing browsers to pick up the selected-day insertion fix instead of a cached older quick-plan script.
 - Improved AI quick-plan normalization so compound text such as `长颈鹿中心后出发去马赛马拉` is split into a visit activity and a travel activity with car transport.
+- Cleaned AI quick-plan city parsing so phrases such as `在内罗毕安排1天` produce location `内罗毕` rather than `内罗毕安排`.
+- Converted `cloud-authority-refresh.js` into a passive cloud-readiness marker. It no longer writes cloud state into `localStorage`, no longer posts a `BroadcastChannel` library update, and no longer runs the 1.8 second settle refresh that could visibly replace the day list after startup.
+- Bumped the production entrypoint to `render-20260719m` and loaded `cloud-authority-refresh.js?v=render-20260719m` so browsers pick up the passive refresh script.
 - Added a server-side blank overwrite guard: if a room already has real content, a startup/default blank `新行程单` state is ignored instead of being merged as newer data.
 - Added `startup-cloud-primer.js` and loaded it before the room app boot path. It reads the current room from `/api/room-state` before `app-collab.js` initializes, then primes the guarded storage read so the app starts from the GitHub cloud room state instead of generating and displaying a default blank itinerary first.
 
@@ -28,6 +31,12 @@
 - Follow-up hardening commit `9fd0b8c9d1f2ce43e68f04dc0e0213be361e6ec2` fixed stale selection fallback by recording the last touched day card before applying AI generated days.
 - Follow-up entrypoint commit `59c2ba7f500fc76415f890b1700a4b410ae3836a` bumps `ai-quick-plan.js` to `render-20260719l`, ensuring the browser no longer keeps the old bottom-insertion script from cache.
 - Follow-up AI runtime QA called production `/api/ai/quick-plan` with a 3-day Nairobi prompt. It returned exactly 3 days; Day 2 contained `基贝拉贫民窟` and `国家博物馆`; Day 3 split `长颈鹿中心` and `出发去马赛马拉` with `car` transport from `长颈鹿中心` to `马赛马拉`.
+- Follow-up AI parser commit `ece0263438fe4b65ee8ea88d28ef692135d3cfb0` cleaned planning suffixes from city names.
+- Production AI parser QA after that commit called `/api/ai/quick-plan` with `在内罗毕安排1天，上午去国家博物馆，下午去咖啡馆休息`; it returned location `内罗毕` and activities `国家博物馆 / 咖啡馆休息`.
+- Production 3-day parser regression still passed after the cleanup: it returned `内罗毕` for all 3 days, kept Day 2 `基贝拉贫民窟 / 国家博物馆`, and split Day 3 into `长颈鹿中心` plus `出发去马赛马拉` with car transport.
+- Passive cloud refresh commit `51ae88119ef4872fb2c351cb3f90eb91ae4713a8` removed `BroadcastChannel`, `localStorage.setItem`, and the delayed settle refresh from `cloud-authority-refresh.js`.
+- Production asset QA for `cloud-authority-refresh.js?v=render-20260719m` confirmed `hasBroadcastChannel=false`, `hasLocalStorageWrite=false`, `hasSettleTimer=false`, and `hasMarkCloudReady=true`.
+- Production stability QA used room `QAPASABE3`: after opening `render-20260719m`, 8 DOM samples over 5.6 seconds kept one unique day order, `云端第一天 / 云端第二天`, with no delayed replacement of the day list.
 - Follow-up server commit `c632f46e98ed7d12b70781da8597218838a1a95d` restored the full server file and added protection against blank startup state overwrites; commit `f26f9d86da081bc9b2d691592346f35860c6d707` documents this guard.
 - Production blank-overwrite QA used room `QAGDB93B`: after seeding three real days, a deliberate blank `新行程单` write was ignored and the cloud still returned `真实一 / 真实二 / 真实三`.
 - Production AI selected-day QA used room `QAGDB93B`: with Day 2 selected, DeepSeek generated a one-day Nairobi plan and applying it produced cloud order `真实一 / 真实二 / 内罗毕 / 真实三`, confirming it inserted after the selected day instead of at the bottom.
