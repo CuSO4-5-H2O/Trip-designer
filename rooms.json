@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T04:17:54.344Z",
+  "savedAt": "2026-07-19T04:29:17.071Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6778,6 +6778,75 @@
           "members": {}
         },
         "updatedAt": 1784434674094
+      }
+    },
+    "QAPASABE3": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "list-QAPASABE3",
+        "members": [],
+        "lists": [
+          {
+            "id": "list-QAPASABE3",
+            "name": "稳定刷新QA",
+            "trip": {
+              "tripTitle": "稳定刷新QA",
+              "startDate": "2026-08-02",
+              "originCity": "上海",
+              "selectedDayId": "d1-QAPASABE3",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "d1-QAPASABE3",
+                  "location": "云端第一天",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "a1-QAPASABE3",
+                      "time": "09:00",
+                      "title": "云端事项一",
+                      "place": "云端第一天",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784435355272
+                    }
+                  ],
+                  "updatedAt": 1784435355272,
+                  "orderUpdatedAt": 1784435355272
+                },
+                {
+                  "id": "d2-QAPASABE3",
+                  "location": "云端第二天",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1784435355273,
+                  "orderUpdatedAt": 1784435355273
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784435355271
+              },
+              "updatedAt": 1784435355281,
+              "orderUpdatedAt": 1784435355281
+            },
+            "createdAt": 1784435355271,
+            "updatedAt": 1784435355281
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784435355281
       }
     }
   }
