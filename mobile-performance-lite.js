@@ -12,6 +12,7 @@
     observePanelCreation();
     window.setTimeout(() => scheduleMobilePass(0), 300);
     window.setTimeout(() => scheduleMobilePass(0), 900);
+    window.setTimeout(() => scheduleMobilePass(0), 1800);
   }
 
   function scheduleMobilePass(delay = 80) {
@@ -26,6 +27,7 @@
   function runMobilePass() {
     if (!isMobile()) return;
     collapseSmartPanelsOnce();
+    collapseQuickPlanOnce();
   }
 
   function observePanelCreation() {
@@ -34,8 +36,8 @@
       if (!isMobile()) return;
       const hasNewPanel = mutations.some((mutation) => [...mutation.addedNodes].some((node) =>
         node.nodeType === 1 && (
-          node.matches?.(".smart-map-panel,.ai-panel") ||
-          node.querySelector?.(".smart-map-panel,.ai-panel")
+          node.matches?.(".smart-map-panel,.ai-panel,#quickPlanPanel") ||
+          node.querySelector?.(".smart-map-panel,.ai-panel,#quickPlanPanel")
         )
       ));
       if (hasNewPanel) scheduleMobilePass(40);
@@ -54,6 +56,17 @@
     });
   }
 
+  function collapseQuickPlanOnce() {
+    const panel = document.querySelector("#quickPlanPanel");
+    if (!panel || panel.dataset.mobileCollapsedOnce) return;
+    panel.dataset.mobileCollapsedOnce = "1";
+    panel.classList.add("is-collapsed");
+    panel.querySelectorAll("[data-quick-collapse]").forEach((button) => {
+      button.textContent = "展开";
+      button.setAttribute("aria-expanded", "false");
+    });
+  }
+
   function installStyles() {
     if (styleInstalled) return;
     styleInstalled = true;
@@ -64,7 +77,11 @@
         .workspace{display:flex!important;flex-direction:column!important;gap:12px!important;width:100%!important;max-width:100%!important}
         .timeline-section{order:1;display:flex!important;flex-direction:column!important;gap:12px!important;width:100%;min-width:0}
         .sidebar{order:2;width:100%;min-width:0}.detail-panel{order:3;width:100%;min-width:0}
-        .timeline-head{order:1}.day-list,#dayList{order:2;display:grid!important;gap:12px!important}.smart-panel{order:3;display:grid!important;gap:12px!important;width:100%;min-width:0}
+        .timeline-head{order:1}.day-list,#dayList{order:2;display:grid!important;gap:12px!important}.quick-plan-panel{order:3}.smart-panel{order:4;display:grid!important;gap:12px!important;width:100%;min-width:0}
+        .quick-plan-panel.is-collapsed .quick-plan-form,
+        .quick-plan-panel.is-collapsed .quick-plan-batch,
+        .quick-plan-panel.is-collapsed .quick-segment-list{display:none!important}
+        .quick-plan-panel.is-collapsed{min-height:auto!important;padding-block:10px!important}
         .smart-map-panel.is-collapsed .map-canvas,
         .smart-map-panel.is-collapsed .map-provider-switch,
         .smart-map-panel.is-collapsed #mapStatus,
