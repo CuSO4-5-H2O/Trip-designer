@@ -216,7 +216,7 @@
   }
 
   function shouldSendImmediately(reason) {
-    return /manual|unload|flush|beforeunload|retry|add-day|delete-day|add-list|delete-list|save-activity|delete-activity|reorder-|inline-template-add-activity|add-ai|apply-ai|ai-quick-plan-apply|create-room|join-room/i.test(String(reason || ""));
+    return /manual|unload|flush|beforeunload|retry|add-day|delete-day|add-list|delete-list|save-activity|delete-activity|reorder-|inline-template-add-activity|inline-edit-|add-ai|apply-ai|ai-quick-plan-apply|create-room|join-room/i.test(String(reason || ""));
   }
 
   function clonePostInit(init = {}) {
