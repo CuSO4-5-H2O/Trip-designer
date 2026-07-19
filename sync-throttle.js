@@ -23,6 +23,10 @@
     const payload = parseJson(data);
     if (payload?.type === "state" && payload.roomId && payload.state) {
       lastStateByRoom.set(payload.roomId, payload.state);
+      if (shouldSendImmediately(payload.reason)) {
+        setSyncText("正在保存到云端", true);
+        return originalSend.call(this, data);
+      }
       markPending(payload.roomId);
       queueSocketState(this, payload.roomId, payload);
       setSyncText("本地待同步 · 1 分钟内自动保存", false);
@@ -212,7 +216,7 @@
   }
 
   function shouldSendImmediately(reason) {
-    return /manual|unload|flush|beforeunload|retry/i.test(String(reason || ""));
+    return /manual|unload|flush|beforeunload|retry|add-day|delete-day|add-list|delete-list|save-activity|delete-activity|reorder-|inline-template-add-activity|add-ai|apply-ai|ai-quick-plan-apply|create-room|join-room/i.test(String(reason || ""));
   }
 
   function clonePostInit(init = {}) {
