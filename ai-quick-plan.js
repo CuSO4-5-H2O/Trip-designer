@@ -3,6 +3,7 @@
 
   let installed = false;
   let pendingPlan = null;
+  let pendingMeta = null;
   let installTimer = 0;
   let installAttempts = 0;
 
@@ -30,7 +31,7 @@
     box.innerHTML = `
       <div class="ai-quick-head">
         <strong>文本快速添加</strong>
-        <span>输入自然语言，AI 会生成天数和事项</span>
+        <span>输入自然语言，AI 会生成天数和事项；确认后才写入当前 list</span>
       </div>
       <textarea id="aiQuickPlanText" rows="4" placeholder="例如：在内罗毕玩3天，第一天抵达并逛市区，第二天去基贝拉贫民窟和博物馆，第三天去长颈鹿中心后出发去马赛马拉"></textarea>
       <div class="ai-quick-actions">
@@ -52,13 +53,11 @@
     const apply = document.querySelector("#aiQuickApply");
     const preview = document.querySelector("#aiQuickPreview");
     pendingPlan = null;
+    pendingMeta = null;
     apply.disabled = true;
     preview.replaceChildren();
-    if (!text) {
-      status.textContent = "请先输入行程文本";
-      return;
-    }
-    status.textContent = "正在解析行程...";
+    if (!text) return setStatus("请先输入行程文本");
+    setStatus("正在解析行程...");
     try {
       const library = window.TripPlanner?.getLibrary?.();
       const list = activeList(library);
@@ -70,26 +69,36 @@
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.error || data.detail || "解析失败");
       pendingPlan = data.plan;
-      renderPreview(pendingPlan);
+      pendingMeta = { source: data.source || "", warning: data.warning || "", expectedDays: data.hints?.expectedDays || data.plan?.days?.length || 0 };
+      renderPreview(pendingPlan, pendingMeta);
       apply.disabled = false;
-      status.textContent = `已生成 ${pendingPlan.days.length} 天，确认后应用到当前 list`;
+      const sourceText = pendingMeta.source === "deepseek" ? "DeepSeek" : "规则解析";
+      setStatus(`已生成 ${pendingPlan.days.length} 天（${sourceText}），确认后应用到当前 list`);
     } catch (error) {
-      status.textContent = error.message || "解析失败，请重试";
+      setStatus(error.message || "解析失败，请重试");
     }
   }
 
-  function renderPreview(plan) {
+  function renderPreview(plan, meta = {}) {
     const preview = document.querySelector("#aiQuickPreview");
-    preview.replaceChildren(...plan.days.map((day, index) => {
+    const items = [];
+    if (meta.warning) {
+      const warning = document.createElement("article");
+      warning.className = "ai-quick-day ai-quick-warning";
+      warning.innerHTML = `<strong>已使用备用解析</strong><span>${escapeHtml(meta.warning)}</span>`;
+      items.push(warning);
+    }
+    items.push(...plan.days.map((day, index) => {
       const item = document.createElement("article");
       item.className = "ai-quick-day";
-      const titles = (day.activities || []).map((activity) => activity.title).filter(Boolean).slice(0, 4).join("、");
+      const titles = (day.activities || []).map((activity) => activity.title).filter(Boolean).slice(0, 6).join("、");
       item.innerHTML = `<strong>第 ${index + 1} 天 · ${escapeHtml(day.location || "未填写地点")}</strong><span>${escapeHtml(titles || "暂无事项")}</span>`;
       return item;
     }));
+    preview.replaceChildren(...items);
   }
 
-  function applyPlan() {
+  async function applyPlan() {
     if (!pendingPlan) return;
     const library = window.TripPlanner?.getLibrary?.();
     const list = activeList(library);
@@ -97,7 +106,7 @@
     if (!library || !list || !trip) return setStatus("行程还没有加载完成");
     const stamp = Date.now();
     const hasOnlyBlankDay = trip.days.length === 1 && !trip.days[0].location && !trip.days[0].stay && !(trip.days[0].activities || []).length;
-    const generatedDays = pendingPlan.days.map((day) => makeDay(day, trip, stamp));
+    const generatedDays = pendingPlan.days.map((day) => makeDay(day, stamp));
     if (hasOnlyBlankDay) trip.days = generatedDays;
     else trip.days.push(...generatedDays);
     trip.selectedDayId = generatedDays[0]?.id || trip.selectedDayId;
@@ -112,23 +121,35 @@
     list.updatedAt = stamp;
     library.updatedAt = stamp;
     window.TripPlanner?.saveExternalLibrary?.(library, "ai-quick-plan-apply");
-    setStatus(`已应用 ${generatedDays.length} 天行程到当前 list`);
+    setStatus(`已应用 ${generatedDays.length} 天，正在保存到云端...`);
     pendingPlan = null;
-    document.querySelector("#aiQuickApply").disabled = true;
+    pendingMeta = null;
+    const apply = document.querySelector("#aiQuickApply");
+    if (apply) apply.disabled = true;
+    try {
+      if (typeof window.TripDesignerFlushSync === "function") {
+        const ok = await window.TripDesignerFlushSync("ai-quick-plan-apply-manual");
+        setStatus(ok === false ? "已应用到页面，本地待同步；点击同步条可重试" : `已应用 ${generatedDays.length} 天并保存到云端`);
+      } else {
+        setStatus(`已应用 ${generatedDays.length} 天，本地待同步`);
+      }
+    } catch {
+      setStatus("已应用到页面，本地待同步；点击同步条可重试");
+    }
   }
 
-  function makeDay(day, trip, stamp) {
+  function makeDay(day, stamp) {
     return {
       id: crypto.randomUUID(),
       location: day.location || "",
       stay: day.stay || "",
-      activities: (day.activities || []).map((activity) => makeActivity(activity, trip, stamp)),
+      activities: (day.activities || []).map((activity) => makeActivity(activity, stamp)),
       updatedAt: stamp,
       orderUpdatedAt: stamp,
     };
   }
 
-  function makeActivity(activity, trip, stamp) {
+  function makeActivity(activity, stamp) {
     return {
       id: crypto.randomUUID(),
       time: activity.time || "",
@@ -164,7 +185,7 @@
     const style = document.createElement("style");
     style.id = "aiQuickPlanStyles";
     style.textContent = `
-      .ai-quick-plan{display:grid;gap:10px;margin:12px 0;padding:12px;border:1px solid #cfe3de;border-radius:12px;background:#f8fbfa}.ai-quick-head{display:grid;gap:3px}.ai-quick-head strong{font-size:16px}.ai-quick-head span,.ai-quick-status{color:#64736f;font-weight:700;font-size:13px}.ai-quick-plan textarea{width:100%;resize:vertical;min-height:96px;border:1px solid #cfe3de;border-radius:10px;padding:10px 12px;font:inherit;line-height:1.5}.ai-quick-actions{display:flex;gap:8px;flex-wrap:wrap}.ai-quick-preview{display:grid;gap:8px;max-height:220px;overflow:auto}.ai-quick-day{display:grid;gap:4px;padding:9px 10px;border:1px solid #e2ece9;border-radius:10px;background:#fff}.ai-quick-day span{color:#64736f;font-size:13px;line-height:1.4}`;
+      .ai-quick-plan{display:grid;gap:10px;margin:12px 0;padding:12px;border:1px solid #cfe3de;border-radius:12px;background:#f8fbfa}.ai-quick-head{display:grid;gap:3px}.ai-quick-head strong{font-size:16px}.ai-quick-head span,.ai-quick-status{color:#64736f;font-weight:700;font-size:13px}.ai-quick-plan textarea{width:100%;resize:vertical;min-height:96px;border:1px solid #cfe3de;border-radius:10px;padding:10px 12px;font:inherit;line-height:1.5}.ai-quick-actions{display:flex;gap:8px;flex-wrap:wrap}.ai-quick-preview{display:grid;gap:8px;max-height:240px;overflow:auto}.ai-quick-day{display:grid;gap:4px;padding:9px 10px;border:1px solid #e2ece9;border-radius:10px;background:#fff}.ai-quick-day span{color:#64736f;font-size:13px;line-height:1.4}.ai-quick-warning{border-color:#ffd8c2;background:#fff8f4}.ai-quick-warning strong{color:#b63a28}`;
     document.head.append(style);
   }
 
