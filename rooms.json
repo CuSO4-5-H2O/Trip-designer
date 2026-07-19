@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:57:01.711Z",
+  "savedAt": "2026-07-19T02:57:07.854Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -2923,7 +2923,7 @@
       }
     },
     "F6F48EC8": {
-      "revision": 15,
+      "revision": 16,
       "state": {
         "version": 2,
         "activeListId": "3016121c-c51f-4974-9956-86916e97321e",
@@ -2936,48 +2936,9 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-18",
               "originCity": "",
-              "selectedDayId": "36dfcf4d-3b21-448d-9b3a-546ea4368caa",
+              "selectedDayId": "a9a68c4a-edfa-4205-a90f-05bd44340327",
               "dayLimit": 30,
               "days": [
-                {
-                  "id": "a9a68c4a-edfa-4205-a90f-05bd44340327",
-                  "location": "",
-                  "stay": "",
-                  "updatedAt": 1784429799683,
-                  "orderUpdatedAt": 1784429772630,
-                  "activities": [
-                    {
-                      "id": "ae9d57aa-1c16-4291-83b5-9f354288f441",
-                      "time": "",
-                      "title": "新事项",
-                      "place": "",
-                      "note": "",
-                      "tags": [],
-                      "done": false,
-                      "budget": {
-                        "amount": 0,
-                        "currency": "CNY"
-                      },
-                      "transport": null,
-                      "updatedAt": 1784429768153
-                    },
-                    {
-                      "id": "937ef488-3c3a-4a2c-936b-ed60989e5262",
-                      "time": "",
-                      "title": "新事项",
-                      "place": "",
-                      "note": "",
-                      "tags": [],
-                      "done": false,
-                      "budget": {
-                        "amount": 0,
-                        "currency": "CNY"
-                      },
-                      "transport": null,
-                      "updatedAt": 1784429775103
-                    }
-                  ]
-                },
                 {
                   "id": "36dfcf4d-3b21-448d-9b3a-546ea4368caa",
                   "location": "",
@@ -3030,6 +2991,45 @@
                       "updatedAt": 1784429793750
                     }
                   ]
+                },
+                {
+                  "id": "a9a68c4a-edfa-4205-a90f-05bd44340327",
+                  "location": "",
+                  "stay": "",
+                  "updatedAt": 1784429799683,
+                  "orderUpdatedAt": 1784429772630,
+                  "activities": [
+                    {
+                      "id": "ae9d57aa-1c16-4291-83b5-9f354288f441",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784429768153
+                    },
+                    {
+                      "id": "937ef488-3c3a-4a2c-936b-ed60989e5262",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784429775103
+                    }
+                  ]
                 }
               ],
               "budget": {
@@ -3038,11 +3038,11 @@
                 "limit": 0,
                 "updatedAt": 1784371570602
               },
-              "updatedAt": 1784429820527,
-              "orderUpdatedAt": 1784429820527
+              "updatedAt": 1784429826670,
+              "orderUpdatedAt": 1784429826670
             },
             "createdAt": 1784371570602,
-            "updatedAt": 1784429820527
+            "updatedAt": 1784429826670
           }
         ],
         "deleted": {
@@ -3051,7 +3051,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784429821461
+        "updatedAt": 1784429827604
       }
     },
     "AICLOUD6BDBC3": {
