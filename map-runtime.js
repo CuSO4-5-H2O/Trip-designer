@@ -23,47 +23,41 @@ function getMapConfig() {
   const amapKey = process.env.gaodemap_key || process.env.GAODEMAP_KEY || process.env.AMAP_KEY || "";
   const amapSecurityCode = process.env.gaodemap_securitycode || process.env.GAODEMAP_SECURITYCODE || process.env.AMAP_SECURITY_CODE || "";
   const googleKey = process.env.googlemap || process.env.GOOGLEMAP || process.env.GOOGLE_MAPS_API_KEY || "";
-  return { defaultProvider: amapKey ? "amap" : googleKey ? "google" : "none", providers: { amap: { configured: Boolean(amapKey), key: amapKey, securityCode: amapSecurityCode }, google: { configured: Boolean(googleKey), key: googleKey } } };
+  return {
+    defaultProvider: googleKey ? "google" : amapKey ? "amap" : "none",
+    providers: {
+      amap: { configured: Boolean(amapKey), key: amapKey, securityCode: amapSecurityCode },
+      google: { configured: Boolean(googleKey), key: googleKey },
+    },
+  };
 }
 
 async function handleMapPlan(req, res) {
   try {
     const body = JSON.parse(await readBody(req));
     const config = getMapConfig();
-    const provider = chooseProvider(body.provider, config);
-    if (provider === "none") return sendJson(res, 503, { ok: false, error: "missing map api key" });
-    const entries = (Array.isArray(body.entries) ? body.entries : []).slice(0, 40).map((entry, index) => ({
-      query: String(entry?.query || "").trim(),
-      label: String(entry?.label || entry?.query || "").trim(),
-      day: String(entry?.day || "").trim(),
-      dayId: String(entry?.dayId || "").trim(),
-      activityId: String(entry?.activityId || "").trim(),
-      mode: normalizeMode(entry?.mode || entry?.transport || ""),
-      order: index + 1,
-    })).filter((entry) => entry.query && entry.label);
+    const entries = normalizeEntries(body.entries);
     if (!entries.length) return sendJson(res, 400, { ok: false, error: "missing itinerary points" });
-    const cacheKey = `${provider}:${JSON.stringify(entries)}`;
+
+    const requestedProvider = String(body.provider || "auto").toLowerCase();
+    const providers = providerOrder(requestedProvider, config);
+    if (!providers.length) return sendJson(res, 503, { ok: false, error: "missing map api key" });
+
+    const cacheKey = `${providers.join("+")}:${JSON.stringify(entries)}`;
     const cached = mapPlanCache.get(cacheKey);
     if (cached) return sendJson(res, 200, { ok: true, cached: true, ...cached });
-    const points = [];
-    for (const entry of entries) {
-      try {
-        const point = await geocodeEntry(provider, entry, config);
-        if (point) points.push(point);
-      } catch {
-        points.push({ ...entry, located: false, lat: null, lng: null });
-      }
+
+    const attempts = [];
+    for (const provider of providers) {
+      const plan = await buildPlanForProvider(provider, entries, config);
+      attempts.push(plan);
+      if (requestedProvider !== "auto") break;
+      if (locatedCount(plan) === entries.length) break;
     }
-    const locatedPoints = points.filter((point) => point.located !== false && Number.isFinite(point.lat) && Number.isFinite(point.lng));
-    const segments = [];
-    for (let index = 1; index < locatedPoints.length; index += 1) {
-      const from = locatedPoints[index - 1];
-      const to = locatedPoints[index];
-      const mode = normalizeMode(to.mode || "car");
-      segments.push(await routeSegment(provider, from, to, mode, config));
-    }
-    const summary = segments.reduce((acc, segment) => { acc.distance += Number(segment.distance || 0); acc.duration += Number(segment.duration || 0); return acc; }, { distance: 0, duration: 0, pointCount: locatedPoints.length, segmentCount: segments.length });
-    const plan = { provider, points, segments, summary };
+
+    const plan = chooseBestPlan(attempts);
+    if (!plan) return sendJson(res, 503, { ok: false, error: "map provider unavailable" });
+    plan.attempts = attempts.map((attempt) => ({ provider: attempt.provider, located: locatedCount(attempt), total: attempt.points.length }));
     remember(cacheKey, plan);
     sendJson(res, 200, { ok: true, cached: false, ...plan });
   } catch (error) {
@@ -71,11 +65,74 @@ async function handleMapPlan(req, res) {
   }
 }
 
+function normalizeEntries(entries) {
+  return (Array.isArray(entries) ? entries : []).slice(0, 40).map((entry, index) => ({
+    query: String(entry?.query || "").trim(),
+    label: String(entry?.label || entry?.query || "").trim(),
+    day: String(entry?.day || "").trim(),
+    dayId: String(entry?.dayId || "").trim(),
+    activityId: String(entry?.activityId || "").trim(),
+    mode: normalizeMode(entry?.mode || entry?.transport || ""),
+    order: index + 1,
+  })).filter((entry) => entry.query && entry.label);
+}
+
+function providerOrder(requested, config) {
+  const available = [];
+  if (config.providers.google.configured) available.push("google");
+  if (config.providers.amap.configured) available.push("amap");
+  if (requested === "google" && config.providers.google.configured) return ["google"];
+  if (requested === "amap" && config.providers.amap.configured) return ["amap"];
+  return available;
+}
+
+async function buildPlanForProvider(provider, entries, config) {
+  const points = [];
+  for (const entry of entries) {
+    try {
+      const point = await geocodeEntry(provider, entry, config);
+      points.push(point || { ...entry, located: false, lat: null, lng: null });
+    } catch (error) {
+      points.push({ ...entry, located: false, lat: null, lng: null, error: shortError(error) });
+    }
+  }
+
+  const locatedPoints = points.filter((point) => point.located !== false && Number.isFinite(point.lat) && Number.isFinite(point.lng));
+  const segments = [];
+  for (let index = 1; index < locatedPoints.length; index += 1) {
+    const from = locatedPoints[index - 1];
+    const to = locatedPoints[index];
+    const mode = normalizeMode(to.mode || "car");
+    segments.push(await routeSegment(provider, from, to, mode, config));
+  }
+  const summary = segments.reduce((acc, segment) => {
+    acc.distance += Number(segment.distance || 0);
+    acc.duration += Number(segment.duration || 0);
+    return acc;
+  }, { distance: 0, duration: 0, pointCount: locatedPoints.length, segmentCount: segments.length });
+  return { provider, points, segments, summary };
+}
+
+function chooseBestPlan(attempts) {
+  return attempts.filter(Boolean).sort((a, b) => {
+    const locatedDiff = locatedCount(b) - locatedCount(a);
+    if (locatedDiff) return locatedDiff;
+    const segmentDiff = (b.segments || []).length - (a.segments || []).length;
+    if (segmentDiff) return segmentDiff;
+    return providerRank(a.provider) - providerRank(b.provider);
+  })[0] || null;
+}
+
+function locatedCount(plan) {
+  return (plan?.points || []).filter((point) => point.located !== false && Number.isFinite(point.lat) && Number.isFinite(point.lng)).length;
+}
+
+function providerRank(provider) {
+  return provider === "google" ? 0 : provider === "amap" ? 1 : 2;
+}
+
 function chooseProvider(requested, config) {
-  const provider = String(requested || "auto").toLowerCase();
-  if (provider === "amap" && config.providers.amap.configured) return "amap";
-  if (provider === "google" && config.providers.google.configured) return "google";
-  return config.defaultProvider || "none";
+  return providerOrder(requested, config)[0] || "none";
 }
 
 async function geocodeEntry(provider, entry, config) {
@@ -109,8 +166,11 @@ async function geocodeGoogle(query, key) {
 
 async function routeSegment(provider, from, to, mode, config) {
   if (mode === "plane" || mode === "boat") return estimateSegment(from, to, mode);
-  try { return provider === "google" ? await routeGoogle(from, to, mode, config.providers.google.key) : await routeAmap(from, to, mode, config.providers.amap.key); }
-  catch { return estimateSegment(from, to, mode); }
+  try {
+    return provider === "google" ? await routeGoogle(from, to, mode, config.providers.google.key) : await routeAmap(from, to, mode, config.providers.amap.key);
+  } catch {
+    return estimateSegment(from, to, mode);
+  }
 }
 
 async function routeAmap(from, to, mode, key) {
@@ -121,7 +181,10 @@ async function routeAmap(from, to, mode, key) {
   url.searchParams.set("key", key);
   url.searchParams.set("origin", origin);
   url.searchParams.set("destination", destination);
-  if (mode === "train" || mode === "bus") { url.searchParams.set("city", from.city || "全国"); url.searchParams.set("cityd", to.city || from.city || "全国"); }
+  if (mode === "train" || mode === "bus") {
+    url.searchParams.set("city", from.city || "全国");
+    url.searchParams.set("cityd", to.city || from.city || "全国");
+  }
   const json = await fetchJson(url);
   if (json.status !== "1") throw new Error(json.info || "amap route failed");
   if (mode === "train" || mode === "bus") {
@@ -157,19 +220,111 @@ function estimateSegment(from, to, mode) {
 }
 
 function makeSegment(from, to, mode, distance, duration, polyline, estimated) {
-  return { from: from.label, to: to.label, dayId: to.dayId || "", activityId: to.activityId || "", mode, distance: Math.max(0, Math.round(Number(distance || 0))), duration: Math.max(0, Math.round(Number(duration || 0))), polyline: Array.isArray(polyline) && polyline.length ? polyline : [{ lat: from.lat, lng: from.lng }, { lat: to.lat, lng: to.lng }], estimated: Boolean(estimated) };
+  return {
+    from: from.label,
+    to: to.label,
+    dayId: to.dayId || "",
+    activityId: to.activityId || "",
+    mode,
+    distance: Math.max(0, Math.round(Number(distance || 0))),
+    duration: Math.max(0, Math.round(Number(duration || 0))),
+    polyline: Array.isArray(polyline) && polyline.length ? polyline : [{ lat: from.lat, lng: from.lng }, { lat: to.lat, lng: to.lng }],
+    estimated: Boolean(estimated),
+  };
 }
 
-function collectAmapPathPolyline(path) { const points = []; (path.steps || []).forEach((step) => pushAmapPolyline(points, step.polyline)); return points; }
-function collectAmapTransitPolyline(transit) { const points = []; (transit.segments || []).forEach((segment) => { (segment.walking?.steps || []).forEach((step) => pushAmapPolyline(points, step.polyline)); (segment.bus?.buslines || []).forEach((line) => pushAmapPolyline(points, line.polyline)); pushAmapPolyline(points, segment.railway?.polyline); }); return points; }
-function pushAmapPolyline(points, polyline) { String(polyline || "").split(";").forEach((pair) => { const [lng, lat] = pair.split(",").map(Number); if (Number.isFinite(lat) && Number.isFinite(lng)) points.push({ lat, lng }); }); }
-function decodeGooglePolyline(encoded) { const points = []; let index = 0, lat = 0, lng = 0; while (index < encoded.length) { let shift = 0, result = 0, byte; do { byte = encoded.charCodeAt(index++) - 63; result |= (byte & 0x1f) << shift; shift += 5; } while (byte >= 0x20); lat += result & 1 ? ~(result >> 1) : result >> 1; shift = 0; result = 0; do { byte = encoded.charCodeAt(index++) - 63; result |= (byte & 0x1f) << shift; shift += 5; } while (byte >= 0x20); lng += result & 1 ? ~(result >> 1) : result >> 1; points.push({ lat: lat / 1e5, lng: lng / 1e5 }); } return points; }
-function normalizeMode(value) { const text = String(value || "").trim().toLowerCase(); if (["plane","flight","air","飞机","航班"].includes(text)) return "plane"; if (["train","rail","火车","高铁","动车"].includes(text)) return "train"; if (["bus","coach","大巴","巴士","公交"].includes(text)) return "bus"; if (["boat","ship","ferry","船","轮渡"].includes(text)) return "boat"; if (["walk","walking","步行"].includes(text)) return "walk"; return "car"; }
-function normalizeCity(value) { if (Array.isArray(value)) return value[0] || ""; return String(value || ""); }
-function haversineMeters(a, b) { const radius = 6371000; const lat1 = a.lat * Math.PI / 180; const lat2 = b.lat * Math.PI / 180; const deltaLat = (b.lat - a.lat) * Math.PI / 180; const deltaLng = (b.lng - a.lng) * Math.PI / 180; const x = Math.sin(deltaLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2; return 2 * radius * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x)); }
-async function fetchJson(url) { const response = await fetch(url, { headers: { "User-Agent": "TripDesigner/1.0" } }); const text = await response.text(); let json; try { json = JSON.parse(text); } catch { throw new Error("map provider returned non-json response"); } if (!response.ok) throw new Error(json.error_message || json.info || `map provider http ${response.status}`); return json; }
-function remember(key, value) { if (mapPlanCache.size >= CACHE_LIMIT) mapPlanCache.delete(mapPlanCache.keys().next().value); mapPlanCache.set(key, value); }
-function readBody(req, limit = 1024 * 1024) { return new Promise((resolve, reject) => { let size = 0, data = ""; req.setEncoding("utf8"); req.on("data", (chunk) => { size += chunk.length; if (size > limit) { reject(new Error("request body too large")); req.destroy(); return; } data += chunk; }); req.on("end", () => resolve(data || "{}")); req.on("error", reject); }); }
-function sendJson(res, status, payload) { res.writeHead(status, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" }); res.end(JSON.stringify(payload)); }
+function collectAmapPathPolyline(path) {
+  const points = [];
+  (path.steps || []).forEach((step) => pushAmapPolyline(points, step.polyline));
+  return points;
+}
+function collectAmapTransitPolyline(transit) {
+  const points = [];
+  (transit.segments || []).forEach((segment) => {
+    (segment.walking?.steps || []).forEach((step) => pushAmapPolyline(points, step.polyline));
+    (segment.bus?.buslines || []).forEach((line) => pushAmapPolyline(points, line.polyline));
+    pushAmapPolyline(points, segment.railway?.polyline);
+  });
+  return points;
+}
+function pushAmapPolyline(points, polyline) {
+  String(polyline || "").split(";").forEach((pair) => {
+    const [lng, lat] = pair.split(",").map(Number);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) points.push({ lat, lng });
+  });
+}
+function decodeGooglePolyline(encoded) {
+  const points = [];
+  let index = 0, lat = 0, lng = 0;
+  while (index < encoded.length) {
+    let shift = 0, result = 0, byte;
+    do { byte = encoded.charCodeAt(index++) - 63; result |= (byte & 0x1f) << shift; shift += 5; } while (byte >= 0x20);
+    lat += result & 1 ? ~(result >> 1) : result >> 1;
+    shift = 0;
+    result = 0;
+    do { byte = encoded.charCodeAt(index++) - 63; result |= (byte & 0x1f) << shift; shift += 5; } while (byte >= 0x20);
+    lng += result & 1 ? ~(result >> 1) : result >> 1;
+    points.push({ lat: lat / 1e5, lng: lng / 1e5 });
+  }
+  return points;
+}
+function normalizeMode(value) {
+  const text = String(value || "").trim().toLowerCase();
+  if (["plane", "flight", "air", "飞机", "航班"].includes(text)) return "plane";
+  if (["train", "rail", "火车", "高铁", "动车"].includes(text)) return "train";
+  if (["bus", "coach", "大巴", "巴士", "公交"].includes(text)) return "bus";
+  if (["boat", "ship", "ferry", "船", "轮渡"].includes(text)) return "boat";
+  if (["walk", "walking", "步行"].includes(text)) return "walk";
+  return "car";
+}
+function normalizeCity(value) {
+  if (Array.isArray(value)) return value[0] || "";
+  return String(value || "");
+}
+function haversineMeters(a, b) {
+  const radius = 6371000;
+  const lat1 = a.lat * Math.PI / 180;
+  const lat2 = b.lat * Math.PI / 180;
+  const deltaLat = (b.lat - a.lat) * Math.PI / 180;
+  const deltaLng = (b.lng - a.lng) * Math.PI / 180;
+  const x = Math.sin(deltaLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2;
+  return 2 * radius * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+}
+async function fetchJson(url) {
+  const response = await fetch(url, { headers: { "User-Agent": "TripDesigner/1.0" } });
+  const text = await response.text();
+  let json;
+  try { json = JSON.parse(text); } catch { throw new Error("map provider returned non-json response"); }
+  if (!response.ok) throw new Error(json.error_message || json.info || `map provider http ${response.status}`);
+  return json;
+}
+function remember(key, value) {
+  if (mapPlanCache.size >= CACHE_LIMIT) mapPlanCache.delete(mapPlanCache.keys().next().value);
+  mapPlanCache.set(key, value);
+}
+function shortError(error) {
+  return String(error?.message || error || "map error").slice(0, 180);
+}
+function readBody(req, limit = 1024 * 1024) {
+  return new Promise((resolve, reject) => {
+    let size = 0, data = "";
+    req.setEncoding("utf8");
+    req.on("data", (chunk) => {
+      size += chunk.length;
+      if (size > limit) {
+        reject(new Error("request body too large"));
+        req.destroy();
+        return;
+      }
+      data += chunk;
+    });
+    req.on("end", () => resolve(data || "{}"));
+    req.on("error", reject);
+  });
+}
+function sendJson(res, status, payload) {
+  res.writeHead(status, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
+  res.end(JSON.stringify(payload));
+}
 
-module.exports = { handleMapRuntime };
+module.exports = { handleMapRuntime, getMapConfig, chooseProvider };
