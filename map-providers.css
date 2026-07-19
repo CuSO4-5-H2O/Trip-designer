@@ -6,6 +6,7 @@
   justify-content: flex-end;
 }
 
+.map-provider-choice,
 .map-provider-field {
   display: inline-flex;
   align-items: center;
@@ -20,6 +21,7 @@
   font-weight: 700;
 }
 
+.map-provider-choice select,
 .map-provider-field select {
   border: 0;
   outline: 0;
@@ -171,10 +173,13 @@
     width: 100%;
   }
 
+  .map-provider-choice,
+  .map-provider-choice select,
   .map-provider-field,
   .map-provider-field select,
   .map-provider-toolbar .btn-ghost,
-  .map-provider-toolbar .panel-collapse-btn {
+  .map-provider-toolbar .panel-collapse-btn,
+  .map-provider-toolbar .mini-action {
     width: 100%;
   }
 
