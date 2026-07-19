@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:48:09.784Z",
+  "savedAt": "2026-07-19T03:48:21.771Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6348,7 +6348,7 @@
       }
     },
     "QAAIA94F": {
-      "revision": 1,
+      "revision": 2,
       "state": {
         "version": 2,
         "activeListId": "79d028cc-7ded-4666-86cb-2d9c527655d7",
@@ -6368,9 +6368,9 @@
                   "id": "30353150-f653-4ac2-94a5-cec31dfd3a03",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1784432298816,
-                  "orderUpdatedAt": 1784432298816
+                  "orderUpdatedAt": 1784432298816,
+                  "activities": []
                 }
               ],
               "budget": {
@@ -6392,7 +6392,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784432298816
+        "updatedAt": 1784432901520
       }
     },
     "QAGDB93B": {
