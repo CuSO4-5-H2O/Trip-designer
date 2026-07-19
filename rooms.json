@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:20:26.789Z",
+  "savedAt": "2026-07-19T03:22:05.856Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6079,7 +6079,7 @@
       }
     },
     "QAMOB088": {
-      "revision": 6,
+      "revision": 7,
       "state": {
         "version": 2,
         "activeListId": "c491e2a3-17fa-4722-8295-d4441d54a030",
@@ -6092,7 +6092,7 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-19",
               "originCity": "",
-              "selectedDayId": "7db0cb2c-b8b9-4e8a-b9e9-bd1c39980215",
+              "selectedDayId": "53704f6d-2be7-4ccd-aa11-3dbd602bf5f1",
               "dayLimit": 30,
               "days": [
                 {
@@ -6124,6 +6124,14 @@
                       "updatedAt": 1784431225593
                     }
                   ]
+                },
+                {
+                  "id": "53704f6d-2be7-4ccd-aa11-3dbd602bf5f1",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1784431324659,
+                  "orderUpdatedAt": 1784431324659
                 }
               ],
               "budget": {
@@ -6132,11 +6140,11 @@
                 "limit": 0,
                 "updatedAt": 1784430680587
               },
-              "updatedAt": 1784431225594,
-              "orderUpdatedAt": 1784430680587
+              "updatedAt": 1784431324659,
+              "orderUpdatedAt": 1784431324659
             },
             "createdAt": 1784430680587,
-            "updatedAt": 1784431225594
+            "updatedAt": 1784431324659
           }
         ],
         "deleted": {
@@ -6145,7 +6153,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784431226538
+        "updatedAt": 1784431325605
       }
     }
   }
