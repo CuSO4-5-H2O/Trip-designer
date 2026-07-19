@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:46:16.177Z",
+  "savedAt": "2026-07-19T02:47:00.399Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -5612,6 +5612,54 @@
           "members": {}
         },
         "updatedAt": 1784428770058
+      }
+    },
+    "D88E8AE8": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "22a1b0aa-cce3-4737-ab5f-f7ad7e2d20bc",
+        "members": [],
+        "lists": [
+          {
+            "id": "22a1b0aa-cce3-4737-ab5f-f7ad7e2d20bc",
+            "name": "新行程单",
+            "trip": {
+              "tripTitle": "新行程单",
+              "startDate": "2026-07-19",
+              "originCity": "",
+              "selectedDayId": "62bcfcc5-b2a4-4d8b-b04f-b92b0848f77b",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "62bcfcc5-b2a4-4d8b-b04f-b92b0848f77b",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1784429220142,
+                  "orderUpdatedAt": 1784429220142
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784429220142
+              },
+              "updatedAt": 1784429220142,
+              "orderUpdatedAt": 1784429220142
+            },
+            "createdAt": 1784429220142,
+            "updatedAt": 1784429220142
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784429220142
       }
     }
   }
