@@ -105,8 +105,12 @@
     if (!library || !list || !trip) return setStatus("行程还没有加载完成");
     const stamp = Date.now();
     const generatedDays = pendingPlan.days.map((day) => makeDay(day, stamp));
-    if (isBlankTrip(trip)) trip.days = generatedDays;
-    else trip.days.push(...generatedDays);
+    if (isBlankTrip(trip)) {
+      tombstoneDays(library, trip.days, stamp);
+      trip.days = generatedDays;
+    } else {
+      trip.days.push(...generatedDays);
+    }
     trip.selectedDayId = generatedDays[0]?.id || trip.selectedDayId;
     trip.dayLimit = Math.max(Number(trip.dayLimit) || 30, trip.days.length);
     if (pendingPlan.title && (!trip.tripTitle || /^新行程单/.test(trip.tripTitle))) {
@@ -152,6 +156,18 @@
         && !String(day?.stay || "").trim()
         && activities.length === 0;
     });
+  }
+
+  function tombstoneDays(library, days, stamp) {
+    library.deleted ||= {};
+    library.deleted.days ||= {};
+    library.deleted.activities ||= {};
+    for (const day of Array.isArray(days) ? days : []) {
+      if (day?.id) library.deleted.days[day.id] = stamp;
+      for (const activity of day?.activities || []) {
+        if (activity?.id) library.deleted.activities[activity.id] = stamp;
+      }
+    }
   }
 
   function makeDay(day, stamp) {
