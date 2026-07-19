@@ -37,6 +37,10 @@
 - Passive cloud refresh commit `51ae88119ef4872fb2c351cb3f90eb91ae4713a8` removed `BroadcastChannel`, `localStorage.setItem`, and the delayed settle refresh from `cloud-authority-refresh.js`.
 - Production asset QA for `cloud-authority-refresh.js?v=render-20260719m` confirmed `hasBroadcastChannel=false`, `hasLocalStorageWrite=false`, `hasSettleTimer=false`, and `hasMarkCloudReady=true`.
 - Production stability QA used room `QAPASABE3`: after opening `render-20260719m`, 8 DOM samples over 5.6 seconds kept one unique day order, `云端第一天 / 云端第二天`, with no delayed replacement of the day list.
+- Production storage status returned `backend=github`, `cloudOnly=true`, `allowDiskStorage=false`, `dataFile=disabled`, `repo=CuSO4-5-H2O/Trip-designer`, `branch=trip-data`, `path=rooms.json`, and `ready=true`.
+- Production auth status returned `ready=true`, `repo=CuSO4-5-H2O/Trip-designer`, `branch=trip-data`, and `path=accounts.json`.
+- Remote-device sync QA used room `QAPASABE3`: an external `/api/room-state` write from client `codex-remote-device` added `远端同步测试事项`; the already-open page saw it automatically and the cloud state contained the same activity under `云端第二天`.
+- Account sharing QA registered owner `qaowner_0df9fb` with owner room `64213E19`, registered friend `qafriend_0df9fb` with own room `AB14178F`, then joined the friend to `64213E19` as `editor`; `/api/auth/me` returned both rooms for the friend.
 - Follow-up server commit `c632f46e98ed7d12b70781da8597218838a1a95d` restored the full server file and added protection against blank startup state overwrites; commit `f26f9d86da081bc9b2d691592346f35860c6d707` documents this guard.
 - Production blank-overwrite QA used room `QAGDB93B`: after seeding three real days, a deliberate blank `新行程单` write was ignored and the cloud still returned `真实一 / 真实二 / 真实三`.
 - Production AI selected-day QA used room `QAGDB93B`: with Day 2 selected, DeepSeek generated a one-day Nairobi plan and applying it produced cloud order `真实一 / 真实二 / 内罗毕 / 真实三`, confirming it inserted after the selected day instead of at the bottom.
