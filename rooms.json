@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:20:10.670Z",
+  "savedAt": "2026-07-19T03:20:26.789Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6079,7 +6079,7 @@
       }
     },
     "QAMOB088": {
-      "revision": 5,
+      "revision": 6,
       "state": {
         "version": 2,
         "activeListId": "c491e2a3-17fa-4722-8295-d4441d54a030",
@@ -6099,7 +6099,7 @@
                   "id": "7db0cb2c-b8b9-4e8a-b9e9-bd1c39980215",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784431209475,
+                  "updatedAt": 1784431225593,
                   "orderUpdatedAt": 1784431194452,
                   "activities": [
                     {
@@ -6114,8 +6114,14 @@
                         "amount": 0,
                         "currency": "CNY"
                       },
-                      "transport": null,
-                      "updatedAt": 1784431209475
+                      "transport": {
+                        "type": "car",
+                        "from": "酒店",
+                        "to": "博物馆",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1784431225593
                     }
                   ]
                 }
@@ -6126,11 +6132,11 @@
                 "limit": 0,
                 "updatedAt": 1784430680587
               },
-              "updatedAt": 1784431209475,
+              "updatedAt": 1784431225594,
               "orderUpdatedAt": 1784430680587
             },
             "createdAt": 1784430680587,
-            "updatedAt": 1784431209475
+            "updatedAt": 1784431225594
           }
         ],
         "deleted": {
@@ -6139,7 +6145,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784431210419
+        "updatedAt": 1784431226538
       }
     }
   }
