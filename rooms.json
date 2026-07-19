@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T04:16:10.471Z",
+  "savedAt": "2026-07-19T04:17:54.344Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6645,7 +6645,7 @@
       }
     },
     "QAINSB23C": {
-      "revision": 2,
+      "revision": 4,
       "state": {
         "version": 2,
         "activeListId": "list-QAINSB23C",
@@ -6658,13 +6658,15 @@
               "tripTitle": "AI插入位置QA",
               "startDate": "2026-08-01",
               "originCity": "上海",
-              "selectedDayId": "day2-QAINSB23C",
+              "selectedDayId": "909db44d-f8fe-4031-8865-ef70f1600e48",
               "dayLimit": 30,
               "days": [
                 {
                   "id": "day1-QAINSB23C",
                   "location": "真实一",
                   "stay": "",
+                  "updatedAt": 1784434541499,
+                  "orderUpdatedAt": 1784434541499,
                   "activities": [
                     {
                       "id": "day1-QAINSB23Ca",
@@ -6678,14 +6680,14 @@
                       "transport": null,
                       "updatedAt": 1784434541499
                     }
-                  ],
-                  "updatedAt": 1784434541499,
-                  "orderUpdatedAt": 1784434541499
+                  ]
                 },
                 {
                   "id": "day2-QAINSB23C",
                   "location": "真实二",
                   "stay": "",
+                  "updatedAt": 1784434541500,
+                  "orderUpdatedAt": 1784434541500,
                   "activities": [
                     {
                       "id": "day2-QAINSB23Ca",
@@ -6699,14 +6701,47 @@
                       "transport": null,
                       "updatedAt": 1784434541500
                     }
-                  ],
-                  "updatedAt": 1784434541500,
-                  "orderUpdatedAt": 1784434541500
+                  ]
+                },
+                {
+                  "id": "909db44d-f8fe-4031-8865-ef70f1600e48",
+                  "location": "内罗毕安排",
+                  "stay": "",
+                  "updatedAt": 1784434672908,
+                  "orderUpdatedAt": 1784434672908,
+                  "activities": [
+                    {
+                      "id": "9c8c4f17-3f40-450b-81f5-f65cf6e32aac",
+                      "time": "",
+                      "title": "国家博物馆",
+                      "place": "国家博物馆",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784434672908
+                    },
+                    {
+                      "id": "fa7dcdaf-5786-4218-b3f5-3de8bc372209",
+                      "time": "",
+                      "title": "咖啡馆休息",
+                      "place": "咖啡馆休息",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784434672908
+                    }
+                  ]
                 },
                 {
                   "id": "day3-QAINSB23C",
                   "location": "真实三",
                   "stay": "",
+                  "updatedAt": 1784434541501,
+                  "orderUpdatedAt": 1784434541501,
                   "activities": [
                     {
                       "id": "day3-QAINSB23Ca",
@@ -6720,9 +6755,7 @@
                       "transport": null,
                       "updatedAt": 1784434541501
                     }
-                  ],
-                  "updatedAt": 1784434541501,
-                  "orderUpdatedAt": 1784434541501
+                  ]
                 }
               ],
               "budget": {
@@ -6731,11 +6764,11 @@
                 "limit": 0,
                 "updatedAt": 1784434541498
               },
-              "updatedAt": 1784434541508,
-              "orderUpdatedAt": 1784434541508
+              "updatedAt": 1784434672909,
+              "orderUpdatedAt": 1784434672908
             },
             "createdAt": 1784434541498,
-            "updatedAt": 1784434541508
+            "updatedAt": 1784434672909
           }
         ],
         "deleted": {
@@ -6744,7 +6777,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784434570221
+        "updatedAt": 1784434674094
       }
     }
   }
