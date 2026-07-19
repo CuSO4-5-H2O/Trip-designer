@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:19:37.864Z",
+  "savedAt": "2026-07-19T03:19:55.649Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6079,7 +6079,7 @@
       }
     },
     "QAMOB088": {
-      "revision": 3,
+      "revision": 4,
       "state": {
         "version": 2,
         "activeListId": "c491e2a3-17fa-4722-8295-d4441d54a030",
@@ -6099,9 +6099,25 @@
                   "id": "7db0cb2c-b8b9-4e8a-b9e9-bd1c39980215",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784430680587,
-                  "orderUpdatedAt": 1784430680587,
-                  "activities": []
+                  "updatedAt": 1784431194452,
+                  "orderUpdatedAt": 1784431194452,
+                  "activities": [
+                    {
+                      "id": "68befd36-9253-490e-93f8-3fd4dec3577f",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784431194452
+                    }
+                  ]
                 }
               ],
               "budget": {
@@ -6110,11 +6126,11 @@
                 "limit": 0,
                 "updatedAt": 1784430680587
               },
-              "updatedAt": 1784430680587,
+              "updatedAt": 1784431194453,
               "orderUpdatedAt": 1784430680587
             },
             "createdAt": 1784430680587,
-            "updatedAt": 1784430680587
+            "updatedAt": 1784431194453
           }
         ],
         "deleted": {
@@ -6123,7 +6139,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784431177613
+        "updatedAt": 1784431195398
       }
     }
   }
