@@ -59,7 +59,7 @@
   function loadMobileSyncGuard() {
     if (document.querySelector("script[data-mobile-sync-status-guard]")) return;
     const script = document.createElement("script");
-    script.src = "./mobile-sync-status-guard.js?v=render-20260719c";
+    script.src = "./mobile-sync-status-guard.js?v=render-20260719g";
     script.defer = true;
     script.dataset.mobileSyncStatusGuard = "1";
     document.head.append(script);
