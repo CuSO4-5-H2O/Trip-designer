@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:15:13.783Z",
+  "savedAt": "2026-07-19T02:16:38.733Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -4744,7 +4744,7 @@
       }
     },
     "5BEAB4AB": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "38618812-3ac5-4070-b09b-fa40442075e7",
@@ -4764,9 +4764,25 @@
                   "id": "4d5fa113-3a48-4aec-9a6b-63e1a60c24cb",
                   "location": "",
                   "stay": "",
-                  "activities": [],
-                  "updatedAt": 1784427303535,
-                  "orderUpdatedAt": 1784427303535
+                  "updatedAt": 1784427397570,
+                  "orderUpdatedAt": 1784427397570,
+                  "activities": [
+                    {
+                      "id": "5b245fae-728e-49ca-9c56-955711d182b4",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784427397570
+                    }
+                  ]
                 }
               ],
               "budget": {
@@ -4775,11 +4791,11 @@
                 "limit": 0,
                 "updatedAt": 1784427303535
               },
-              "updatedAt": 1784427303535,
+              "updatedAt": 1784427397570,
               "orderUpdatedAt": 1784427303535
             },
             "createdAt": 1784427303535,
-            "updatedAt": 1784427303535
+            "updatedAt": 1784427397570
           }
         ],
         "deleted": {
@@ -4788,7 +4804,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784427313532
+        "updatedAt": 1784427398482
       }
     }
   }
