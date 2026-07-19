@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:35:58.584Z",
+  "savedAt": "2026-07-19T02:36:10.351Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -5455,7 +5455,7 @@
       }
     },
     "4AD8AF43": {
-      "revision": 6,
+      "revision": 7,
       "state": {
         "version": 2,
         "activeListId": "28dbe368-e9d8-4a97-8eca-049b87b23b72",
@@ -5475,13 +5475,13 @@
                   "id": "72298a9b-a526-40a1-b17f-b7a6ed6f4d98",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784428557414,
+                  "updatedAt": 1784428569180,
                   "orderUpdatedAt": 1784428557414,
                   "activities": [
                     {
                       "id": "06dc1f50-f586-40fa-98d4-861c548788dd",
                       "time": "",
-                      "title": "新事项",
+                      "title": "好友云端标题-ic6si",
                       "place": "",
                       "note": "",
                       "tags": [],
@@ -5491,7 +5491,7 @@
                         "currency": "CNY"
                       },
                       "transport": null,
-                      "updatedAt": 1784428557414
+                      "updatedAt": 1784428569180
                     }
                   ]
                 }
@@ -5502,11 +5502,11 @@
                 "limit": 0,
                 "updatedAt": 1784428533564
               },
-              "updatedAt": 1784428557415,
+              "updatedAt": 1784428569181,
               "orderUpdatedAt": 1784428533564
             },
             "createdAt": 1784428533564,
-            "updatedAt": 1784428557415
+            "updatedAt": 1784428569181
           }
         ],
         "deleted": {
@@ -5515,7 +5515,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784428558335
+        "updatedAt": 1784428570102
       }
     },
     "CEDD4070": {
