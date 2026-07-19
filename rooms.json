@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:31:49.929Z",
+  "savedAt": "2026-07-19T02:32:21.841Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -5343,7 +5343,7 @@
       }
     },
     "984188C0": {
-      "revision": 5,
+      "revision": 6,
       "state": {
         "version": 2,
         "activeListId": "84e98c7d-b47e-4691-a25a-0e2c3f5d3e65",
@@ -5363,9 +5363,25 @@
                   "id": "baf9663c-3b17-4e8a-8f4d-424859de4614",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784428279689,
-                  "orderUpdatedAt": 1784428279689,
-                  "activities": []
+                  "updatedAt": 1784428340671,
+                  "orderUpdatedAt": 1784428340671,
+                  "activities": [
+                    {
+                      "id": "8309b691-0234-451d-aa55-5355ccd06aa9",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784428340671
+                    }
+                  ]
                 }
               ],
               "budget": {
@@ -5374,11 +5390,11 @@
                 "limit": 0,
                 "updatedAt": 1784428279689
               },
-              "updatedAt": 1784428279689,
+              "updatedAt": 1784428340671,
               "orderUpdatedAt": 1784428279689
             },
             "createdAt": 1784428279689,
-            "updatedAt": 1784428279689
+            "updatedAt": 1784428340671
           }
         ],
         "deleted": {
@@ -5387,7 +5403,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784428309678
+        "updatedAt": 1784428341590
       }
     },
     "E0729F4C": {
