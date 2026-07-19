@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:24:49.438Z",
+  "savedAt": "2026-07-19T02:28:22.790Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -5031,7 +5031,7 @@
       }
     },
     "890D01C2": {
-      "revision": 4,
+      "revision": 5,
       "state": {
         "version": 2,
         "activeListId": "bb0f255f-ee34-4d32-ac76-0f7e187c6ac4",
@@ -5162,9 +5162,9 @@
                   "id": "f1742ada-2fe5-477e-8186-ab1b53d73829",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1784427863911,
-                  "orderUpdatedAt": 1784427863911
+                  "orderUpdatedAt": 1784427863911,
+                  "activities": []
                 }
               ],
               "budget": {
@@ -5186,7 +5186,55 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784427889188
+        "updatedAt": 1784428102540
+      }
+    },
+    "EBB7204B": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "ef4f18ee-647c-4db7-b180-408f0c082467",
+        "members": [],
+        "lists": [
+          {
+            "id": "ef4f18ee-647c-4db7-b180-408f0c082467",
+            "name": "新行程单",
+            "trip": {
+              "tripTitle": "新行程单",
+              "startDate": "2026-07-19",
+              "originCity": "",
+              "selectedDayId": "d49a4877-9e0c-4030-aabb-b04b1733ed51",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "d49a4877-9e0c-4030-aabb-b04b1733ed51",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1784428102100,
+                  "orderUpdatedAt": 1784428102100
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784428102100
+              },
+              "updatedAt": 1784428102100,
+              "orderUpdatedAt": 1784428102100
+            },
+            "createdAt": 1784428102100,
+            "updatedAt": 1784428102100
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784428102100
       }
     }
   }
