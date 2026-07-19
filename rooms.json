@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:59:40.371Z",
+  "savedAt": "2026-07-19T04:01:14.427Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6533,7 +6533,7 @@
       }
     },
     "AA332C49": {
-      "revision": 2,
+      "revision": 3,
       "state": {
         "version": 2,
         "activeListId": "39016c78-fce5-4872-9ce9-f425d2fb4787",
@@ -6553,9 +6553,25 @@
                   "id": "3d1bcf2e-dbcb-4616-b4ad-e2e8f368d785",
                   "location": "",
                   "stay": "",
-                  "activities": [],
-                  "updatedAt": 1784433557465,
-                  "orderUpdatedAt": 1784433557465
+                  "updatedAt": 1784433673211,
+                  "orderUpdatedAt": 1784433673211,
+                  "activities": [
+                    {
+                      "id": "a101e1f8-4735-499a-a1ff-580e7b84782d",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1784433673211
+                    }
+                  ]
                 }
               ],
               "budget": {
@@ -6564,11 +6580,11 @@
                 "limit": 0,
                 "updatedAt": 1784433557465
               },
-              "updatedAt": 1784433557465,
+              "updatedAt": 1784433673212,
               "orderUpdatedAt": 1784433557465
             },
             "createdAt": 1784433557465,
-            "updatedAt": 1784433557465
+            "updatedAt": 1784433673212
           }
         ],
         "deleted": {
@@ -6577,7 +6593,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784433559869
+        "updatedAt": 1784433674178
       }
     },
     "54304F8B": {
