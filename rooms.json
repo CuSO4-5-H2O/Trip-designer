@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T02:56:13.813Z",
+  "savedAt": "2026-07-19T02:56:16.364Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -2923,7 +2923,7 @@
       }
     },
     "F6F48EC8": {
-      "revision": 9,
+      "revision": 11,
       "state": {
         "version": 2,
         "activeListId": "3016121c-c51f-4974-9956-86916e97321e",
@@ -2936,14 +2936,14 @@
               "tripTitle": "新行程单",
               "startDate": "2026-07-18",
               "originCity": "",
-              "selectedDayId": "a9a68c4a-edfa-4205-a90f-05bd44340327",
+              "selectedDayId": "36dfcf4d-3b21-448d-9b3a-546ea4368caa",
               "dayLimit": 30,
               "days": [
                 {
                   "id": "a9a68c4a-edfa-4205-a90f-05bd44340327",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1784429772630,
+                  "updatedAt": 1784429775103,
                   "orderUpdatedAt": 1784429772630,
                   "activities": [
                     {
@@ -2974,9 +2974,17 @@
                         "currency": "CNY"
                       },
                       "transport": null,
-                      "updatedAt": 1784429772630
+                      "updatedAt": 1784429775103
                     }
                   ]
+                },
+                {
+                  "id": "36dfcf4d-3b21-448d-9b3a-546ea4368caa",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1784429775181,
+                  "orderUpdatedAt": 1784429775181
                 }
               ],
               "budget": {
@@ -2985,11 +2993,11 @@
                 "limit": 0,
                 "updatedAt": 1784371570602
               },
-              "updatedAt": 1784429772631,
-              "orderUpdatedAt": 1784371570602
+              "updatedAt": 1784429775181,
+              "orderUpdatedAt": 1784429775181
             },
             "createdAt": 1784371570602,
-            "updatedAt": 1784429772631
+            "updatedAt": 1784429775181
           }
         ],
         "deleted": {
@@ -2998,7 +3006,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1784429773563
+        "updatedAt": 1784429776114
       }
     },
     "AICLOUD6BDBC3": {
