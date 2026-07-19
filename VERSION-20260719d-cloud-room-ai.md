@@ -42,11 +42,18 @@ Verified on Render production after deployment:
 3. Registration returned default room `595BC23F`.
 4. `/api/room-state?room=595BC23F` returned revision `1` and one initialized list.
 5. GitHub Contents API for `trip-data/rooms.json` showed `595BC23F` persisted with revision `1`.
-6. `/api/ai/quick-plan` was tested with:
+6. Registered owner/friend QA accounts for shared-room verification.
+7. Owner default room was `47F10036`; friend default room was `6FDFD8AC`.
+8. Friend joined owner room `47F10036` and `/api/auth/me` returned it as role `editor`.
+9. Owner wrote activity `房主云端事项-co9pjf`; room revision advanced from `2` to `3`.
+10. Friend wrote activity `朋友协作事项-co9pjf`; room revision advanced from `3` to `4`.
+11. Final `/api/room-state?room=47F10036` contained both owner and friend activities.
+12. GitHub Contents API for `trip-data/rooms.json` also contained both activities, with `savedAt` `2026-07-19T01:43:02.401Z`.
+13. `/api/ai/quick-plan` was tested with:
 
    `在内罗毕玩3天，第一天抵达内罗毕并入住酒店，第二天去基贝拉贫民窟和国家博物馆，第三天去长颈鹿中心和马赛市场，然后准备出发。`
 
-7. The quick-plan API returned `ok: true`, source `deepseek`, exactly 3 days, and these parsed activities:
+14. The quick-plan API returned `ok: true`, source `deepseek`, exactly 3 days, and these parsed activities:
    - Day 1: `抵达内罗毕`, `入住酒店`
    - Day 2: `基贝拉贫民窟`, `国家博物馆`
    - Day 3: `长颈鹿中心`, `马赛市场`, `出发`
@@ -54,4 +61,4 @@ Verified on Render production after deployment:
 ## Remaining Verification Target
 
 - Continue full rendered browser validation of applying AI-generated days into the visible itinerary list once the browser automation surface is stable enough to perform clicks without storage-context limitations.
-- Continue multi-device live editing validation for the same logged-in account and invited room.
+- Continue rendered mobile/desktop validation of the same logged-in account and invited room.
