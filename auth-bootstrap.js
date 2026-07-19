@@ -164,6 +164,7 @@
 
     function renderHome(account) {
       accountState = normalizeAccount(account);
+      setError("");
       $("#pageTitle").textContent = "账号主页";
       $("#homeTitle").textContent = `${accountState.displayName || accountState.username} 的房间`;
       $("#authPanel").classList.add("hidden");
