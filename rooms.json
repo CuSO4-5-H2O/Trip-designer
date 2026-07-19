@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T03:38:22.779Z",
+  "savedAt": "2026-07-19T03:48:06.872Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -6393,6 +6393,110 @@
           "members": {}
         },
         "updatedAt": 1784432298816
+      }
+    },
+    "QAGDB93B": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "0c4a415c-7192-4161-8957-c8fca01fbbab",
+        "members": [],
+        "lists": [
+          {
+            "id": "0c4a415c-7192-4161-8957-c8fca01fbbab",
+            "name": "空白覆盖保护测试",
+            "createdAt": 1784432885337,
+            "updatedAt": 1784432885337,
+            "trip": {
+              "version": 1,
+              "tripTitle": "空白覆盖保护测试",
+              "startDate": "2026-07-20",
+              "originCity": "",
+              "selectedDayId": "d3220b81-a69c-4dbb-a4d0-15700d1a72ac",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "18d92425-6bc9-4e70-a0a4-0535ef4655c5",
+                  "location": "真实一",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "645096a3-31bc-4e87-b66e-7f3a54bc6b55",
+                      "time": "01:00",
+                      "title": "真实一事项",
+                      "place": "真实一",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784432885337
+                    }
+                  ],
+                  "updatedAt": 1784432885337,
+                  "orderUpdatedAt": 1784432885337
+                },
+                {
+                  "id": "d3220b81-a69c-4dbb-a4d0-15700d1a72ac",
+                  "location": "真实二",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "70ac4a81-fe22-42b8-a57c-573625d78156",
+                      "time": "02:00",
+                      "title": "真实二事项",
+                      "place": "真实二",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784432885337
+                    }
+                  ],
+                  "updatedAt": 1784432885337,
+                  "orderUpdatedAt": 1784432885337
+                },
+                {
+                  "id": "b7f00e0d-b95f-44b3-afb3-81666790678d",
+                  "location": "真实三",
+                  "stay": "",
+                  "activities": [
+                    {
+                      "id": "410f0287-7a1b-4800-a64e-22a892109200",
+                      "time": "03:00",
+                      "title": "真实三事项",
+                      "place": "真实三",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1784432885337
+                    }
+                  ],
+                  "updatedAt": 1784432885337,
+                  "orderUpdatedAt": 1784432885337
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1784432885337
+              },
+              "updatedAt": 1784432885337,
+              "orderUpdatedAt": 1784432885337
+            }
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1784432885337
       }
     }
   }
