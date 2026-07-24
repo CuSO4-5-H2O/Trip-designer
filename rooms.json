@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "savedAt": "2026-07-19T08:37:22.741Z",
+  "savedAt": "2026-07-24T09:24:48.796Z",
   "rooms": {
     "34910250": {
       "revision": 4,
@@ -202,7 +202,7 @@
       }
     },
     "1075424A": {
-      "revision": 6,
+      "revision": 7,
       "state": {
         "version": 2,
         "activeListId": "list-greece-italy",
@@ -987,7 +987,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1783947049863
+        "updatedAt": 1784885088546
       }
     },
     "102FB440": {
