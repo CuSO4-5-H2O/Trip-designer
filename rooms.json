@@ -1,13 +1,26 @@
 {
   "version": 2,
-  "savedAt": "2026-07-30T11:10:40.555Z",
+  "savedAt": "2026-07-30T11:11:48.650Z",
   "rooms": {
     "1": {
-      "revision": 3,
+      "revision": 4,
       "state": {
         "version": 2,
         "activeListId": "1683a5be-48e8-4f66-9ded-394699c1df28",
-        "members": [],
+        "members": [
+          {
+            "id": "be7c7e2e-0394-466c-a939-b3945b5ca768",
+            "name": "wzy",
+            "createdAt": 1785409873653,
+            "updatedAt": 1785409873653
+          },
+          {
+            "id": "59c81123-ce3f-40df-9e65-debfd522ae02",
+            "name": "cmy",
+            "createdAt": 1785409879182,
+            "updatedAt": 1785409879182
+          }
+        ],
         "lists": [
           {
             "id": "1683a5be-48e8-4f66-9ded-394699c1df28",
@@ -34,11 +47,11 @@
                 "limit": 0,
                 "updatedAt": 1785409835287
               },
-              "updatedAt": 1785409835287,
+              "updatedAt": 1785409879182,
               "orderUpdatedAt": 1785409835287
             },
             "createdAt": 1785409835287,
-            "updatedAt": 1785409835287
+            "updatedAt": 1785409879182
           }
         ],
         "deleted": {
@@ -47,7 +60,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1785409840304
+        "updatedAt": 1785409908399
       }
     },
     "122127": {
