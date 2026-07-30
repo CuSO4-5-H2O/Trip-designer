@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "savedAt": "2026-07-30T11:35:05.190Z",
+  "savedAt": "2026-07-30T11:36:02.827Z",
   "rooms": {
     "1": {
-      "revision": 14,
+      "revision": 15,
       "state": {
         "version": 2,
         "activeListId": "c19a5998-527f-4161-9ec1-457af8525770",
@@ -592,7 +592,7 @@
                       "id": "a04fae1b-93f9-4bcd-aeae-7c01cf7756b4",
                       "time": "22:00",
                       "title": "搭乘BSF夜船前往哈尼亚（请务必购买Cabin卧铺舱舱位）",
-                      "place": "皮雷���夫斯港",
+                      "place": "皮雷����夫斯港",
                       "note": "请务必购买Cabin卧铺舱舱位",
                       "tags": [],
                       "done": false,
@@ -2042,7 +2042,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1785411304939
+        "updatedAt": 1785411362577
       }
     },
     "122127": {
