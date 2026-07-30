@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "savedAt": "2026-07-30T11:34:14.133Z",
+  "savedAt": "2026-07-30T11:35:05.190Z",
   "rooms": {
     "1": {
-      "revision": 13,
+      "revision": 14,
       "state": {
         "version": 2,
         "activeListId": "c19a5998-527f-4161-9ec1-457af8525770",
@@ -57,15 +57,15 @@
             "id": "c19a5998-527f-4161-9ec1-457af8525770",
             "name": "AI导入 - 8月5日\t雅典 (Athens)\t07:25 抵",
             "createdAt": 1785409935650,
-            "updatedAt": 1785410144997,
+            "updatedAt": 1785411299196,
             "trip": {
               "version": 1,
               "tripTitle": "AI导入 - 8月5日\t雅典 (Athens)\t07:25 抵",
               "startDate": "2026-07-30",
               "originCity": "",
-              "selectedDayId": "370b5e8c-61bc-48fb-b874-6d87f345d84e",
+              "selectedDayId": "595aa7ce-aef8-4a99-b202-b4b172562c28",
               "dayLimit": 30,
-              "updatedAt": 1785410144997,
+              "updatedAt": 1785411299196,
               "orderUpdatedAt": 1785410136002,
               "budget": {
                 "currency": "CNY",
@@ -78,8 +78,8 @@
                   "id": "595aa7ce-aef8-4a99-b202-b4b172562c28",
                   "location": "",
                   "stay": "",
-                  "updatedAt": 1785409935650,
-                  "orderUpdatedAt": 1785409935650,
+                  "updatedAt": 1785411299195,
+                  "orderUpdatedAt": 1785411284621,
                   "activities": [
                     {
                       "id": "b4e1f6fb-19ef-4596-a768-ec50a40c78fc",
@@ -146,6 +146,21 @@
                         "arrive": "18:45"
                       },
                       "updatedAt": 1785409935650
+                    },
+                    {
+                      "id": "559b0d94-5231-4428-b19a-983eda3ef06f",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1785411284621
                     }
                   ]
                 },
@@ -577,7 +592,7 @@
                       "id": "a04fae1b-93f9-4bcd-aeae-7c01cf7756b4",
                       "time": "22:00",
                       "title": "搭乘BSF夜船前往哈尼亚（请务必购买Cabin卧铺舱舱位）",
-                      "place": "皮雷埃夫斯港",
+                      "place": "皮雷���夫斯港",
                       "note": "请务必购买Cabin卧铺舱舱位",
                       "tags": [],
                       "done": false,
@@ -597,8 +612,8 @@
                   "id": "88e9ba10-c747-49e7-be20-be3a20990f24",
                   "location": "哈尼亚",
                   "stay": "",
-                  "updatedAt": 1785410085047,
-                  "orderUpdatedAt": 1785410085047,
+                  "updatedAt": 1785411296504,
+                  "orderUpdatedAt": 1785411295128,
                   "activities": [
                     {
                       "id": "7108c99d-3577-48c8-bbde-dceb7bdf24e8",
@@ -677,6 +692,21 @@
                       "budget": null,
                       "transport": null,
                       "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "420e9703-d45e-4232-b7da-a4fa7ca14183",
+                      "time": "",
+                      "title": "新事项",
+                      "place": "",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": {
+                        "amount": 0,
+                        "currency": "CNY"
+                      },
+                      "transport": null,
+                      "updatedAt": 1785411296504
                     }
                   ]
                 },
@@ -1394,7 +1424,7 @@
                     {
                       "id": "7744fbe6-bb3d-4cb8-bf0f-365e91832eb5",
                       "time": "12:00",
-                      "title": "步行穿过著名的老桥 (Ponte Vecchio)享用午餐",
+                      "title": "步行穿过著名的老桥 (Ponte Vecchio)享���午餐",
                       "place": "老桥",
                       "note": "",
                       "tags": [],
@@ -2012,7 +2042,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1785411253883
+        "updatedAt": 1785411304939
       }
     },
     "122127": {
