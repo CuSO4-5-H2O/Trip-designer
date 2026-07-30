@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "savedAt": "2026-07-30T11:13:18.890Z",
+  "savedAt": "2026-07-30T11:14:46.114Z",
   "rooms": {
     "1": {
-      "revision": 6,
+      "revision": 7,
       "state": {
         "version": 2,
         "activeListId": "c19a5998-527f-4161-9ec1-457af8525770",
@@ -57,16 +57,16 @@
             "id": "c19a5998-527f-4161-9ec1-457af8525770",
             "name": "AI导入 - 8月5日\t雅典 (Athens)\t07:25 抵",
             "createdAt": 1785409935650,
-            "updatedAt": 1785409935651,
+            "updatedAt": 1785410085048,
             "trip": {
               "version": 1,
               "tripTitle": "AI导入 - 8月5日\t雅典 (Athens)\t07:25 抵",
               "startDate": "2026-07-30",
               "originCity": "",
-              "selectedDayId": "595aa7ce-aef8-4a99-b202-b4b172562c28",
+              "selectedDayId": "88476061-5511-4900-a2c1-62ce9d309782",
               "dayLimit": 30,
-              "updatedAt": 1785409935651,
-              "orderUpdatedAt": 1785409935650,
+              "updatedAt": 1785410085048,
+              "orderUpdatedAt": 1785410085047,
               "budget": {
                 "currency": "CNY",
                 "items": {},
@@ -148,6 +148,1851 @@
                       "updatedAt": 1785409935650
                     }
                   ]
+                },
+                {
+                  "id": "88476061-5511-4900-a2c1-62ce9d309782",
+                  "location": "雅典",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "a1932c8a-148a-4477-9aab-8da469a93e40",
+                      "time": "07:25",
+                      "title": "雅典 (Athens)\t07:25 抵达雅典\t【",
+                      "place": "雅典机场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "plane",
+                        "from": "",
+                        "to": "雅典",
+                        "depart": "",
+                        "arrive": "07:25"
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "72a9944d-9612-4688-ac36-348ef3f455f6",
+                      "time": "",
+                      "title": "搭乘地铁3号线直达市区",
+                      "place": "雅典",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "train",
+                        "from": "雅典机场",
+                        "to": "雅典市区",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "be35bd4f-6422-4d1d-af0d-3ae97833bad7",
+                      "time": "",
+                      "title": "办理行李托管/入住",
+                      "place": "07:25 飞机降落雅典机场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "2ab18e27-20ac-43a6-9ce8-09f9ba787349",
+                      "time": "",
+                      "title": "漫步普拉卡老城区(Plaka)，打卡哈德良拱门与奥林匹亚宙斯神庙",
+                      "place": "普拉卡老城区",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "1af58173-4a03-40c1-a2a9-26d63df96df1",
+                      "time": "",
+                      "title": "推荐预订带有卫城景观的露台餐厅，一边享用希腊特色烤肉(Souvlaki)，一边欣赏亮灯的卫城夜景",
+                      "place": "雅典卫城附近",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "0d6e2dfc-eee6-4d18-80d8-cfc2c3795fd0",
+                      "time": "",
+                      "title": "：初见诸神之城】",
+                      "place": "：初见诸神之城】",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "a0d1615e-c74d-4aee-9a4e-c6b6949a3233",
+                      "time": "",
+                      "title": "07:25 飞机降落雅典机场",
+                      "place": "07:25 飞机降落雅典机场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "68a8d8e6-738a-4c37-8914-9645c162a09c",
+                      "time": "",
+                      "title": "14:00-16:30 漫步普拉卡老城区(Plaka)",
+                      "place": "14:00-16:30 漫步普拉卡老城区(Plaka)",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "5140530d-6419-4886-b7ff-321ae1d2a44a",
+                      "time": "",
+                      "title": "18:30-21:00 推荐预订带有卫城景观的露台餐厅",
+                      "place": "18:30-21:00 推荐预订带有卫城景观的露台餐厅",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "e07c197e-6138-4c1a-b681-b4eb19ab29f5",
+                      "time": "",
+                      "title": "雅典\t雅典 -> 克里特岛\t渡轮 BSF (22:00 - 07:25+1)\t【雅典朝圣 -> 启航克里特岛】",
+                      "place": "雅典\t雅典 -> 克里特岛\t渡轮 BSF (22:00 - 07:25+1)\t【雅典朝圣 -> 启航克里特岛】",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "bc97ac16-9ff1-42e1-bd27-35b2c701b588",
+                      "time": "",
+                      "title": "08:00-11:00 【重头戏：雅典卫城】(务必提前预约08:00第一批入场",
+                      "place": "08:00-11:00 【重头戏：雅典卫城】(务必提前预约08:00第一批入场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "d2e7cba9-ead7-4be8-a98b-ed97e3cc7330",
+                      "time": "",
+                      "title": "避开暴晒",
+                      "place": "避开暴晒",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "d12a9d16-b657-4648-b090-1c15024d414c",
+                      "time": "",
+                      "title": "旅行团)",
+                      "place": "旅行团)",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "dffe5865-42b5-460b-bd31-05531433ccca",
+                      "time": "",
+                      "title": "帕特农神庙",
+                      "place": "帕特农神庙",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "fe8d6c35-f704-4175-8626-b23506730b05",
+                      "time": "",
+                      "title": "伊瑞克提翁神庙",
+                      "place": "伊瑞克提翁神庙",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "6b1a4dd7-f1fe-42d3-bd9c-433a3b070038",
+                      "time": "",
+                      "title": "11:30-13:30 【卫城博物馆】(建议预约11:30)",
+                      "place": "11:30-13:30 【卫城博物馆】(建议预约11:30)",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "a932c79b-80ab-4d02-acd0-52918ea87e96",
+                      "time": "",
+                      "title": "馆内可近距离观赏原版女像柱",
+                      "place": "馆内可近距离观赏原版女像柱",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "5c5804ac-3dbb-4d4e-b564-6c894dbb561b",
+                      "time": "",
+                      "title": "14:00-16:00 Monastiraki广场午餐",
+                      "place": "14:00-16:00 Monastiraki广场午餐",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "9a90cacd-5ed7-40e3-84f3-670660b4e129",
+                      "time": "",
+                      "title": "跳蚤市场",
+                      "place": "跳蚤市场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "82087376-c944-436f-9e10-c13b25179886",
+                      "time": "",
+                      "title": "20:00 前往皮雷埃夫斯港(Piraeus)",
+                      "place": "20:00 前往皮雷埃夫斯港(Piraeus)",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "4ab78ca9-d3b6-48f7-a155-f274c0d1388f",
+                      "time": "",
+                      "title": "22:00搭乘BSF夜船前往哈尼亚(请务必购买Cabin卧铺舱舱位)",
+                      "place": "22:00搭乘BSF夜船前往哈尼亚(请务必购买Cabin卧铺舱舱位)",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "7a74b433-a994-4294-97e0-97ae34e4ed11",
+                      "time": "",
+                      "title": "Blue Star Ferries 船上\t哈尼亚 (Chania)\t07:25 船抵克里特岛 | 自驾开启\t【哈尼亚：梦幻粉色沙滩自驾】",
+                      "place": "Blue Star Ferries 船上\t哈尼亚 (Chania)\t07:25 船抵克里特岛 | 自驾开启\t【哈尼亚：梦幻粉色沙滩自驾】",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "1ad3aff7-0a8e-43bc-a54a-b52d0aa50f7f",
+                      "time": "",
+                      "title": "07:25 游轮抵达克里特岛苏达港",
+                      "place": "07:25 游轮抵达克里特岛苏达港",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "47c728e1-50ea-4314-90e9-689d48a0fa2a",
+                      "time": "",
+                      "title": "码头/市区取车【自驾开启】",
+                      "place": "码头/市区取车【自驾开启】",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "4d223b6b-2167-4bc6-8a17-036a1dca8c7d",
+                      "time": "",
+                      "title": "09:00-11:00 驱车前往【粉色沙滩 (Elafonisi Beach)】",
+                      "place": "09:00-11:00 驱车前往【粉色沙滩 (Elafonisi Beach)】",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "fa43dc73-f3a4-470b-a747-e61fbcaa46fa",
+                      "time": "",
+                      "title": "沿途山路多",
+                      "place": "沿途山路多",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "bb1b6ac6-2cd0-48ed-8dd3-869db7e21008",
+                      "time": "",
+                      "title": "注意减速",
+                      "place": "注意减速",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "7314fd45-5cda-455f-875e-c5934c6dca1a",
+                      "time": "",
+                      "title": "11:00-15:00 在梦幻粉色沙滩畅游",
+                      "place": "11:00-15:00 在梦幻粉色沙滩畅游",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "01bd0ed9-7147-4b61-8d13-2dfd7a910dca",
+                      "time": "",
+                      "title": "日光浴",
+                      "place": "日光浴",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "c650535b-516b-4c1c-9d5c-6112f41da2ea",
+                  "location": "雅典",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "85a4040a-1b3b-4e91-886a-fd4db0b0cfab",
+                      "time": "",
+                      "title": "雅典卫城（务必提前预约08:00第一批入场，避开暴晒和旅行团），游览帕特农神庙、伊瑞克提翁神庙",
+                      "place": "雅典卫城",
+                      "note": "务必提前预约08:00第一批入场",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "1d69b173-4bb8-4e02-8ff4-f54b0d2c4f39",
+                      "time": "",
+                      "title": "卫城博物馆（建议预约11:30），馆内可近距离观赏原版女像柱",
+                      "place": "卫城博物馆",
+                      "note": "建议预约11:30",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "58ca72ed-a627-485b-acd8-207236ac60e6",
+                      "time": "",
+                      "title": "Monastiraki广场午餐，逛跳蚤市场",
+                      "place": "Monastiraki广场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "1295cd5a-006f-4f79-981c-c15e295961bd",
+                      "time": "20:00",
+                      "title": "皮雷埃夫斯港(Piraeus)",
+                      "place": "皮雷埃夫斯港",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "a04fae1b-93f9-4bcd-aeae-7c01cf7756b4",
+                      "time": "22:00",
+                      "title": "搭乘BSF夜船前往哈尼亚（请务必购买Cabin卧铺舱舱位）",
+                      "place": "皮雷埃夫斯港",
+                      "note": "请务必购买Cabin卧铺舱舱位",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "boat",
+                        "from": "皮雷埃夫斯港",
+                        "to": "哈尼亚",
+                        "depart": "22:00",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "88e9ba10-c747-49e7-be20-be3a20990f24",
+                  "location": "哈尼亚",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "7108c99d-3577-48c8-bbde-dceb7bdf24e8",
+                      "time": "07:25",
+                      "title": "游轮抵达克里特岛苏达港",
+                      "place": "克里特岛苏达港",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "boat",
+                        "from": "皮雷埃夫斯港",
+                        "to": "克里特岛苏达港",
+                        "depart": "",
+                        "arrive": "07:25"
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "8f89bd3c-14e3-425d-ba83-6ae02cf256ce",
+                      "time": "",
+                      "title": "码头/市区取车【自驾开启】",
+                      "place": "克里特岛",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "",
+                        "to": "",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "2b9021b7-e2fa-4dba-89cf-4eca1c3357fb",
+                      "time": "",
+                      "title": "驱车前往【粉色沙滩 (Elafonisi Beach)】，沿途山路多，注意减速",
+                      "place": "Elafonisi Beach",
+                      "note": "沿途山路多，注意减速",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "克里特岛",
+                        "to": "Elafonisi Beach",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "4e7cbd12-bef4-468d-a955-af192fe537c7",
+                      "time": "",
+                      "title": "在梦幻粉色沙滩畅游、日光浴、漫步",
+                      "place": "Elafonisi Beach",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "ed64b111-3020-4692-88ff-857909a917e8",
+                      "time": "16:00",
+                      "title": "返回哈尼亚老城，傍晚漫步威尼斯老港口(Venetian Harbor)，打卡埃及灯塔并享用海鲜大餐",
+                      "place": "哈尼亚老城",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "74bcc6ef-ff03-4ac2-a1cd-25fce236d932",
+                  "location": "哈尼亚",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": []
+                },
+                {
+                  "id": "8a1af014-880c-4684-8692-9d73efd1a35d",
+                  "location": "伊拉克利翁",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "307578b3-e69e-4d65-938e-116e415e19d2",
+                      "time": "",
+                      "title": "巴士前往克里特岛首府伊拉克利翁(车程约2.5小时)，入住酒店",
+                      "place": "伊拉克利翁",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "bus",
+                        "from": "哈尼亚",
+                        "to": "伊拉克利翁",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "5215b92c-ebcb-400a-aa2b-1cac24b2e063",
+                      "time": "",
+                      "title": "伊拉克利翁考古博物馆（必看：持蛇女神、斐斯托斯圆盘）",
+                      "place": "伊拉克利翁考古博物馆",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "4022e0aa-9476-44ba-b390-7a3eec7badd3",
+                      "time": "",
+                      "title": "驱车前往克诺索斯宫殿 (Palace of Knossos)，探寻希腊神话中米诺陶洛斯迷宫的源头",
+                      "place": "克诺索斯宫殿",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "伊拉克利翁",
+                        "to": "克诺索斯宫殿",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "43ee1dac-1db2-4d6c-b056-354f7a8f607e",
+                      "time": "19:00",
+                      "title": "漫步库勒斯古堡海堤，品尝克里特特色餐点与Raki酒",
+                      "place": "库勒斯古堡",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "e8bb741e-634e-4af3-a44c-8c70ee1a4101",
+                  "location": "圣托里尼",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "392a4e28-a03d-464f-af47-12d6209aff60",
+                      "time": "07:00",
+                      "title": "港口",
+                      "place": "克里特岛港口",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "35c2949c-1265-45ab-b87c-ade28825c624",
+                      "time": "08:00",
+                      "title": "搭乘SEAJETS快船前往圣托里尼(约9:30抵达)",
+                      "place": "圣托里尼",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "boat",
+                        "from": "克里特岛",
+                        "to": "圣托里尼",
+                        "depart": "08:00",
+                        "arrive": "09:30"
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "f5513747-6e31-46e0-8436-13a4b23d21f9",
+                      "time": "",
+                      "title": "接送至费拉(Fira)或伊亚(Oia)悬崖酒店，在小镇享用午餐",
+                      "place": "费拉或伊亚",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "a6529d6b-1af5-4527-82de-2dfaecb94721",
+                      "time": "",
+                      "title": "漫步费拉悬崖步道，打卡国家地理标志性的蓝顶教堂",
+                      "place": "费拉",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "f974cb8b-4714-41ac-ab6c-e66d8ed597aa",
+                      "time": "",
+                      "title": "伊亚小镇 (Oia)，提早去城堡占据观景位，静静欣赏号称落入爱琴海的金色夕阳",
+                      "place": "伊亚小镇",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "79c34e69-c10c-4c76-8290-496b0259e742",
+                  "location": "罗马",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "bb799f9a-e6cc-4d77-9233-cc3aadc1ff48",
+                      "time": "",
+                      "title": "Imerovigli(伊莫洛维里)悬崖步道徒步，这里的悬崖景观最纯净",
+                      "place": "伊莫洛维里",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "bbd54c70-1ebd-4887-8bba-8aab85e2f11b",
+                      "time": "",
+                      "title": "享用午餐，品尝当地特产的圣酒(Vinsanto)",
+                      "place": "圣托里尼",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "f8d8d00e-23fb-4f46-bc02-6a05779ad9e6",
+                      "time": "14:30",
+                      "title": "酒店取行李，打车前往圣托里尼机场(JTR)",
+                      "place": "圣托里尼机场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "圣托里尼",
+                        "to": "圣托里尼机场",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "7be7fc03-a6c4-47d7-929c-37a7dfb020c4",
+                      "time": "",
+                      "title": "搭乘国际航班飞往意大利罗马(深夜抵达后打车直达市区酒店休息)",
+                      "place": "罗马",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "plane",
+                        "from": "圣托里尼机场",
+                        "to": "罗马",
+                        "depart": "17:30",
+                        "arrive": "22:20"
+                      },
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "c866663c-3bb5-4abe-9365-96ef4bcfe6a9",
+                  "location": "罗马",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "0ece06f8-c950-40cc-ba16-ce0fd3e1d554",
+                      "time": "15:00",
+                      "title": "罗马斗兽场+古罗马广场+帕拉蒂尼山",
+                      "place": "罗马斗兽场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "95a9887a-7741-46f6-9897-cfc5447910a9",
+                      "time": "",
+                      "title": "威尼斯广场附近享用午餐，品尝经典培根蛋面(Carbonara)",
+                      "place": "威尼斯广场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "836bc33e-3cb6-4ea5-9684-4dc7dc3c5939",
+                      "time": "",
+                      "title": "真理之口",
+                      "place": "真理之口",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "b695bf71-2bad-4ef3-8ee9-08ea328bcc5a",
+                      "time": "",
+                      "title": "阿文丁山橘园",
+                      "place": "阿文丁山",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "a088640e-e12d-41af-a817-0c5118231d74",
+                  "location": "罗马",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "324eaa23-d64c-49d0-b837-8986885abec5",
+                      "time": "09:00",
+                      "title": "梵蒂冈博物馆+西斯廷教堂",
+                      "place": "梵蒂冈博物馆",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "04f4d165-c445-490d-b3e5-e8f76413401d",
+                      "time": "15:00",
+                      "title": "从西斯廷快捷通道进入圣彼得大教堂，推荐登顶穹顶，俯瞰钥匙状的圣彼得广场",
+                      "place": "圣彼得大教堂",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "c40ec721-0831-453b-ab04-bec97292a990",
+                      "time": "17:00",
+                      "title": "顺着台伯河步行至圣天使堡与圣天使桥拍照",
+                      "place": "圣天使堡",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "557ac822-a7c4-400c-844e-1342c2587920",
+                      "time": "18:30",
+                      "title": "烟火气十足的越台伯河区(Trastevere)，享用传统罗马炖牛尾大餐",
+                      "place": "越台伯河区",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "8f2d28de-a549-411d-b122-3127b7130845",
+                  "location": "罗马",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "6b678c6f-62b0-4463-bc1b-e5fb7d4aa0d4",
+                      "time": "",
+                      "title": "博尔盖塞美术馆 (Borghese)（每场严格限2小时，必须极早提前预约，看贝尼尼雕塑神作）",
+                      "place": "博尔盖塞美术馆",
+                      "note": "必须极早提前预约",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "80bc1717-2884-4e83-afdb-48847748ae55",
+                      "time": "11:30",
+                      "title": "漫步博尔盖塞公园",
+                      "place": "博尔盖塞公园",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "43d76244-2952-4b5f-a2ac-d3e83a2138d5",
+                      "time": "",
+                      "title": "退房并前往罗马Termini车站享用快速午餐",
+                      "place": "罗马Termini车站",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "a06b5db3-b52a-4611-81e1-f77da9181b81",
+                      "time": "",
+                      "title": "万神殿（需提前网购门票），惊叹两千年的无钢筋穹顶",
+                      "place": "万神殿",
+                      "note": "需提前网购门票",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "576e6f6f-c405-45e0-a170-9bc2e9611324",
+                      "time": "",
+                      "title": "纳沃纳广场(四河喷泉) -> 特雷维喷泉(许愿池投币) -> 西班牙广场打卡",
+                      "place": "纳沃纳广场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "a16f46c4-ff19-4299-8f6d-60a9d9ad27b6",
+                      "time": "19:00",
+                      "title": "享用冰淇淋(Giolitti)并观赏罗马迷人夜景",
+                      "place": "罗马",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "e35172ff-4956-4aaf-b993-eb0ee8530fdb",
+                  "location": "那不勒斯",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "b0b848c5-85bd-47ce-8340-a89b366f71cd",
+                      "time": "",
+                      "title": "搭乘意铁高铁前往那不勒斯(Napoli Centrale)",
+                      "place": "那不勒斯",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "train",
+                        "from": "罗马",
+                        "to": "那不勒斯",
+                        "depart": "14:00",
+                        "arrive": "15:15"
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "75641c6d-f06e-4e51-bbfa-9958d1c4497e",
+                      "time": "",
+                      "title": "入住后游览老城区，打卡圣塞维诺小堂（看极其震撼的《披纱基督》雕塑，需提前预约）",
+                      "place": "圣塞维诺小堂",
+                      "note": "需提前预约",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "55fe06b1-41a6-48f6-947c-7a8168194f46",
+                      "time": "19:00",
+                      "title": "享用正宗那不勒斯玛格丽特披萨（推荐L'Antica Pizzeria da Michele）",
+                      "place": "那不勒斯",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "720583aa-b34f-4ecb-9d43-45f64bdcdba9",
+                  "location": "罗马",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "bed78c20-b9bb-4e75-85de-afcb61100d89",
+                      "time": "08:00",
+                      "title": "搭乘Circumvesuviana环线火车前往庞贝",
+                      "place": "庞贝",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "train",
+                        "from": "那不勒斯",
+                        "to": "庞贝",
+                        "depart": "08:00",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "c6ef87ca-5094-49bb-bbaf-51856fd2652e",
+                      "time": "",
+                      "title": "庞贝古城 (Pompeii)深度游览（阿波罗神庙、公共浴场、神秘别墅等，建议租语音导览）",
+                      "place": "庞贝古城",
+                      "note": "建议租语音导览",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "5eb4864b-6770-4dda-95d9-b70356b50907",
+                      "time": "",
+                      "title": "在火车站前搭乘巴士直达维苏威火山1000米处，随后步行登顶看火山口（门票须提前网购）",
+                      "place": "维苏威火山",
+                      "note": "门票须提前网购",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "bus",
+                        "from": "庞贝",
+                        "to": "维苏威火山",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "8d0cb017-d63f-4cf9-a977-716524cc4965",
+                      "time": "17:30",
+                      "title": "返回那不勒斯车站取行李",
+                      "place": "那不勒斯车站",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "f690c740-87c5-47ab-9599-73f0bf52cd56",
+                      "time": "",
+                      "title": "搭乘高铁返回罗马，入住罗马Termini车站附近",
+                      "place": "罗马",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "train",
+                        "from": "那不勒斯",
+                        "to": "罗马",
+                        "depart": "19:30",
+                        "arrive": "20:45"
+                      },
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "9f651307-3695-4b33-9dfe-756badee3077",
+                  "location": "托斯卡纳农庄",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "0bfc2fe1-559c-4fce-aad1-8bf00d8ec5d3",
+                      "time": "08:30",
+                      "title": "罗马车站取车【自驾段1开启】",
+                      "place": "罗马",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "罗马",
+                        "to": "托斯卡纳",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "4ca7a00a-6d86-4870-a045-22380f650216",
+                      "time": "11:30",
+                      "title": "抵达“理想城市”皮恩扎(Pienza)，品尝Pecorino羊奶干酪",
+                      "place": "皮恩扎",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "2b438d7b-91d0-49d9-97dd-db60a1caa7d3",
+                      "time": "",
+                      "title": "明信片摄影线自驾：导航至Podere Belvedere(经典丝柏树庄园)、小教堂(Chapel of Vitaleta)、小耳朵丝柏树群",
+                      "place": "奥尔恰谷",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "皮恩扎",
+                        "to": "奥尔恰谷",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "a41b880a-a0ee-43db-8cb1-5adf532cebb5",
+                      "time": "17:30",
+                      "title": "入住托斯卡纳温泉镇或风景农庄(Agriturismo)，在酒庄享用布鲁奈罗红酒与地道意式晚宴",
+                      "place": "托斯卡纳农庄",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "684a4915-e6d9-45cb-b0f8-ab2ab0655ee0",
+                  "location": "佛罗伦萨",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "58aa4000-88a8-45ba-8ad1-de421d221634",
+                      "time": "",
+                      "title": "驱车前往“千塔之城”圣吉米尼亚诺 (San Gimignano)，漫步水井广场，品尝世界冠军冰淇淋",
+                      "place": "圣吉米尼亚诺",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "托斯卡纳农庄",
+                        "to": "圣吉米尼亚诺",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "ae467de0-3a05-4768-ac74-e95a3ea70736",
+                      "time": "",
+                      "title": "驱车前往佛罗伦萨(Firenze)",
+                      "place": "佛罗伦萨",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "圣吉米尼亚诺",
+                        "to": "佛罗伦萨",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "57d66e21-a694-4a04-b848-f915d1cf4c8e",
+                      "time": "13:30",
+                      "title": "将车停在ZTL区域外的指定报备车库(或直接前往火车站/机场网点还车【自驾段1结束】)",
+                      "place": "佛罗伦萨",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "6b1e3cbe-1590-4979-954d-5f2ed9d42f3d",
+                      "time": "",
+                      "title": "Trattoria Zà Zà",
+                      "place": "佛罗伦萨",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "4382cf0b-4f0a-43ed-94e6-d74f34ff1e21",
+                  "location": "佛罗伦萨",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "4e1c55a4-dee8-4ed8-8c75-21c75a03aa13",
+                      "time": "",
+                      "title": "乌菲兹美术馆（务必预约08:15第一批，看波提切利《维纳斯的诞生》、达芬奇《三博士朝圣》）",
+                      "place": "乌菲兹美术馆",
+                      "note": "务必预约08:15第一批",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "7744fbe6-bb3d-4cb8-bf0f-365e91832eb5",
+                      "time": "12:00",
+                      "title": "步行穿过著名的老桥 (Ponte Vecchio)享用午餐",
+                      "place": "老桥",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "333e2175-4338-40c5-a9ab-bf1dd8fcc79e",
+                      "time": "",
+                      "title": "学院美术馆（必须提前预约），膜拜米开朗基罗的传世原版雕塑——《大卫》",
+                      "place": "学院美术馆",
+                      "note": "必须提前预约",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "4009b209-5208-440c-a302-7beb1bef97a6",
+                      "time": "16:30",
+                      "title": "领主广场、佣兵凉廊，前往中央市场(Mercato Centrale)二楼尝尝特色牛肚包(Lampredotto)",
+                      "place": "领主广场",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "21731899-af2e-4faf-91ef-05e9ac64e0b3",
+                      "time": "18:00",
+                      "title": "圣母百花大教堂登顶",
+                      "place": "圣母百花大教堂",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "0c165247-2e34-4003-91de-afcc60d4e546",
+                  "location": "佛罗伦萨",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "7fa305ec-3058-4fdf-9e19-85ac66a76451",
+                      "time": "",
+                      "title": "从佛罗伦萨SMN车站搭乘火车直达比萨(Pisa Centrale)",
+                      "place": "比萨",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "train",
+                        "from": "佛罗伦萨",
+                        "to": "比萨",
+                        "depart": "09:00",
+                        "arrive": "10:00"
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "8afb0b7c-0d53-4d6f-82c0-f7d7c911d6e6",
+                      "time": "",
+                      "title": "步行至奇迹广场，观赏并合影比萨斜塔、洗礼堂和大教堂（登斜塔需提前网购定时票）",
+                      "place": "奇迹广场",
+                      "note": "登斜塔需提前网购定时票",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "68a7cd3b-e44c-4a6a-987f-38894775713b",
+                      "time": "13:00",
+                      "title": "市区避开景区陷阱餐厅用午餐",
+                      "place": "比萨",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "92fa0648-2fa0-48f2-89a7-794ccb052944",
+                      "time": "15:00",
+                      "title": "搭乘火车返回佛罗伦萨",
+                      "place": "佛罗伦萨",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "train",
+                        "from": "比萨",
+                        "to": "佛罗伦萨",
+                        "depart": "15:00",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "28dd129e-00ac-41b7-a779-fd4f74b45a25",
+                      "time": "",
+                      "title": "在文艺的布雷拉街区或圣玛利亚修道院香水制药厂采购手信",
+                      "place": "佛罗伦萨",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "140be0c4-d89f-4f98-a446-163bc00e6dae",
+                      "time": "19:30",
+                      "title": "佛罗伦萨阿诺河畔浪漫晚餐",
+                      "place": "阿诺河畔",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "075cd0ae-d7e3-40a0-877d-dc94f52c3f10",
+                  "location": "威尼斯主岛",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "7d2d9577-1e6f-4f02-b0e9-d0a3169292b9",
+                      "time": "",
+                      "title": "从佛罗伦萨搭乘意铁高铁直达威尼斯主岛车站 (Venezia Santa Lucia)",
+                      "place": "威尼斯主岛车站",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "train",
+                        "from": "佛罗伦萨",
+                        "to": "威尼斯",
+                        "depart": "08:30",
+                        "arrive": "10:35"
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "f3dade6d-ee5c-4d86-bc28-61fea3b35810",
+                      "time": "11:00",
+                      "title": "搭乘水上巴士(Vaporetto)前往主岛酒店寄存行李",
+                      "place": "威尼斯主岛",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "boat",
+                        "from": "威尼斯主岛车站",
+                        "to": "主岛酒店",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "1b05af56-461c-4fcd-a791-5531b9af34e8",
+                      "time": "13:00",
+                      "title": "享用特色墨鱼汁面(Spaghetti al Nero di Seppia)",
+                      "place": "威尼斯",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "5e31d74d-e154-40af-86b1-3842357680fd",
+                      "time": "",
+                      "title": "圣马可大教堂+总督宫（总督宫门票提前网购），走过叹息桥",
+                      "place": "圣马可广场",
+                      "note": "总督宫门票提前网购",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "3af3db4c-71f4-4c2e-98d6-c0b67fbd8ced",
+                      "time": "18:00",
+                      "title": "贡多拉 (Gondola)穿梭幽静水道",
+                      "place": "威尼斯",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "b3d63d37-aa0b-4d6e-903c-55f690363299",
+                      "time": "",
+                      "title": "夜幕降临在里亚托桥畔用晚餐",
+                      "place": "里亚托桥",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "46a89157-5be3-4201-b099-32f06dad910d",
+                  "location": "威尼斯主岛",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "4a92a243-4d8d-491b-8d2a-1b4541621830",
+                      "time": "",
+                      "title": "从Fondamente Nove码头搭乘12路水上巴士前往玻璃岛 (Murano)，参观吹玻璃工艺",
+                      "place": "玻璃岛",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "boat",
+                        "from": "威尼斯主岛",
+                        "to": "玻璃岛",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "2796bd1d-7f3c-4780-b91d-1843dc6523ca",
+                      "time": "",
+                      "title": "续乘前往彩色岛 (Burano)，打卡高饱和度童话小镇，中午在岛上享用鱼汤烩饭",
+                      "place": "彩色岛",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "boat",
+                        "from": "玻璃岛",
+                        "to": "彩色岛",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "d2eab953-81b2-46a5-8afa-976dd11a0b62",
+                      "time": "15:30",
+                      "title": "返回主岛，远离主干道迷失在Cannaregio本地小巷中，尝试威尼斯独特的餐前小吃(Cicchetti)并配一杯Aperol Spritz酒",
+                      "place": "威尼斯主岛",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "a262b7bb-e41c-471f-8461-4e2205b9b47f",
+                  "location": "多洛米蒂",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "0842a66e-45dc-40e1-aafb-9db678e4fdd7",
+                      "time": "08:30",
+                      "title": "威尼斯罗马广场或机场取车【自驾段2开启】",
+                      "place": "威尼斯",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "威尼斯",
+                        "to": "多洛米蒂",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "651922f8-f1b8-4029-b6c4-ac2f66a00e2b",
+                      "time": "11:30",
+                      "title": "抵达东部大本营科尔蒂纳丹佩佐(Cortina)享用高山意面",
+                      "place": "科尔蒂纳丹佩佐",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "4ee76791-6cb7-4fb6-aca5-9fe56db36c8e",
+                      "time": "",
+                      "title": "初见多洛米蒂：三峰山 Tre Cime，驱车前往三峰山国家公园，开启轻徒步(101号徒步道)，近距离感受阿尔卑斯巨石的震撼",
+                      "place": "三峰山国家公园",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "科尔蒂纳丹佩佐",
+                        "to": "三峰山国家公园",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "8018a556-5328-463b-b609-f9c877ba856e",
+                      "time": "19:00",
+                      "title": "入住山区木屋酒店，享用脆皮猪肘与当地啤酒",
+                      "place": "多洛米蒂",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "ff9a3221-e6c3-4273-9b69-3425c1a85bbe",
+                  "location": "多洛米蒂",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "5038b036-7f87-43ce-b116-0f6bfe3b02c6",
+                      "time": "",
+                      "title": "布莱埃斯湖 (Lago di Braies)（8月严格限流，必须提前网购停车证，或早上07:30前到达！），可在碧绿湖面租木舟荡桨",
+                      "place": "布莱埃斯湖",
+                      "note": "8月严格限流，必须提前网购停车证，或早上07:30前到达",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "ccc164d9-5f8b-4b1a-9a30-74ca46f4ed60",
+                      "time": "12:00",
+                      "title": "驱车前往富纳斯山谷(Val di Funes)",
+                      "place": "富纳斯山谷",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "布莱埃斯湖",
+                        "to": "富纳斯山谷",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "44d55c5a-d5f0-44cc-9024-f2d0e867c2ea",
+                      "time": "",
+                      "title": "背靠巨齿状盖斯勒山峰的孤独小教堂(Ranui Church)，以及Santa Magdalena小教堂山坡(地理杂志封面取景地)",
+                      "place": "富纳斯山谷",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "3e534aea-2374-4f1c-8d78-43da0814e307",
+                      "time": "18:00",
+                      "title": "入住奥蒂塞伊(Ortisei)",
+                      "place": "奥蒂塞伊",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "2a8dd599-8522-4b2a-8fa6-8ddf5a0ea351",
+                  "location": "多洛米蒂",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "dc4e2e58-fafa-423b-8627-5f501b2067a8",
+                      "time": "08:30",
+                      "title": "从奥蒂塞伊搭乘缆车直达休斯山 (Alpe di Siusi)",
+                      "place": "休斯山",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "train",
+                        "from": "奥蒂塞伊",
+                        "to": "休斯山",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "5809feb8-d530-49f1-91fc-52251dc3ebea",
+                      "time": "",
+                      "title": "强烈建议在山顶租电动山地车 (E-Bike)或徒步慢行，原生态木屋星罗棋布",
+                      "place": "休斯山",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "9d99937c-e6b9-49a4-8c64-63497b916d17",
+                      "time": "12:30",
+                      "title": "在山顶避难所木屋(Rauch Hütte)户外露台午餐，品尝凯撒皇帝煎饼",
+                      "place": "休斯山",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "af249022-0ea3-41f7-a5be-a6f4aa2f3c9e",
+                      "time": "15:00",
+                      "title": "下山自由驾车兜风，享受无敌山景，晚餐享用南蒂罗尔高山料理",
+                      "place": "多洛米蒂",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "31839823-4b90-490d-a9bc-a40fc11b5f59",
+                  "location": "米兰",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": [
+                    {
+                      "id": "f0b264f5-6e2e-4c64-aeca-f28f9e1d8fd9",
+                      "time": "08:30",
+                      "title": "驱车离开多洛米蒂，开启较长距离的高速自驾，前往米兰 (Milan)（车程约3.5-4小时）",
+                      "place": "米兰",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": {
+                        "type": "car",
+                        "from": "多洛米蒂",
+                        "to": "米兰",
+                        "depart": "",
+                        "arrive": ""
+                      },
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "438800f1-8155-4ac3-9197-56dd9bd6addd",
+                      "time": "13:00",
+                      "title": "抵达米兰，在机场或市区还车【自驾段2结束】，入住酒店",
+                      "place": "米兰",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "6e19cf7e-14b3-4815-bc77-58826f1336ac",
+                      "time": "",
+                      "title": "米兰大教堂（必须提前买登顶通票），走在粉白色大理石屋顶的尖塔间，极其震撼",
+                      "place": "米兰大教堂",
+                      "note": "必须提前买登顶通票",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "168fcd49-ca1a-4ec1-a489-e6e8804191c8",
+                      "time": "16:45",
+                      "title": "穿过埃马努埃莱二世长廊",
+                      "place": "埃马努埃莱二世长廊",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    },
+                    {
+                      "id": "1aa28e3c-ecd2-41f9-9d5f-39da975f71d8",
+                      "time": "",
+                      "title": "米兰运河区(Navigli)体验著名的Aperitivo(点酒送自助小吃)晚餐",
+                      "place": "米兰运河区",
+                      "note": "",
+                      "tags": [],
+                      "done": false,
+                      "budget": null,
+                      "transport": null,
+                      "updatedAt": 1785410085047
+                    }
+                  ]
+                },
+                {
+                  "id": "ec417787-5967-410e-923f-f3f30c126aa0",
+                  "location": "米兰",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": []
+                },
+                {
+                  "id": "6bb6433a-ca59-4421-9289-ca23ab68ac66",
+                  "location": "皮雷埃夫斯港(Piraeus)",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": []
+                },
+                {
+                  "id": "9c0b1524-f8af-43f7-8e66-8c42ac2d2699",
+                  "location": "皮雷埃夫斯港(Piraeus)",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": []
+                },
+                {
+                  "id": "c07f0a6d-adc0-4ec3-97d5-d04b10da38b6",
+                  "location": "皮雷埃夫斯港(Piraeus)",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": []
+                },
+                {
+                  "id": "551e1e5a-01dc-4003-aa9f-84aa33d5b744",
+                  "location": "皮雷埃夫斯港(Piraeus)",
+                  "stay": "",
+                  "updatedAt": 1785410085047,
+                  "orderUpdatedAt": 1785410085047,
+                  "activities": []
                 }
               ]
             }
@@ -159,7 +2004,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1785409998640
+        "updatedAt": 1785410085865
       }
     },
     "122127": {
