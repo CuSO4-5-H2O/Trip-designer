@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "savedAt": "2026-07-30T11:34:13.164Z",
+  "savedAt": "2026-07-30T11:34:14.133Z",
   "rooms": {
     "1": {
-      "revision": 12,
+      "revision": 13,
       "state": {
         "version": 2,
         "activeListId": "c19a5998-527f-4161-9ec1-457af8525770",
@@ -2012,7 +2012,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1785411252913
+        "updatedAt": 1785411253883
       }
     },
     "122127": {
