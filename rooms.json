@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "savedAt": "2026-07-30T11:15:39.658Z",
+  "savedAt": "2026-07-30T11:16:48.507Z",
   "rooms": {
     "1": {
-      "revision": 9,
+      "revision": 10,
       "state": {
         "version": 2,
         "activeListId": "c19a5998-527f-4161-9ec1-457af8525770",
@@ -57,7 +57,7 @@
             "id": "c19a5998-527f-4161-9ec1-457af8525770",
             "name": "AI导入 - 8月5日\t雅典 (Athens)\t07:25 抵",
             "createdAt": 1785409935650,
-            "updatedAt": 1785410136002,
+            "updatedAt": 1785410144997,
             "trip": {
               "version": 1,
               "tripTitle": "AI导入 - 8月5日\t雅典 (Athens)\t07:25 抵",
@@ -65,7 +65,7 @@
               "originCity": "",
               "selectedDayId": "370b5e8c-61bc-48fb-b874-6d87f345d84e",
               "dayLimit": 30,
-              "updatedAt": 1785410136002,
+              "updatedAt": 1785410144997,
               "orderUpdatedAt": 1785410136002,
               "budget": {
                 "currency": "CNY",
@@ -1996,11 +1996,11 @@
                 },
                 {
                   "id": "370b5e8c-61bc-48fb-b874-6d87f345d84e",
-                  "location": "",
+                  "location": "米兰",
                   "stay": "",
-                  "activities": [],
-                  "updatedAt": 1785410136002,
-                  "orderUpdatedAt": 1785410136002
+                  "updatedAt": 1785410144996,
+                  "orderUpdatedAt": 1785410136002,
+                  "activities": []
                 }
               ]
             }
@@ -2012,7 +2012,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1785410139408
+        "updatedAt": 1785410208256
       }
     },
     "122127": {
