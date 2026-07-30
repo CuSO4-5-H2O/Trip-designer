@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "savedAt": "2026-07-30T11:14:48.571Z",
+  "savedAt": "2026-07-30T11:15:39.658Z",
   "rooms": {
     "1": {
-      "revision": 8,
+      "revision": 9,
       "state": {
         "version": 2,
         "activeListId": "c19a5998-527f-4161-9ec1-457af8525770",
@@ -57,16 +57,16 @@
             "id": "c19a5998-527f-4161-9ec1-457af8525770",
             "name": "AI导入 - 8月5日\t雅典 (Athens)\t07:25 抵",
             "createdAt": 1785409935650,
-            "updatedAt": 1785410085048,
+            "updatedAt": 1785410136002,
             "trip": {
               "version": 1,
               "tripTitle": "AI导入 - 8月5日\t雅典 (Athens)\t07:25 抵",
               "startDate": "2026-07-30",
               "originCity": "",
-              "selectedDayId": "88476061-5511-4900-a2c1-62ce9d309782",
+              "selectedDayId": "370b5e8c-61bc-48fb-b874-6d87f345d84e",
               "dayLimit": 30,
-              "updatedAt": 1785410085048,
-              "orderUpdatedAt": 1785410085047,
+              "updatedAt": 1785410136002,
+              "orderUpdatedAt": 1785410136002,
               "budget": {
                 "currency": "CNY",
                 "items": {},
@@ -1993,6 +1993,14 @@
                   "updatedAt": 1785410085047,
                   "orderUpdatedAt": 1785410085047,
                   "activities": []
+                },
+                {
+                  "id": "370b5e8c-61bc-48fb-b874-6d87f345d84e",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1785410136002,
+                  "orderUpdatedAt": 1785410136002
                 }
               ]
             }
@@ -2004,7 +2012,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1785410088320
+        "updatedAt": 1785410139408
       }
     },
     "122127": {
