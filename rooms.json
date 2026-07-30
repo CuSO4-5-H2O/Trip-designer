@@ -1,9 +1,57 @@
 {
   "version": 2,
-  "savedAt": "2026-07-30T11:10:21.933Z",
+  "savedAt": "2026-07-30T11:10:36.218Z",
   "rooms": {
+    "1": {
+      "revision": 1,
+      "state": {
+        "version": 2,
+        "activeListId": "1683a5be-48e8-4f66-9ded-394699c1df28",
+        "members": [],
+        "lists": [
+          {
+            "id": "1683a5be-48e8-4f66-9ded-394699c1df28",
+            "name": "新行程单",
+            "trip": {
+              "tripTitle": "新行程单",
+              "startDate": "2026-07-30",
+              "originCity": "",
+              "selectedDayId": "a4d2ead4-287d-45e9-9d0c-8119ab022f1a",
+              "dayLimit": 30,
+              "days": [
+                {
+                  "id": "a4d2ead4-287d-45e9-9d0c-8119ab022f1a",
+                  "location": "",
+                  "stay": "",
+                  "activities": [],
+                  "updatedAt": 1785409835287,
+                  "orderUpdatedAt": 1785409835287
+                }
+              ],
+              "budget": {
+                "currency": "CNY",
+                "items": {},
+                "limit": 0,
+                "updatedAt": 1785409835287
+              },
+              "updatedAt": 1785409835287,
+              "orderUpdatedAt": 1785409835287
+            },
+            "createdAt": 1785409835287,
+            "updatedAt": 1785409835287
+          }
+        ],
+        "deleted": {
+          "lists": {},
+          "days": {},
+          "activities": {},
+          "members": {}
+        },
+        "updatedAt": 1785409835287
+      }
+    },
     "122127": {
-      "revision": 2,
+      "revision": 4,
       "state": {
         "version": 2,
         "activeListId": "bb74e209-1334-45a0-aa3e-216df0fa41d3",
@@ -23,9 +71,9 @@
                   "id": "a415cdd1-eac0-4dca-9675-b72849de4e2b",
                   "location": "",
                   "stay": "",
-                  "activities": [],
                   "updatedAt": 1785409820375,
-                  "orderUpdatedAt": 1785409820375
+                  "orderUpdatedAt": 1785409820375,
+                  "activities": []
                 }
               ],
               "budget": {
@@ -47,7 +95,7 @@
           "activities": {},
           "members": {}
         },
-        "updatedAt": 1785409820944
+        "updatedAt": 1785409835968
       }
     },
     "34910250": {
